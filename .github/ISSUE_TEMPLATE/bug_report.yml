@@ -1,0 +1,43 @@
+name: Bug report
+description: Report a problem in one of the ClearView starter applications.
+title: "bug: "
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: Thanks for helping us improve ClearView. Please include enough detail for a teammate to reproduce the problem.
+  - type: dropdown
+    id: platform
+    attributes:
+      label: Platform
+      options:
+        - Flutter
+        - React Native / Expo
+        - Electron
+        - React web / Vite
+        - Documentation
+        - Other
+    validations:
+      required: true
+  - type: textarea
+    id: description
+    attributes:
+      label: What happened?
+      description: Clearly describe the problem and what you expected instead.
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      placeholder: |
+        1. Start the application
+        2. ...
+        3. ...
+    validations:
+      required: true
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment
+      description: Include device, operating system, browser, and/or relevant tool versions.

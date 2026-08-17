@@ -1,0 +1,41 @@
+name: Feature request
+description: Suggest a small, well-defined improvement for ClearView.
+title: "feature: "
+labels: [enhancement]
+body:
+  - type: markdown
+    attributes:
+      value: Describe the user need and the smallest useful outcome. Do not include implementation details unless they are important to the request.
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem or user need
+      description: What problem would this solve, and for whom?
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed outcome
+      description: Describe the expected behavior or result.
+    validations:
+      required: true
+  - type: dropdown
+    id: platform
+    attributes:
+      label: Affected platform
+      options:
+        - Flutter
+        - React Native / Expo
+        - Electron
+        - React web / Vite
+        - Documentation
+        - Multiple platforms
+        - Not sure
+    validations:
+      required: true
+  - type: textarea
+    id: context
+    attributes:
+      label: Additional context
+      description: Add mockups, references, or other helpful details if available.
