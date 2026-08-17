@@ -34,7 +34,15 @@ Documentation can be stored in or referenced from [docs/](docs/README.md) as it 
 
 ## Setup and run
 
-Install a current Flutter SDK, Node.js, and npm. From a fresh clone, use the commands below for the starter application you want to run.
+From a fresh clone, use the commands below for the starter application you want to run.
+
+### Prerequisites
+
+Complete the course-required development environment setup before following these instructions.
+
+### Current limitation
+
+- The Expo starter is currently configured for native iOS and Android use. Its `npm run web` script requires the optional `react-dom` and `react-native-web` packages, which are not included yet.
 
 ### Flutter
 
