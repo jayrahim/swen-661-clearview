@@ -37,3 +37,6 @@ secrets/
 coverage/
 tmp/
 temp/
+
+# Local design-reference exports
+docs/design/*.png
