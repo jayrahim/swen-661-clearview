@@ -127,16 +127,17 @@ class AccessibilityOptionCard extends StatelessWidget {
     required this.description,
     required this.value,
     this.isEnabled = false,
+    this.onTap,
   });
   final String title;
   final String description;
   final String value;
   final bool isEnabled;
+  final VoidCallback? onTap;
 
   @override
-  Widget build(BuildContext context) => Semantics(
-    label: '$title, $value. $description',
-    child: ExcludeSemantics(
+  Widget build(BuildContext context) {
+    final content = ExcludeSemantics(
       child: AppCard(
         padding: const EdgeInsets.fromLTRB(13, 14, 18, 14),
         child: LayoutBuilder(
@@ -178,8 +179,19 @@ class AccessibilityOptionCard extends StatelessWidget {
           },
         ),
       ),
-    ),
-  );
+    );
+    return Semantics(
+      button: onTap != null,
+      label: '$title, $value. $description',
+      child: onTap == null
+          ? content
+          : InkWell(
+              onTap: onTap,
+              borderRadius: BorderRadius.circular(14),
+              child: content,
+            ),
+    );
+  }
 }
 
 class ClearViewBottomNavigation extends StatelessWidget {
