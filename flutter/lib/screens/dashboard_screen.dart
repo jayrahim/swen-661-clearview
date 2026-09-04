@@ -1,11 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../models/quick_access_item.dart';
+import '../repositories/mock_repositories.dart';
+import '../state/accessibility_preferences.dart';
 import '../theme/app_colors.dart';
 import '../widgets/ui_components.dart';
 import 'accessibility_settings_screen.dart';
+import 'appointment_detail_screen.dart';
 
-class DashboardScreen extends StatelessWidget {
+class DashboardScreen extends ConsumerWidget {
   const DashboardScreen({super.key});
 
   static const _items = [
@@ -36,7 +40,9 @@ class DashboardScreen extends StatelessWidget {
   ];
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final preferences = ref.watch(accessibilityPreferencesProvider);
+    final appointment = ref.watch(appointmentRepositoryProvider).getAll().first;
     void openAccessibility() => Navigator.of(context).push(
       MaterialPageRoute(builder: (_) => const AccessibilitySettingsScreen()),
     );
@@ -78,7 +84,11 @@ class DashboardScreen extends StatelessWidget {
                             : Row(
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceBetween,
-                                children: [greeting, accessibilityLabel],
+                                children: [
+                                  Expanded(child: greeting),
+                                  const SizedBox(width: 12),
+                                  accessibilityLabel,
+                                ],
                               );
                       },
                     ),
@@ -108,7 +118,7 @@ class DashboardScreen extends StatelessWidget {
                                 foregroundColor: AppColors.mintInk,
                               );
                               if (MediaQuery.textScalerOf(context).scale(1) >
-                                  1.25) {
+                                  1.1) {
                                 return Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
@@ -122,13 +132,17 @@ class DashboardScreen extends StatelessWidget {
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceBetween,
                                 crossAxisAlignment: CrossAxisAlignment.center,
-                                children: [appointmentLabel, confirmedPill],
+                                children: [
+                                  Flexible(child: appointmentLabel),
+                                  SizedBox(width: 12),
+                                  confirmedPill,
+                                ],
                               );
                             },
                           ),
                           const SizedBox(height: 5),
                           Text(
-                            'Dr. Elena Martinez',
+                            appointment.clinicianName,
                             style: Theme.of(context).textTheme.titleLarge,
                           ),
                           const SizedBox(height: 8),
@@ -138,15 +152,22 @@ class DashboardScreen extends StatelessWidget {
                           ),
                           const SizedBox(height: 8),
                           Text(
-                            'Cardiology • Main Campus',
+                            '${appointment.specialty} • ${appointment.location}',
                             style: Theme.of(context).textTheme.bodyMedium,
                           ),
                           const SizedBox(height: 9),
-                          const Text(
-                            'View details  →',
-                            style: TextStyle(
-                              color: AppColors.primary,
-                              fontWeight: FontWeight.w700,
+                          Semantics(
+                            button: true,
+                            label: 'View appointment details',
+                            child: TextButton(
+                              onPressed: () => Navigator.of(context).push(
+                                MaterialPageRoute(
+                                  builder: (_) => AppointmentDetailScreen(
+                                    appointment: appointment,
+                                  ),
+                                ),
+                              ),
+                              child: const Text('View details  →'),
                             ),
                           ),
                         ],
@@ -179,7 +200,8 @@ class DashboardScreen extends StatelessWidget {
                     const SizedBox(height: 42),
                     Semantics(
                       button: true,
-                      label: 'Accessibility preferences. Text large. High contrast on.',
+                      label:
+                          'Accessibility preferences. Text ${preferences.textSize.label}. High contrast ${preferences.highContrast ? 'on' : 'off'}.',
                       child: InkWell(
                         onTap: openAccessibility,
                         borderRadius: BorderRadius.circular(14),
@@ -200,7 +222,7 @@ class DashboardScreen extends StatelessWidget {
                                   ),
                                   const SizedBox(height: 9),
                                   Text(
-                                    'Text: Large • High contrast: On',
+                                    'Text: ${preferences.textSize.label} • High contrast: ${preferences.highContrast ? 'On' : 'Off'}',
                                     style: Theme.of(context)
                                         .textTheme
                                         .bodyMedium

@@ -3,14 +3,14 @@ import 'package:flutter/material.dart';
 import 'app_colors.dart';
 
 abstract final class AppTheme {
-  static ThemeData get lightTheme => ThemeData(
+  static ThemeData lightTheme({bool highContrast = true}) => ThemeData(
     useMaterial3: true,
     scaffoldBackgroundColor: AppColors.background,
-    colorScheme: const ColorScheme.light(
-      primary: AppColors.primary,
+    colorScheme: ColorScheme.light(
+      primary: highContrast ? AppColors.primary : const Color(0xFF16758A),
       onPrimary: Colors.white,
       surface: AppColors.surface,
-      onSurface: AppColors.ink,
+      onSurface: highContrast ? AppColors.ink : const Color(0xFF263448),
     ),
     fontFamily: 'Arial',
     textTheme: const TextTheme(
