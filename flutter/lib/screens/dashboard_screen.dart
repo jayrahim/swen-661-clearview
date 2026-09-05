@@ -8,6 +8,7 @@ import '../theme/app_colors.dart';
 import '../widgets/ui_components.dart';
 import 'accessibility_settings_screen.dart';
 import 'appointment_detail_screen.dart';
+import 'appointments_screen.dart';
 
 class DashboardScreen extends ConsumerWidget {
   const DashboardScreen({super.key});
@@ -46,6 +47,8 @@ class DashboardScreen extends ConsumerWidget {
     void openAccessibility() => Navigator.of(context).push(
       MaterialPageRoute(builder: (_) => const AccessibilitySettingsScreen()),
     );
+    void openAppointments() => Navigator.of(context)
+        .push(MaterialPageRoute(builder: (_) => const AppointmentsScreen()));
     return Scaffold(
       body: AppPage(
         child: Column(
@@ -112,10 +115,8 @@ class DashboardScreen extends ConsumerWidget {
                                   fontWeight: FontWeight.w700,
                                 ),
                               );
-                              const confirmedPill = StatusPill(
-                                label: 'Confirmed',
-                                backgroundColor: AppColors.mint,
-                                foregroundColor: AppColors.mintInk,
+                              final confirmedPill = AppointmentStatusPill(
+                                status: appointment.status,
                               );
                               if (MediaQuery.textScalerOf(context).scale(1) >
                                   1.1) {
@@ -128,13 +129,13 @@ class DashboardScreen extends ConsumerWidget {
                                   ],
                                 );
                               }
-                              return const Row(
+                              return Row(
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceBetween,
                                 crossAxisAlignment: CrossAxisAlignment.center,
                                 children: [
                                   Flexible(child: appointmentLabel),
-                                  SizedBox(width: 12),
+                                  const SizedBox(width: 12),
                                   confirmedPill,
                                 ],
                               );
@@ -263,7 +264,10 @@ class DashboardScreen extends ConsumerWidget {
                 ),
               ),
             ),
-            ClearViewBottomNavigation(onSettingsTap: openAccessibility),
+            ClearViewBottomNavigation(
+              onSettingsTap: openAccessibility,
+              onVisitsTap: openAppointments,
+            ),
           ],
         ),
       ),

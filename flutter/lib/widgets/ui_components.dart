@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../models/appointment.dart';
 import '../models/quick_access_item.dart';
 import '../theme/app_colors.dart';
 
@@ -88,6 +89,44 @@ class StatusPill extends StatelessWidget {
       style: TextStyle(color: foregroundColor, fontWeight: FontWeight.w700),
     ),
   );
+}
+
+class AppointmentStatusPill extends StatelessWidget {
+  const AppointmentStatusPill({super.key, required this.status});
+
+  final AppointmentStatus status;
+
+  @override
+  Widget build(BuildContext context) {
+    final style = AppointmentStatusStyle.forStatus(status);
+    return StatusPill(
+      label: status.label,
+      backgroundColor: style.background,
+      foregroundColor: style.foreground,
+    );
+  }
+}
+
+class AppointmentStatusStyle {
+  const AppointmentStatusStyle._(this.background, this.foreground);
+
+  final Color background;
+  final Color foreground;
+
+  static const _confirmed = AppointmentStatusStyle._(
+    AppColors.mint,
+    AppColors.mintInk,
+  );
+  static const _needsAction = AppointmentStatusStyle._(
+    AppColors.yellowTile,
+    AppColors.warningInk,
+  );
+
+  static AppointmentStatusStyle forStatus(AppointmentStatus status) =>
+      switch (status) {
+        AppointmentStatus.confirmed => _confirmed,
+        AppointmentStatus.needsAction => _needsAction,
+      };
 }
 
 class QuickAccessTile extends StatelessWidget {
@@ -194,9 +233,20 @@ class AccessibilityOptionCard extends StatelessWidget {
   }
 }
 
+enum ClearViewNavigationItem { home, visits, messages, records, settings }
+
 class ClearViewBottomNavigation extends StatelessWidget {
-  const ClearViewBottomNavigation({super.key, required this.onSettingsTap});
+  const ClearViewBottomNavigation({
+    super.key,
+    required this.onSettingsTap,
+    this.onHomeTap,
+    this.onVisitsTap,
+    this.selectedItem = ClearViewNavigationItem.home,
+  });
   final VoidCallback onSettingsTap;
+  final VoidCallback? onHomeTap;
+  final VoidCallback? onVisitsTap;
+  final ClearViewNavigationItem selectedItem;
 
   @override
   Widget build(BuildContext context) {
@@ -209,13 +259,24 @@ class ClearViewBottomNavigation extends StatelessWidget {
       ),
       child: Row(
         children: [
-          const _NavItem(icon: Icons.circle, label: 'Home', isSelected: true),
-          const _NavItem(icon: Icons.calendar_today_outlined, label: 'Visits'),
+          _NavItem(
+            icon: Icons.circle,
+            label: 'Home',
+            isSelected: selectedItem == ClearViewNavigationItem.home,
+            onTap: onHomeTap,
+          ),
+          _NavItem(
+            icon: Icons.calendar_today_outlined,
+            label: 'Visits',
+            isSelected: selectedItem == ClearViewNavigationItem.visits,
+            onTap: onVisitsTap,
+          ),
           const _NavItem(icon: Icons.mail_outline, label: 'Messages'),
           const _NavItem(icon: Icons.view_headline_outlined, label: 'Records'),
           _NavItem(
             icon: Icons.settings,
             label: 'Settings',
+            isSelected: selectedItem == ClearViewNavigationItem.settings,
             onTap: onSettingsTap,
           ),
         ],
