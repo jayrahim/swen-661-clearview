@@ -68,11 +68,11 @@ void main() {
   test('high contrast theme uses the approved primary color', () {
     expect(
       AppTheme.lightTheme(highContrast: true).colorScheme.primary,
-      AppColors.primary,
+      AppColors.highContrastPrimary,
     );
     expect(
       AppTheme.lightTheme(highContrast: false).colorScheme.primary,
-      isNot(AppColors.primary),
+      AppColors.primary,
     );
   });
 }
