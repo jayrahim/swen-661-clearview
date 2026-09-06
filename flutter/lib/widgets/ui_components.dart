@@ -6,17 +6,18 @@ import '../theme/app_colors.dart';
 
 class AppPage extends StatelessWidget {
   const AppPage({super.key, required this.child});
+
   final Widget child;
 
   @override
   Widget build(BuildContext context) => SafeArea(
-    child: Center(
-      child: ConstrainedBox(
-        constraints: const BoxConstraints(maxWidth: 480),
-        child: child,
-      ),
-    ),
-  );
+        child: Center(
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 480),
+            child: child,
+          ),
+        ),
+      );
 }
 
 class AppCard extends StatelessWidget {
@@ -26,20 +27,21 @@ class AppCard extends StatelessWidget {
     this.padding = const EdgeInsets.all(14),
     this.color = AppColors.surface,
   });
+
   final Widget child;
   final EdgeInsetsGeometry padding;
   final Color color;
 
   @override
   Widget build(BuildContext context) => Container(
-    padding: padding,
-    decoration: BoxDecoration(
-      color: color,
-      borderRadius: BorderRadius.circular(14),
-      border: Border.all(color: AppColors.border),
-    ),
-    child: child,
-  );
+        padding: padding,
+        decoration: BoxDecoration(
+          color: color,
+          borderRadius: BorderRadius.circular(14),
+          border: Border.all(color: AppColors.border),
+        ),
+        child: child,
+      );
 }
 
 class PrimaryButton extends StatelessWidget {
@@ -48,22 +50,26 @@ class PrimaryButton extends StatelessWidget {
     required this.label,
     required this.onPressed,
   });
+
   final String label;
   final VoidCallback onPressed;
 
   @override
   Widget build(BuildContext context) => ConstrainedBox(
-    constraints: const BoxConstraints(minWidth: double.infinity, minHeight: 53),
-    child: FilledButton(
-      style: FilledButton.styleFrom(
-        backgroundColor: AppColors.primary,
-        foregroundColor: Colors.white,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(11)),
-      ),
-      onPressed: onPressed,
-      child: Text(label),
-    ),
-  );
+        constraints:
+            const BoxConstraints(minWidth: double.infinity, minHeight: 53),
+        child: FilledButton(
+          style: FilledButton.styleFrom(
+            backgroundColor: AppColors.primary,
+            foregroundColor: Colors.white,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(11),
+            ),
+          ),
+          onPressed: onPressed,
+          child: Text(label),
+        ),
+      );
 }
 
 class StatusPill extends StatelessWidget {
@@ -73,32 +79,43 @@ class StatusPill extends StatelessWidget {
     this.backgroundColor = AppColors.aqua,
     this.foregroundColor = AppColors.primary,
   });
+
   final String label;
   final Color backgroundColor;
   final Color foregroundColor;
 
   @override
   Widget build(BuildContext context) => Container(
-    padding: const EdgeInsets.symmetric(horizontal: 17, vertical: 8),
-    decoration: BoxDecoration(
-      color: backgroundColor,
-      borderRadius: BorderRadius.circular(22),
-    ),
-    child: Text(
-      label,
-      style: TextStyle(color: foregroundColor, fontWeight: FontWeight.w700),
-    ),
-  );
+        padding: const EdgeInsets.symmetric(
+          horizontal: 17,
+          vertical: 8,
+        ),
+        decoration: BoxDecoration(
+          color: backgroundColor,
+          borderRadius: BorderRadius.circular(22),
+        ),
+        child: Text(
+          label,
+          style: TextStyle(
+            color: foregroundColor,
+            fontWeight: FontWeight.w700,
+          ),
+        ),
+      );
 }
 
 class AppointmentStatusPill extends StatelessWidget {
-  const AppointmentStatusPill({super.key, required this.status});
+  const AppointmentStatusPill({
+    super.key,
+    required this.status,
+  });
 
   final AppointmentStatus status;
 
   @override
   Widget build(BuildContext context) {
     final style = AppointmentStatusStyle.forStatus(status);
+
     return StatusPill(
       label: status.label,
       backgroundColor: style.background,
@@ -108,7 +125,10 @@ class AppointmentStatusPill extends StatelessWidget {
 }
 
 class AppointmentStatusStyle {
-  const AppointmentStatusStyle._(this.background, this.foreground);
+  const AppointmentStatusStyle._(
+    this.background,
+    this.foreground,
+  );
 
   final Color background;
   final Color foreground;
@@ -117,12 +137,15 @@ class AppointmentStatusStyle {
     AppColors.mint,
     AppColors.mintInk,
   );
+
   static const _needsAction = AppointmentStatusStyle._(
     AppColors.yellowTile,
     AppColors.warningInk,
   );
 
-  static AppointmentStatusStyle forStatus(AppointmentStatus status) =>
+  static AppointmentStatusStyle forStatus(
+    AppointmentStatus status,
+  ) =>
       switch (status) {
         AppointmentStatus.confirmed => _confirmed,
         AppointmentStatus.needsAction => _needsAction,
@@ -130,33 +153,54 @@ class AppointmentStatusStyle {
 }
 
 class QuickAccessTile extends StatelessWidget {
-  const QuickAccessTile({super.key, required this.item});
+  const QuickAccessTile({
+    super.key,
+    required this.item,
+    this.onTap,
+  });
+
   final QuickAccessItem item;
+  final VoidCallback? onTap;
 
   @override
-  Widget build(BuildContext context) => Semantics(
-    label: '${item.title}, ${item.subtitle}',
-    child: ExcludeSemantics(
-      child: Container(
-        padding: const EdgeInsets.all(14),
-        decoration: BoxDecoration(
-          color: item.backgroundColor,
-          borderRadius: BorderRadius.circular(12),
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(item.title, style: Theme.of(context).textTheme.titleMedium),
-            Text(
-              item.subtitle,
-              style: TextStyle(color: item.subtitleColor, fontSize: 14),
-            ),
-          ],
-        ),
+  Widget build(BuildContext context) {
+    final content = Container(
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: item.backgroundColor,
+        borderRadius: BorderRadius.circular(12),
       ),
-    ),
-  );
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(
+            item.title,
+            style: Theme.of(context).textTheme.titleMedium,
+          ),
+          Text(
+            item.subtitle,
+            style: TextStyle(
+              color: item.subtitleColor,
+              fontSize: 14,
+            ),
+          ),
+        ],
+      ),
+    );
+
+    return Semantics(
+      button: onTap != null,
+      label: '${item.title}, ${item.subtitle}',
+      child: onTap == null
+          ? ExcludeSemantics(child: content)
+          : InkWell(
+              onTap: onTap,
+              borderRadius: BorderRadius.circular(12),
+              child: ExcludeSemantics(child: content),
+            ),
+    );
+  }
 }
 
 class AccessibilityOptionCard extends StatelessWidget {
@@ -168,6 +212,7 @@ class AccessibilityOptionCard extends StatelessWidget {
     this.isEnabled = false,
     this.onTap,
   });
+
   final String title;
   final String description;
   final String value;
@@ -178,36 +223,54 @@ class AccessibilityOptionCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final content = ExcludeSemantics(
       child: AppCard(
-        padding: const EdgeInsets.fromLTRB(13, 14, 18, 14),
+        padding: const EdgeInsets.fromLTRB(
+          13,
+          14,
+          18,
+          14,
+        ),
         child: LayoutBuilder(
           builder: (context, constraints) {
             final useStackedLayout =
                 MediaQuery.textScalerOf(context).scale(1) > 1.3;
+
             final details = Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(title, style: Theme.of(context).textTheme.titleMedium),
+                Text(
+                  title,
+                  style: Theme.of(context).textTheme.titleMedium,
+                ),
                 const SizedBox(height: 8),
                 Text(
                   description,
-                  style: Theme.of(context).textTheme.bodyMedium
+                  style: Theme.of(context)
+                      .textTheme
+                      .bodyMedium
                       ?.copyWith(fontSize: 13),
                 ),
               ],
             );
+
             final valuePill = StatusPill(
               label: value,
-              backgroundColor: isEnabled ? AppColors.mint : AppColors.aqua,
-              foregroundColor: isEnabled
-                  ? AppColors.mintInk
-                  : AppColors.primary,
+              backgroundColor:
+                  isEnabled ? AppColors.mint : AppColors.aqua,
+              foregroundColor:
+                  isEnabled ? AppColors.mintInk : AppColors.primary,
             );
+
             if (useStackedLayout) {
               return Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
-                children: [details, const SizedBox(height: 12), valuePill],
+                children: [
+                  details,
+                  const SizedBox(height: 12),
+                  valuePill,
+                ],
               );
             }
+
             return Row(
               children: [
                 Expanded(child: details),
@@ -219,6 +282,7 @@ class AccessibilityOptionCard extends StatelessWidget {
         ),
       ),
     );
+
     return Semantics(
       button: onTap != null,
       label: '$title, $value. $description',
@@ -233,7 +297,13 @@ class AccessibilityOptionCard extends StatelessWidget {
   }
 }
 
-enum ClearViewNavigationItem { home, visits, messages, records, settings }
+enum ClearViewNavigationItem {
+  home,
+  visits,
+  messages,
+  records,
+  settings,
+}
 
 class ClearViewBottomNavigation extends StatelessWidget {
   const ClearViewBottomNavigation({
@@ -241,42 +311,62 @@ class ClearViewBottomNavigation extends StatelessWidget {
     required this.onSettingsTap,
     this.onHomeTap,
     this.onVisitsTap,
+    this.onRecordsTap,
     this.selectedItem = ClearViewNavigationItem.home,
   });
+
   final VoidCallback onSettingsTap;
   final VoidCallback? onHomeTap;
   final VoidCallback? onVisitsTap;
+  final VoidCallback? onRecordsTap;
   final ClearViewNavigationItem selectedItem;
 
   @override
   Widget build(BuildContext context) {
     final textScale = MediaQuery.textScalerOf(context).scale(1);
+
     return Container(
       height: 88 + ((textScale - 1).clamp(0, 1) * 40),
       decoration: const BoxDecoration(
         color: AppColors.surface,
-        border: Border(top: BorderSide(color: Color(0xFFD9E2EA))),
+        border: Border(
+          top: BorderSide(
+            color: Color(0xFFD9E2EA),
+          ),
+        ),
       ),
       child: Row(
         children: [
           _NavItem(
             icon: Icons.circle,
             label: 'Home',
-            isSelected: selectedItem == ClearViewNavigationItem.home,
+            isSelected:
+                selectedItem == ClearViewNavigationItem.home,
             onTap: onHomeTap,
           ),
           _NavItem(
             icon: Icons.calendar_today_outlined,
             label: 'Visits',
-            isSelected: selectedItem == ClearViewNavigationItem.visits,
+            isSelected:
+                selectedItem == ClearViewNavigationItem.visits,
             onTap: onVisitsTap,
           ),
-          const _NavItem(icon: Icons.mail_outline, label: 'Messages'),
-          const _NavItem(icon: Icons.view_headline_outlined, label: 'Records'),
+          const _NavItem(
+            icon: Icons.mail_outline,
+            label: 'Messages',
+          ),
+          _NavItem(
+            icon: Icons.view_headline_outlined,
+            label: 'Records',
+            isSelected:
+                selectedItem == ClearViewNavigationItem.records,
+            onTap: onRecordsTap,
+          ),
           _NavItem(
             icon: Icons.settings,
             label: 'Settings',
-            isSelected: selectedItem == ClearViewNavigationItem.settings,
+            isSelected:
+                selectedItem == ClearViewNavigationItem.settings,
             onTap: onSettingsTap,
           ),
         ],
@@ -292,6 +382,7 @@ class _NavItem extends StatelessWidget {
     this.isSelected = false,
     this.onTap,
   });
+
   final IconData icon;
   final String label;
   final bool isSelected;
@@ -299,7 +390,9 @@ class _NavItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final color = isSelected ? AppColors.primary : AppColors.mutedInk;
+    final color =
+        isSelected ? AppColors.primary : AppColors.mutedInk;
+
     return Expanded(
       child: Semantics(
         button: true,
@@ -310,14 +403,20 @@ class _NavItem extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(icon, size: 18, color: color),
+              Icon(
+                icon,
+                size: 18,
+                color: color,
+              ),
               const SizedBox(height: 7),
               Text(
                 label,
                 style: TextStyle(
                   fontSize: 11,
                   color: color,
-                  fontWeight: isSelected ? FontWeight.w700 : FontWeight.w400,
+                  fontWeight: isSelected
+                      ? FontWeight.w700
+                      : FontWeight.w400,
                 ),
               ),
             ],

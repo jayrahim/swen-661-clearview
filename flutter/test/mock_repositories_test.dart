@@ -19,6 +19,6 @@ void main() {
     const messages = MessageRepository();
     const notes = MedicalNoteRepository();
     expect(messages.getById('msg-1')?.subject, 'Appointment reminder');
-    expect(notes.getById('note-1')?.author, 'Dr. Elena Martinez');
+    expect(notes.getById('note-1')?.author, 'Dr. David Chen');
   });
 }

@@ -72,23 +72,45 @@ class MessageRepository {
 
 class MedicalNoteRepository {
   const MedicalNoteRepository();
+
   static final _notes = [
     MedicalNote(
       id: 'note-1',
-      title: 'Cardiology follow-up',
-      author: 'Dr. Elena Martinez',
-      createdAt: DateTime(2026, 8, 25),
-      summary: 'Continue the current care plan and monitor symptoms.',
+      title: 'Primary Care Follow-up',
+      author: 'Dr. David Chen',
+      createdAt: DateTime(2026, 8, 21),
+      summary: 'Routine follow-up. Maya reports stable symptoms and no new concerns.',
+      assessment: [
+        'Blood pressure remains well controlled.',
+        'Vitamin D level is mildly low.',
+      ],
+      plan: 'Continue current medications. Begin vitamin D supplement and repeat labs in 12 weeks.',
+      status: MedicalNoteStatus.reviewed,
     ),
     MedicalNote(
       id: 'note-2',
-      title: 'Annual wellness visit',
-      author: 'Dr. Noah Williams',
-      createdAt: DateTime(2026, 8, 12),
-      summary: 'Preventive screening discussion and routine follow-up.',
+      title: 'Cardiology Consultation',
+      author: 'Dr. Elena Martinez',
+      createdAt: DateTime(2026, 7, 30),
+      summary: 'Cardiology consultation note available for review.',
+      assessment: [],
+      plan: '',
+      status: MedicalNoteStatus.newNote,
+    ),
+    MedicalNote(
+      id: 'note-3',
+      title: 'Vision Center Evaluation',
+      author: 'Dr. Priya Shah',
+      createdAt: DateTime(2026, 7, 14),
+      summary: 'Vision center evaluation note available for review.',
+      assessment: [],
+      plan: '',
+      status: MedicalNoteStatus.reviewed,
     ),
   ];
+
   List<MedicalNote> getAll() => List.unmodifiable(_notes);
+
   MedicalNote? getById(String id) =>
       _notes.where((item) => item.id == id).firstOrNull;
 }
