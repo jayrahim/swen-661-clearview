@@ -7,6 +7,7 @@ import '../theme/clearview_tokens.dart';
 
 class AppPage extends StatelessWidget {
   const AppPage({super.key, required this.child});
+
   final Widget child;
 
   @override
@@ -28,6 +29,7 @@ class AppCard extends StatelessWidget {
     this.color,
     this.borderColor,
   });
+
   final Widget child;
   final EdgeInsetsGeometry padding;
   final Color? color;
@@ -36,6 +38,7 @@ class AppCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final tokens = context.clearViewTokens;
+
     return Container(
       padding: padding,
       decoration: BoxDecoration(
@@ -57,6 +60,7 @@ class PrimaryButton extends StatelessWidget {
     required this.label,
     required this.onPressed,
   });
+
   final String label;
   final VoidCallback onPressed;
 
@@ -83,6 +87,7 @@ class StatusPill extends StatelessWidget {
     this.foregroundColor = AppColors.primary,
     this.borderColor,
   });
+
   final String label;
   final Color backgroundColor;
   final Color foregroundColor;
@@ -114,6 +119,7 @@ class AppointmentStatusPill extends StatelessWidget {
   Widget build(BuildContext context) {
     final style = AppointmentStatusStyle.forStatus(status);
     final tokens = context.clearViewTokens;
+
     return StatusPill(
       label: status.label,
       backgroundColor: tokens.isHighContrast
@@ -135,6 +141,7 @@ class AppointmentStatusStyle {
     AppColors.mint,
     AppColors.mintInk,
   );
+
   static const _needsAction = AppointmentStatusStyle._(
     AppColors.yellowTile,
     AppColors.warningInk,
@@ -148,6 +155,62 @@ class AppointmentStatusStyle {
 }
 
 class QuickAccessTile extends StatelessWidget {
+  const QuickAccessTile({super.key, required this.item, this.onTap});
+
+  final QuickAccessItem item;
+  final VoidCallback? onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final tokens = context.clearViewTokens;
+
+    final content = Container(
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: tokens.isHighContrast
+            ? tokens.surface
+            : item.backgroundColor,
+        borderRadius: BorderRadius.circular(12),
+        border: tokens.isHighContrast
+            ? Border.all(
+                color: tokens.border,
+                width: tokens.borderWidth,
+              )
+            : null,
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(
+            item.title,
+            style: Theme.of(context).textTheme.titleMedium,
+          ),
+          Text(
+            item.subtitle,
+            style: TextStyle(
+              color: item.subtitleColor,
+              fontSize: 14,
+            ),
+          ),
+        ],
+      ),
+    );
+
+    return Semantics(
+      button: onTap != null,
+      label: '${item.title}, ${item.subtitle}',
+      child: onTap == null
+          ? ExcludeSemantics(child: content)
+          : InkWell(
+              onTap: onTap,
+              borderRadius: BorderRadius.circular(12),
+              child: ExcludeSemantics(child: content),
+            ),
+    );
+  }
+}
+
   const QuickAccessTile({super.key, required this.item, this.onTap});
 
   final QuickAccessItem item;
@@ -171,7 +234,10 @@ class QuickAccessTile extends StatelessWidget {
                   : item.backgroundColor,
               borderRadius: BorderRadius.circular(12),
               border: tokens.isHighContrast
-                  ? Border.all(color: tokens.border, width: tokens.borderWidth)
+                  ? Border.all(
+                      color: tokens.border,
+                      width: tokens.borderWidth,
+                    )
                   : null,
             ),
             child: Column(
@@ -184,13 +250,41 @@ class QuickAccessTile extends StatelessWidget {
                 ),
                 Text(
                   item.subtitle,
-                  style: TextStyle(color: item.subtitleColor, fontSize: 14),
+                  style: TextStyle(
+                    color: item.subtitleColor,
+                    fontSize: 14,
+                  ),
                 ),
               ],
             ),
           ),
         ),
       ),
+    );
+
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(item.title, style: Theme.of(context).textTheme.titleMedium),
+          Text(
+            item.subtitle,
+            style: TextStyle(color: item.subtitleColor, fontSize: 14),
+          ),
+        ],
+      ),
+    );
+
+    return Semantics(
+      button: onTap != null,
+      label: '${item.title}, ${item.subtitle}',
+      child: onTap == null
+          ? ExcludeSemantics(child: content)
+          : InkWell(
+              onTap: onTap,
+              borderRadius: BorderRadius.circular(12),
+              child: ExcludeSemantics(child: content),
+            ),
     );
   }
 }
@@ -204,6 +298,7 @@ class AccessibilityOptionCard extends StatelessWidget {
     this.isEnabled = false,
     this.onTap,
   });
+
   final String title;
   final String description;
   final String value;
@@ -213,6 +308,7 @@ class AccessibilityOptionCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final tokens = context.clearViewTokens;
+
     final content = ExcludeSemantics(
       child: AppCard(
         padding: const EdgeInsets.fromLTRB(13, 14, 18, 14),
@@ -223,6 +319,7 @@ class AccessibilityOptionCard extends StatelessWidget {
           builder: (context, constraints) {
             final useStackedLayout =
                 MediaQuery.textScalerOf(context).scale(1) > 1.3;
+
             final details = Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -235,6 +332,7 @@ class AccessibilityOptionCard extends StatelessWidget {
                 ),
               ],
             );
+
             final valuePill = StatusPill(
               label: value,
               backgroundColor: tokens.isHighContrast
@@ -247,12 +345,14 @@ class AccessibilityOptionCard extends StatelessWidget {
                   ? (isEnabled ? AppColors.mintInk : tokens.border)
                   : null,
             );
+
             if (useStackedLayout) {
               return Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [details, const SizedBox(height: 12), valuePill],
               );
             }
+
             return Row(
               children: [
                 Expanded(child: details),
@@ -264,6 +364,7 @@ class AccessibilityOptionCard extends StatelessWidget {
         ),
       ),
     );
+
     return Semantics(
       button: onTap != null,
       label: '$title, $value. $description',
@@ -287,18 +388,22 @@ class ClearViewBottomNavigation extends StatelessWidget {
     this.onHomeTap,
     this.onVisitsTap,
     this.onMessagesTap,
+    this.onRecordsTap,
     this.selectedItem = ClearViewNavigationItem.home,
   });
+
   final VoidCallback onSettingsTap;
   final VoidCallback? onHomeTap;
   final VoidCallback? onVisitsTap;
   final VoidCallback? onMessagesTap;
+  final VoidCallback? onRecordsTap;
   final ClearViewNavigationItem selectedItem;
 
   @override
   Widget build(BuildContext context) {
     final textScale = MediaQuery.textScalerOf(context).scale(1);
     final tokens = context.clearViewTokens;
+
     return Container(
       height: 88 + ((textScale - 1).clamp(0, 1) * 40),
       decoration: BoxDecoration(
@@ -327,7 +432,12 @@ class ClearViewBottomNavigation extends StatelessWidget {
             isSelected: selectedItem == ClearViewNavigationItem.messages,
             onTap: onMessagesTap,
           ),
-          const _NavItem(icon: Icons.view_headline_outlined, label: 'Records'),
+          _NavItem(
+            icon: Icons.view_headline_outlined,
+            label: 'Records',
+            isSelected: selectedItem == ClearViewNavigationItem.records,
+            onTap: onRecordsTap,
+          ),
           _NavItem(
             icon: Icons.settings,
             label: 'Settings',
@@ -347,6 +457,7 @@ class _NavItem extends StatelessWidget {
     this.isSelected = false,
     this.onTap,
   });
+
   final IconData icon;
   final String label;
   final bool isSelected;
@@ -356,6 +467,7 @@ class _NavItem extends StatelessWidget {
   Widget build(BuildContext context) {
     final tokens = context.clearViewTokens;
     final color = isSelected ? tokens.primary : tokens.mutedInk;
+
     return Expanded(
       child: Semantics(
         button: true,

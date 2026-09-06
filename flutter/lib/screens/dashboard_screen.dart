@@ -10,7 +10,11 @@ import '../widgets/ui_components.dart';
 import 'accessibility_settings_screen.dart';
 import 'appointment_detail_screen.dart';
 import 'appointments_screen.dart';
+<<<<<<< HEAD
 import 'messages_screen.dart';
+=======
+import 'medical_notes_screen.dart';
+>>>>>>> 757282a (Complete Flutter implementation and testing)
 
 class DashboardScreen extends ConsumerWidget {
   const DashboardScreen({super.key});
@@ -52,11 +56,16 @@ class DashboardScreen extends ConsumerWidget {
     );
     void openAppointments() => Navigator.of(context)
         .push(MaterialPageRoute(builder: (_) => const AppointmentsScreen()));
+<<<<<<< HEAD
     void openMessages() {
       Navigator.of(context)
           .push(MaterialPageRoute(builder: (_) => const MessagesScreen()));
     }
 
+=======
+    void openMedicalNotes() => Navigator.of(context)
+        .push(MaterialPageRoute(builder: (_) => const MedicalNotesScreen()));
+>>>>>>> 757282a (Complete Flutter implementation and testing)
     return Scaffold(
       body: AppPage(
         child: Column(
@@ -208,7 +217,13 @@ class DashboardScreen extends ConsumerWidget {
 
                         return QuickAccessTile(
                           item: item,
+<<<<<<< HEAD
                           onTap: item.title == 'Messages' ? openMessages : null,
+=======
+                          onTap: item.title == 'Medical notes'
+                              ? openMedicalNotes
+                              : null,
+>>>>>>> 757282a (Complete Flutter implementation and testing)
                         );
                       },
                     ),
@@ -282,6 +297,7 @@ class DashboardScreen extends ConsumerWidget {
               onSettingsTap: openAccessibility,
               onVisitsTap: openAppointments,
               onMessagesTap: openMessages,
+              onRecordsTap: openMedicalNotes,
             ),
           ],
         ),

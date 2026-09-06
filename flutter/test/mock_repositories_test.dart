@@ -31,6 +31,9 @@ void main() {
       'Reminder: upcoming appointment',
     );
 
-    expect(notes.getById('note-1')?.author, 'Dr. Elena Martinez');
+    expect(
+      notes.getById('note-1')?.author,
+      'Dr. Elena Martinez',
+    );
   });
 }
