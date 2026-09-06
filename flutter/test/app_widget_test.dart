@@ -32,10 +32,10 @@ void main() {
 
       await tester.tap(find.text('View details  →'));
       await tester.pumpAndSettle();
-      expect(find.text('Appointment'), findsOneWidget);
-      expect(find.text('Date and time'), findsOneWidget);
-      expect(find.text('Cardiology'), findsOneWidget);
-      expect(find.text('September 4, 2026 at 10:30 AM'), findsOneWidget);
+      expect(find.text('Appointment Details'), findsOneWidget);
+      expect(find.text('Date & time'), findsOneWidget);
+      expect(find.text('Cardiology visit'), findsOneWidget);
+      expect(find.text('Friday, September 4 • 10:30 AM'), findsOneWidget);
     },
   );
 

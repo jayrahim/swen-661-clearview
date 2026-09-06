@@ -13,15 +13,33 @@ class AppointmentRepository {
       specialty: 'Cardiology',
       location: 'Main Campus',
       scheduledAt: DateTime(2026, 9, 4, 10, 30),
-      status: 'Confirmed',
+      status: AppointmentStatus.confirmed,
+      locationDetail: 'Building B, Floor 2',
+      visitFormat: VisitFormat.inPersonFollowUp,
+      preparationNote:
+          'Bring your medication list and arrive 15 minutes early.',
     ),
     Appointment(
       id: 'appt-2',
-      clinicianName: 'Dr. Noah Williams',
-      specialty: 'Primary care',
+      clinicianName: 'Dr. David Chen',
+      specialty: 'Primary Care',
+      location: 'Telehealth',
+      scheduledAt: DateTime(2026, 9, 18, 14),
+      status: AppointmentStatus.confirmed,
+      visitFormat: VisitFormat.virtualFollowUp,
+      preparationNote:
+          'Join from a quiet place five minutes before your visit.',
+    ),
+    Appointment(
+      id: 'appt-3',
+      clinicianName: 'Vision Center',
+      specialty: 'Ophthalmology',
       location: 'North Clinic',
-      scheduledAt: DateTime(2026, 9, 22, 9),
-      status: 'Scheduled',
+      scheduledAt: DateTime(2026, 10, 2, 9, 15),
+      status: AppointmentStatus.needsAction,
+      locationDetail: 'Vision Center',
+      visitFormat: VisitFormat.inPersonAppointment,
+      preparationNote: 'Please contact the clinic to confirm this appointment.',
     ),
   ];
   List<Appointment> getAll() => List.unmodifiable(_appointments);

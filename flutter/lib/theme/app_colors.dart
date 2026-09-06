@@ -14,5 +14,6 @@ abstract final class AppColors {
   static const aqua = Color(0xFFD9F4F8);
   static const blueTile = Color(0xFFE4F2FC);
   static const yellowTile = Color(0xFFFFF2D6);
+  static const warningInk = Color(0xFF9B5800);
   static const purpleTile = Color(0xFFF3EBF8);
 }
