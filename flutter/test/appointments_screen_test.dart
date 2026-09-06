@@ -79,4 +79,31 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.text('Good morning, Maya'), findsOneWidget);
   });
+ testWidgets(
+  'schedule appointment button shows prototype message',
+  (tester) async {
+    await tester.pumpWidget(buildAppointmentsApp());
+
+    final scheduleButton = find.text('Schedule Appointment');
+
+    await tester.scrollUntilVisible(
+      scheduleButton,
+      300,
+      scrollable: find.byType(Scrollable).first,
+    );
+    await tester.pumpAndSettle();
+
+    expect(scheduleButton, findsOneWidget);
+
+    await tester.tap(scheduleButton);
+    await tester.pumpAndSettle();
+
+    expect(
+      find.text(
+        'Scheduling is not available in this prototype.',
+      ),
+      findsOneWidget,
+    );
+  },
+);
 }
