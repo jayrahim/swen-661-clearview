@@ -241,11 +241,13 @@ class ClearViewBottomNavigation extends StatelessWidget {
     required this.onSettingsTap,
     this.onHomeTap,
     this.onVisitsTap,
+    this.onMessagesTap,
     this.selectedItem = ClearViewNavigationItem.home,
   });
   final VoidCallback onSettingsTap;
   final VoidCallback? onHomeTap;
   final VoidCallback? onVisitsTap;
+  final VoidCallback? onMessagesTap;
   final ClearViewNavigationItem selectedItem;
 
   @override
@@ -271,7 +273,12 @@ class ClearViewBottomNavigation extends StatelessWidget {
             isSelected: selectedItem == ClearViewNavigationItem.visits,
             onTap: onVisitsTap,
           ),
-          const _NavItem(icon: Icons.mail_outline, label: 'Messages'),
+          _NavItem(
+           icon: Icons.mail_outline,
+           label: 'Messages',
+           isSelected: selectedItem == ClearViewNavigationItem.messages,
+           onTap: onMessagesTap,
+          ),
           const _NavItem(icon: Icons.view_headline_outlined, label: 'Records'),
           _NavItem(
             icon: Icons.settings,
