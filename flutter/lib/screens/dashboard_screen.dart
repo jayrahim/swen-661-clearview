@@ -5,6 +5,7 @@ import '../models/quick_access_item.dart';
 import '../repositories/mock_repositories.dart';
 import '../state/accessibility_preferences.dart';
 import '../theme/app_colors.dart';
+import '../theme/clearview_tokens.dart';
 import '../widgets/ui_components.dart';
 import 'accessibility_settings_screen.dart';
 import 'appointment_detail_screen.dart';
@@ -43,6 +44,7 @@ class DashboardScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final preferences = ref.watch(accessibilityPreferencesProvider);
+    final tokens = context.clearViewTokens;
     final appointment = ref.watch(appointmentRepositoryProvider).getAll().first;
     void openAccessibility() => Navigator.of(context).push(
       MaterialPageRoute(builder: (_) => const AccessibilitySettingsScreen()),
@@ -68,10 +70,10 @@ class DashboardScreen extends ConsumerWidget {
                           style: Theme.of(context).textTheme.headlineMedium
                               ?.copyWith(fontSize: 23),
                         );
-                        const accessibilityLabel = Text(
+                        final accessibilityLabel = Text(
                           'Accessibility',
                           style: TextStyle(
-                            color: AppColors.primary,
+                            color: tokens.primary,
                             fontWeight: FontWeight.w700,
                           ),
                         );
@@ -108,10 +110,10 @@ class DashboardScreen extends ConsumerWidget {
                         children: [
                           Builder(
                             builder: (context) {
-                              const appointmentLabel = Text(
+                              final appointmentLabel = Text(
                                 'Next appointment',
                                 style: TextStyle(
-                                  color: AppColors.primary,
+                                  color: tokens.primary,
                                   fontWeight: FontWeight.w700,
                                 ),
                               );
@@ -238,9 +240,9 @@ class DashboardScreen extends ConsumerWidget {
                                       children: [
                                         details,
                                         const SizedBox(height: 8),
-                                        const Icon(
+                                        Icon(
                                           Icons.chevron_right,
-                                          color: AppColors.primary,
+                                          color: tokens.primary,
                                           size: 30,
                                         ),
                                       ],
@@ -248,9 +250,9 @@ class DashboardScreen extends ConsumerWidget {
                                   : Row(
                                       children: [
                                         Expanded(child: details),
-                                        const Icon(
+                                        Icon(
                                           Icons.chevron_right,
-                                          color: AppColors.primary,
+                                          color: tokens.primary,
                                           size: 30,
                                         ),
                                       ],
