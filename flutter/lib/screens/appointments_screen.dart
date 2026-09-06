@@ -15,14 +15,17 @@ class AppointmentsScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final appointments = ref.watch(appointmentRepositoryProvider).getAll();
+
     void openSettings() => Navigator.of(context).push(
       MaterialPageRoute(builder: (_) => const AccessibilitySettingsScreen()),
     );
+
     return Scaffold(
       body: AppPage(
         child: Column(
           children: [
             const _AppointmentsHeader(),
+
             Expanded(
               child: SingleChildScrollView(
                 padding: const EdgeInsets.fromLTRB(18, 20, 18, 22),
@@ -34,6 +37,7 @@ class AppointmentsScreen extends ConsumerWidget {
                       style: Theme.of(context).textTheme.titleLarge,
                     ),
                     const SizedBox(height: 17),
+
                     for (final appointment in appointments) ...[
                       AppointmentListCard(
                         appointment: appointment,
@@ -47,10 +51,31 @@ class AppointmentsScreen extends ConsumerWidget {
                       ),
                       const SizedBox(height: 20),
                     ],
+
+                    const SizedBox(height: 4),
+
+                    Semantics(
+                      button: true,
+                      label: 'Schedule Appointment',
+                      hint: 'Scheduling is not available in this prototype',
+                      child: PrimaryButton(
+                        label: 'Schedule Appointment',
+                        onPressed: () {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text(
+                                'Scheduling is not available in this prototype.',
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+                    ),
                   ],
                 ),
               ),
             ),
+
             ClearViewBottomNavigation(
               selectedItem: ClearViewNavigationItem.visits,
               // TODO(navigation): Replace stack-based root navigation when
