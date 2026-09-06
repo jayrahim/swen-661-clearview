@@ -16,4 +16,6 @@ abstract final class AppColors {
   static const yellowTile = Color(0xFFFFF2D6);
   static const warningInk = Color(0xFF9B5800);
   static const purpleTile = Color(0xFFF3EBF8);
+  static const Color unreadBadgeBackground = Color(0xFFD9F3F6);
+  static const Color unreadBadgeText = Color(0xFF005A70);
 }

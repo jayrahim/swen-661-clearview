@@ -15,10 +15,22 @@ void main() {
     expect(repository.getById('missing'), isNull);
   });
 
-  test('message and medical note repositories supply synthetic data', () {
-    const messages = MessageRepository();
-    const notes = MedicalNoteRepository();
-    expect(messages.getById('msg-1')?.subject, 'Appointment reminder');
-    expect(notes.getById('note-1')?.author, 'Dr. Elena Martinez');
-  });
+ test('message and medical note repositories supply synthetic data', () {
+  const messages = MessageRepository();
+  const notes = MedicalNoteRepository();
+
+  expect(messages.getAll(), hasLength(4));
+
+  expect(
+    messages.getById('msg-1')?.subject,
+    'Your lab results are available',
+  );
+
+  expect(
+    messages.getById('msg-2')?.subject,
+    'Reminder: upcoming appointment',
+  );
+
+  expect(notes.getById('note-1')?.author, 'Dr. Elena Martinez');
+});
 }

@@ -49,23 +49,52 @@ class AppointmentRepository {
 
 class MessageRepository {
   const MessageRepository();
+
   static final _messages = [
     Message(
       id: 'msg-1',
-      sender: 'Cardiology care team',
-      subject: 'Appointment reminder',
-      preview: 'Your upcoming visit is confirmed.',
-      sentAt: DateTime(2026, 8, 27),
+      sender: 'Dr. David Chen',
+      subject: 'Your lab results are available',
+      preview: 'Your recent blood work is now available in CareConnect.',
+      sentAt: DateTime(2026, 8, 27, 8, 42),
+      isRead: false,
+      body:
+          'Hi Maya,\n\n'
+          'Your recent blood work is now available in CareConnect. '
+          'Most results are within the expected range. I added a note '
+          'about your vitamin D level and would like you to review it '
+          'before our next visit.',
+      statusMessage: '✓ Results reviewed by care team',
+      statusDetail: 'No urgent follow-up is required.',
     ),
     Message(
       id: 'msg-2',
-      sender: 'CareConnect',
-      subject: 'New medical note',
-      preview: 'A note is available to review.',
-      sentAt: DateTime(2026, 8, 26),
+      sender: 'Care Team',
+      subject: 'Reminder: upcoming appointment',
+      preview: 'You have an upcoming appointment.',
+      sentAt: DateTime(2026, 8, 26, 16, 10),
+      isRead: false,
+    ),
+    Message(
+      id: 'msg-3',
+      sender: 'Vision Center',
+      subject: 'Referral received',
+      preview: 'Your referral has been received.',
+      sentAt: DateTime(2026, 8, 24, 11, 18),
+      isRead: true,
+    ),
+    Message(
+      id: 'msg-4',
+      sender: 'Billing Support',
+      subject: 'Statement available',
+      preview: 'A new billing statement is available.',
+      sentAt: DateTime(2026, 8, 19, 14, 3),
+      isRead: true,
     ),
   ];
+
   List<Message> getAll() => List.unmodifiable(_messages);
+
   Message? getById(String id) =>
       _messages.where((item) => item.id == id).firstOrNull;
 }
