@@ -195,8 +195,15 @@ class AccessibilityOptionCard extends StatelessWidget {
 }
 
 class ClearViewBottomNavigation extends StatelessWidget {
-  const ClearViewBottomNavigation({super.key, required this.onSettingsTap});
-  final VoidCallback onSettingsTap;
+  const ClearViewBottomNavigation({
+    super.key,
+    this.selectedIndex = 0,
+    this.onVisitsTap,
+    this.onSettingsTap,
+  });
+  final int selectedIndex;
+  final VoidCallback? onVisitsTap;
+  final VoidCallback? onSettingsTap;
 
   @override
   Widget build(BuildContext context) {
@@ -209,10 +216,27 @@ class ClearViewBottomNavigation extends StatelessWidget {
       ),
       child: Row(
         children: [
-          const _NavItem(icon: Icons.circle, label: 'Home', isSelected: true),
-          const _NavItem(icon: Icons.calendar_today_outlined, label: 'Visits'),
-          const _NavItem(icon: Icons.mail_outline, label: 'Messages'),
-          const _NavItem(icon: Icons.view_headline_outlined, label: 'Records'),
+          _NavItem(
+            icon: Icons.circle,
+            label: 'Home',
+            isSelected: selectedIndex == 0,
+          ),
+          _NavItem(
+            icon: Icons.calendar_today_outlined,
+            label: 'Visits',
+            isSelected: selectedIndex == 1,
+            onTap: onVisitsTap,
+          ),
+          _NavItem(
+            icon: Icons.mail_outline,
+            label: 'Messages',
+            isSelected: selectedIndex == 2,
+          ),
+          _NavItem(
+            icon: Icons.view_headline_outlined,
+            label: 'Records',
+            isSelected: selectedIndex == 3,
+          ),
           _NavItem(
             icon: Icons.settings,
             label: 'Settings',

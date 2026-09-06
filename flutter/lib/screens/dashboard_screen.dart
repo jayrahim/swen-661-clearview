@@ -7,6 +7,7 @@ import '../state/accessibility_preferences.dart';
 import '../theme/app_colors.dart';
 import '../widgets/ui_components.dart';
 import 'accessibility_settings_screen.dart';
+import 'appointments_screen.dart';
 import 'appointment_detail_screen.dart';
 
 class DashboardScreen extends ConsumerWidget {
@@ -46,6 +47,8 @@ class DashboardScreen extends ConsumerWidget {
     void openAccessibility() => Navigator.of(context).push(
       MaterialPageRoute(builder: (_) => const AccessibilitySettingsScreen()),
     );
+    void openAppointments() => Navigator.of(context)
+        .push(MaterialPageRoute(builder: (_) => const AppointmentsScreen()));
     return Scaffold(
       body: AppPage(
         child: Column(
@@ -263,7 +266,11 @@ class DashboardScreen extends ConsumerWidget {
                 ),
               ),
             ),
-            ClearViewBottomNavigation(onSettingsTap: openAccessibility),
+            ClearViewBottomNavigation(
+              selectedIndex: 0,
+              onVisitsTap: openAppointments,
+              onSettingsTap: openAccessibility,
+            ),
           ],
         ),
       ),

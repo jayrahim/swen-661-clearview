@@ -23,6 +23,14 @@ class AppointmentRepository {
       scheduledAt: DateTime(2026, 9, 22, 9),
       status: 'Scheduled',
     ),
+      Appointment(
+    id: 'appt-3',
+    clinicianName: 'Vision Center',
+    specialty: 'Ophthalmology',
+    location: 'North Clinic',
+    scheduledAt: DateTime(2026, 10, 2, 9, 15),
+    status: 'Needs action',
+  ),
   ];
   List<Appointment> getAll() => List.unmodifiable(_appointments);
   Appointment? getById(String id) =>

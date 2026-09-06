@@ -7,7 +7,7 @@ void main() {
     const repository = AppointmentRepository();
     final appointments = repository.getAll();
 
-    expect(appointments, hasLength(2));
+    expect(appointments, hasLength(3));
     expect(repository.getById('appt-1')?.clinicianName, 'Dr. Elena Martinez');
     expect(repository.getById('appt-2')?.location, 'North Clinic');
     expect(repository.getById('missing'), isNull);
