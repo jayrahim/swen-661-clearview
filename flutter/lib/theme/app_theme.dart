@@ -1,65 +1,80 @@
 import 'package:flutter/material.dart';
 
-import 'app_colors.dart';
+import 'clearview_tokens.dart';
 
 abstract final class AppTheme {
-  static ThemeData lightTheme({bool highContrast = true}) => ThemeData(
-    useMaterial3: true,
-    scaffoldBackgroundColor: AppColors.background,
-    colorScheme: ColorScheme.light(
-      primary: highContrast ? AppColors.primary : const Color(0xFF16758A),
-      onPrimary: Colors.white,
-      surface: AppColors.surface,
-      onSurface: highContrast ? AppColors.ink : const Color(0xFF263448),
-    ),
-    fontFamily: 'Arial',
-    textTheme: const TextTheme(
-      headlineLarge: TextStyle(
-        color: AppColors.ink,
-        fontSize: 28,
-        fontWeight: FontWeight.w700,
-        height: 1.18,
+  static ThemeData lightTheme({required bool highContrast}) {
+    final tokens = highContrast
+        ? ClearViewTokens.highContrast
+        : ClearViewTokens.normal;
+    return ThemeData(
+      useMaterial3: true,
+      scaffoldBackgroundColor: tokens.background,
+      colorScheme: ColorScheme.light(
+        primary: tokens.primary,
+        onPrimary: Colors.white,
+        surface: tokens.surface,
+        onSurface: tokens.ink,
       ),
-      headlineMedium: TextStyle(
-        color: AppColors.ink,
-        fontSize: 24,
-        fontWeight: FontWeight.w700,
-        height: 1.2,
+      fontFamily: 'Arial',
+      textTheme: TextTheme(
+        headlineLarge: TextStyle(
+          color: tokens.ink,
+          fontSize: 28,
+          fontWeight: FontWeight.w700,
+          height: 1.18,
+        ),
+        headlineMedium: TextStyle(
+          color: tokens.ink,
+          fontSize: 24,
+          fontWeight: FontWeight.w700,
+          height: 1.2,
+        ),
+        titleLarge: TextStyle(
+          color: tokens.ink,
+          fontSize: 20,
+          fontWeight: FontWeight.w700,
+        ),
+        titleMedium: TextStyle(
+          color: tokens.ink,
+          fontSize: 16,
+          fontWeight: FontWeight.w700,
+        ),
+        bodyLarge: TextStyle(color: tokens.ink, fontSize: 16, height: 1.2),
+        bodyMedium: TextStyle(
+          color: tokens.mutedInk,
+          fontSize: 15,
+          height: 1.25,
+        ),
+        labelLarge: TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
       ),
-      titleLarge: TextStyle(
-        color: AppColors.ink,
-        fontSize: 20,
-        fontWeight: FontWeight.w700,
+      inputDecorationTheme: InputDecorationTheme(
+        filled: true,
+        fillColor: tokens.surface,
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: 16,
+          vertical: 17,
+        ),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10),
+          borderSide: BorderSide(
+            color: tokens.border,
+            width: tokens.borderWidth,
+          ),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10),
+          borderSide: BorderSide(
+            color: tokens.border,
+            width: tokens.borderWidth,
+          ),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10),
+          borderSide: BorderSide(color: tokens.primary, width: 2),
+        ),
       ),
-      titleMedium: TextStyle(
-        color: AppColors.ink,
-        fontSize: 16,
-        fontWeight: FontWeight.w700,
-      ),
-      bodyLarge: TextStyle(color: AppColors.ink, fontSize: 16, height: 1.2),
-      bodyMedium: TextStyle(
-        color: AppColors.mutedInk,
-        fontSize: 15,
-        height: 1.25,
-      ),
-      labelLarge: TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
-    ),
-    inputDecorationTheme: InputDecorationTheme(
-      filled: true,
-      fillColor: AppColors.surface,
-      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 17),
-      border: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(10),
-        borderSide: const BorderSide(color: AppColors.border),
-      ),
-      enabledBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(10),
-        borderSide: const BorderSide(color: AppColors.border),
-      ),
-      focusedBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(10),
-        borderSide: const BorderSide(color: AppColors.primary, width: 2),
-      ),
-    ),
-  );
+      extensions: [tokens],
+    );
+  }
 }

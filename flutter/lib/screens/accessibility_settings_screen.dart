@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../state/accessibility_preferences.dart';
-import '../theme/app_colors.dart';
+import '../theme/clearview_tokens.dart';
 import '../widgets/ui_components.dart';
 
 class AccessibilitySettingsScreen extends ConsumerWidget {
@@ -12,14 +12,20 @@ class AccessibilitySettingsScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final preferences = ref.watch(accessibilityPreferencesProvider);
     final controller = ref.read(accessibilityPreferencesProvider.notifier);
+    final tokens = context.clearViewTokens;
     return Scaffold(
       body: AppPage(
         child: Column(
           children: [
             Container(
               padding: const EdgeInsets.fromLTRB(18, 25, 18, 13),
-              decoration: const BoxDecoration(
-                border: Border(bottom: BorderSide(color: Color(0xFFD9E2EA))),
+              decoration: BoxDecoration(
+                border: Border(
+                  bottom: BorderSide(
+                    color: tokens.border,
+                    width: tokens.borderWidth,
+                  ),
+                ),
               ),
               child: Row(
                 children: [
@@ -32,10 +38,10 @@ class AccessibilitySettingsScreen extends ConsumerWidget {
                         minHeight: 48,
                       ),
                       tooltip: 'Back to dashboard',
-                      icon: const Icon(
+                      icon: Icon(
                         Icons.arrow_back_ios_new,
                         size: 20,
-                        color: AppColors.primary,
+                        color: tokens.primary,
                       ),
                       onPressed: () => Navigator.of(context).pop(),
                     ),
@@ -96,16 +102,20 @@ class AccessibilitySettingsScreen extends ConsumerWidget {
                           width: double.infinity,
                           padding: const EdgeInsets.all(14),
                           decoration: BoxDecoration(
-                            color: AppColors.aqua,
+                            color: tokens.infoBackground,
+                            border: Border.all(
+                              color: tokens.infoBorder,
+                              width: tokens.borderWidth,
+                            ),
                             borderRadius: BorderRadius.circular(12),
                           ),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              const Text(
+                              Text(
                                 'Live preview',
                                 style: TextStyle(
-                                  color: AppColors.primary,
+                                  color: tokens.primary,
                                   fontWeight: FontWeight.w700,
                                 ),
                               ),
@@ -130,11 +140,8 @@ class AccessibilitySettingsScreen extends ConsumerWidget {
                         ),
                         child: OutlinedButton(
                           style: OutlinedButton.styleFrom(
-                            foregroundColor: AppColors.primary,
-                            side: const BorderSide(
-                              color: AppColors.primary,
-                              width: 2,
-                            ),
+                            foregroundColor: tokens.primary,
+                            side: BorderSide(color: tokens.primary, width: 2),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(11),
                             ),
