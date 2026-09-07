@@ -109,6 +109,7 @@ class DashboardScreen extends ConsumerWidget {
                     if (preferences.reducedClutter) ...[
                       _ReducedClutterDashboardContent(
                         appointment: appointment,
+                        preferences: preferences,
                         onAccessibilityTap: openAccessibility,
                       ),
                     ] else ...[
@@ -307,10 +308,12 @@ class DashboardScreen extends ConsumerWidget {
 class _ReducedClutterDashboardContent extends StatelessWidget {
   const _ReducedClutterDashboardContent({
     required this.appointment,
+    required this.preferences,
     required this.onAccessibilityTap,
   });
 
   final Appointment appointment;
+  final AccessibilityPreferences preferences;
   final VoidCallback onAccessibilityTap;
 
   @override
@@ -382,7 +385,8 @@ class _ReducedClutterDashboardContent extends StatelessWidget {
 
         _EssentialActionCard(
           title: 'Accessibility',
-          subtitle: 'Large text • High contrast',
+          subtitle:
+              '${preferences.textSize.label} text • ${preferences.highContrast ? 'High contrast' : 'Standard contrast'}',
           onTap: onAccessibilityTap,
         ),
       ],
