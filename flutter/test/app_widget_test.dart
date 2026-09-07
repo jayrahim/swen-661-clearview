@@ -24,6 +24,24 @@ void main() {
     expect(find.text('Good morning, Maya'), findsOneWidget);
   });
 
+  testWidgets('sign in navigates on a phone-sized Android layout', (
+    tester,
+  ) async {
+    tester.view.devicePixelRatio = 1;
+    tester.view.physicalSize = const Size(393, 852);
+    addTearDown(tester.view.resetDevicePixelRatio);
+    addTearDown(tester.view.resetPhysicalSize);
+
+    await tester.pumpWidget(const ProviderScope(child: ClearViewApp()));
+    final signIn = find.text('Sign in');
+    await tester.ensureVisible(signIn);
+    await tester.tap(signIn);
+    await tester.pumpAndSettle();
+
+    expect(find.text('Good morning, Maya'), findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
+
   testWidgets(
     'dashboard opens appointment detail for the selected appointment',
     (tester) async {

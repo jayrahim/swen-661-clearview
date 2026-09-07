@@ -9,7 +9,6 @@ import '../utils/appointment_date_format.dart';
 import '../widgets/ui_components.dart';
 import 'accessibility_settings_screen.dart';
 import 'appointment_detail_screen.dart';
-import 'medical_notes_screen.dart';
 
 class AppointmentsScreen extends ConsumerWidget {
   const AppointmentsScreen({super.key});
@@ -18,79 +17,80 @@ class AppointmentsScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final appointments = ref.watch(appointmentRepositoryProvider).getAll();
 
+    void openAppointmentsFromNavigation() =>
+        Navigator.of(context).pushAndRemoveUntil(
+          MaterialPageRoute(builder: (_) => const AppointmentsScreen()),
+          (route) => route.isFirst,
+        );
     void openSettings() => Navigator.of(context).push(
-      MaterialPageRoute(builder: (_) => const AccessibilitySettingsScreen()),
+      MaterialPageRoute(
+        builder: (_) => AccessibilitySettingsScreen(
+          onVisitsTap: openAppointmentsFromNavigation,
+        ),
+      ),
     );
-    void openMedicalNotes() => Navigator.of(context)
-        .push(MaterialPageRoute(builder: (_) => const MedicalNotesScreen()));
 
-    return Scaffold(
-      body: AppPage(
-        child: Column(
-          children: [
-            const _AppointmentsHeader(),
+    return ClearViewResponsiveScaffold(
+      selectedItem: ClearViewNavigationItem.visits,
+      onHomeTap: () => Navigator.of(context).popUntil((route) => route.isFirst),
+      onSettingsTap: openSettings,
+      contentWidth: ClearViewContentWidth.reading,
+      child: Column(
+        children: [
+          const _AppointmentsHeader(),
 
-            Expanded(
-              child: SingleChildScrollView(
-                padding: const EdgeInsets.fromLTRB(18, 20, 18, 22),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Upcoming',
-                      style: Theme.of(context).textTheme.titleLarge,
-                    ),
-                    const SizedBox(height: 17),
+          Expanded(
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.fromLTRB(18, 20, 18, 22),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Upcoming',
+                    style: Theme.of(context).textTheme.titleLarge,
+                  ),
+                  const SizedBox(height: 17),
 
-                    for (final appointment in appointments) ...[
-                      AppointmentListCard(
-                        appointment: appointment,
-                        onTap: () => Navigator.of(context).push(
-                          MaterialPageRoute(
-                            builder: (_) => AppointmentDetailScreen(
-                              appointment: appointment,
-                            ),
+                  for (final appointment in appointments) ...[
+                    AppointmentListCard(
+                      appointment: appointment,
+                      onTap: () => Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (_) => AppointmentDetailScreen(
+                            appointment: appointment,
+                            onVisitsTap: openAppointmentsFromNavigation,
+                            onSettingsTap: openSettings,
                           ),
                         ),
                       ),
-                      const SizedBox(height: 20),
-                    ],
-
-                    const SizedBox(height: 4),
-
-                    Semantics(
-                      button: true,
-                      label: 'Schedule Appointment',
-                      hint: 'Scheduling is not available in this prototype',
-                      child: PrimaryButton(
-                        label: 'Schedule Appointment',
-                        onPressed: () {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content: Text(
-                                'Scheduling is not available in this prototype.',
-                              ),
-                            ),
-                          );
-                        },
-                      ),
                     ),
+                    const SizedBox(height: 20),
                   ],
-                ),
+
+                  const SizedBox(height: 4),
+
+                  Semantics(
+                    button: true,
+                    label: 'Schedule Appointment',
+                    hint: 'Scheduling is not available in this prototype',
+                    child: PrimaryButton(
+                      label: 'Schedule Appointment',
+                      onPressed: () {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text(
+                              'Scheduling is not available in this prototype.',
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                ],
               ),
             ),
-
-            ClearViewBottomNavigation(
-              selectedItem: ClearViewNavigationItem.visits,
-              // TODO(navigation): Replace stack-based root navigation when
-              // deep links or centralized routes are introduced.
-              onHomeTap: () =>
-                  Navigator.of(context).popUntil((route) => route.isFirst),
-              onSettingsTap: openSettings,
-              onRecordsTap: openMedicalNotes,
-            ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
