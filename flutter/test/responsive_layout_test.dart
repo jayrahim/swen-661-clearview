@@ -6,6 +6,7 @@ import 'package:clearview_flutter/screens/accessibility_settings_screen.dart';
 import 'package:clearview_flutter/screens/appointment_detail_screen.dart';
 import 'package:clearview_flutter/screens/appointments_screen.dart';
 import 'package:clearview_flutter/screens/dashboard_screen.dart';
+import 'package:clearview_flutter/screens/messages_screen.dart';
 import 'package:clearview_flutter/state/accessibility_preferences.dart';
 import 'package:clearview_flutter/theme/app_theme.dart';
 import 'package:clearview_flutter/widgets/ui_components.dart';
@@ -51,6 +52,26 @@ void main() {
 
     expect(find.byType(ClearViewBottomNavigation), findsOneWidget);
     expect(find.byKey(const Key('clearview-side-navigation')), findsNothing);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('phone Messages navigation opens the Messages workflow', (
+    tester,
+  ) async {
+    await pumpScreen(
+      tester,
+      size: const Size(360, 800),
+      child: const DashboardScreen(),
+    );
+
+    final messagesNavigation = find.descendant(
+      of: find.byType(ClearViewBottomNavigation),
+      matching: find.text('Messages'),
+    );
+    await tester.tap(messagesNavigation);
+    await tester.pumpAndSettle();
+
+    expect(find.byType(MessagesScreen), findsOneWidget);
     expect(tester.takeException(), isNull);
   });
 

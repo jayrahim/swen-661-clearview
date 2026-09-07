@@ -17,6 +17,7 @@ class ClearViewResponsiveScaffold extends StatelessWidget {
     this.onSettingsTap,
     this.onHomeTap,
     this.onVisitsTap,
+    this.onMessagesTap,
     this.selectedItem = ClearViewNavigationItem.home,
     this.isRootTab = true,
     this.showTabletNavigation = true,
@@ -27,6 +28,7 @@ class ClearViewResponsiveScaffold extends StatelessWidget {
   final VoidCallback? onSettingsTap;
   final VoidCallback? onHomeTap;
   final VoidCallback? onVisitsTap;
+  final VoidCallback? onMessagesTap;
   final ClearViewNavigationItem selectedItem;
 
   /// Root tabs show the persistent phone navigation; stack-pushed subpages
@@ -42,6 +44,7 @@ class ClearViewResponsiveScaffold extends StatelessWidget {
       selectedItem: selectedItem,
       onHomeTap: onHomeTap,
       onVisitsTap: onVisitsTap,
+      onMessagesTap: onMessagesTap,
       onSettingsTap: onSettingsTap,
     );
 
@@ -63,6 +66,7 @@ class ClearViewResponsiveScaffold extends StatelessWidget {
                     selectedItem: selectedItem,
                     onHomeTap: onHomeTap,
                     onVisitsTap: onVisitsTap,
+                    onMessagesTap: onMessagesTap,
                     onSettingsTap: onSettingsTap,
                   ),
                   Expanded(child: content),
@@ -241,36 +245,39 @@ class QuickAccessTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final tokens = context.clearViewTokens;
+    final content = Container(
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: tokens.isHighContrast ? tokens.surface : item.backgroundColor,
+        borderRadius: BorderRadius.circular(12),
+        border: tokens.isHighContrast
+            ? Border.all(color: tokens.border, width: tokens.borderWidth)
+            : null,
+      ),
+      // The responsive grid allows this content to wrap at the user's
+      // chosen text scale instead of shrinking the text.
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(item.title, style: Theme.of(context).textTheme.titleMedium),
+          const SizedBox(height: 6),
+          Text(
+            item.subtitle,
+            style: TextStyle(color: item.subtitleColor, fontSize: 14),
+          ),
+        ],
+      ),
+    );
     return Semantics(
       label: '${item.title}, ${item.subtitle}',
-      child: ExcludeSemantics(
-        child: Container(
-          padding: const EdgeInsets.all(14),
-          decoration: BoxDecoration(
-            color: tokens.isHighContrast
-                ? tokens.surface
-                : item.backgroundColor,
-            borderRadius: BorderRadius.circular(12),
-            border: tokens.isHighContrast
-                ? Border.all(color: tokens.border, width: tokens.borderWidth)
-                : null,
-          ),
-          // The responsive grid allows this content to wrap at the user's
-          // chosen text scale instead of shrinking the text.
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(item.title, style: Theme.of(context).textTheme.titleMedium),
-              const SizedBox(height: 6),
-              Text(
-                item.subtitle,
-                style: TextStyle(color: item.subtitleColor, fontSize: 14),
-              ),
-            ],
-          ),
-        ),
-      ),
+      child: onTap == null
+          ? ExcludeSemantics(child: content)
+          : InkWell(
+              onTap: onTap,
+              borderRadius: BorderRadius.circular(12),
+              child: ExcludeSemantics(child: content),
+            ),
     );
   }
 }
@@ -366,12 +373,14 @@ class ClearViewSideNavigation extends StatelessWidget {
     this.onSettingsTap,
     this.onHomeTap,
     this.onVisitsTap,
+    this.onMessagesTap,
     this.selectedItem = ClearViewNavigationItem.home,
   });
 
   final VoidCallback? onSettingsTap;
   final VoidCallback? onHomeTap;
   final VoidCallback? onVisitsTap;
+  final VoidCallback? onMessagesTap;
   final ClearViewNavigationItem selectedItem;
 
   @override
@@ -401,9 +410,11 @@ class ClearViewSideNavigation extends StatelessWidget {
             isSelected: selectedItem == ClearViewNavigationItem.visits,
             onTap: onVisitsTap,
           ),
-          const _SideNavigationItem(
+          _SideNavigationItem(
             icon: Icons.mail_outline,
             label: 'Messages',
+            isSelected: selectedItem == ClearViewNavigationItem.messages,
+            onTap: onMessagesTap,
           ),
           const _SideNavigationItem(
             icon: Icons.view_headline_outlined,

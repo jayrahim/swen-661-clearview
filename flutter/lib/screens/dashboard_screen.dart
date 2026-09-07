@@ -60,9 +60,13 @@ class DashboardScreen extends ConsumerWidget {
     );
     void openAppointments() => Navigator.of(context)
         .push(MaterialPageRoute(builder: (_) => const AppointmentsScreen()));
+    void openMessages() =>
+        Navigator.of(context)
+            .push(MaterialPageRoute(builder: (_) => const MessagesScreen()));
     return ClearViewResponsiveScaffold(
       onSettingsTap: openAccessibility,
       onVisitsTap: openAppointments,
+      onMessagesTap: openMessages,
       contentWidth: ClearViewContentWidth.wide,
       child: SingleChildScrollView(
         padding: const EdgeInsets.fromLTRB(18, 28, 18, 28),
@@ -219,8 +223,13 @@ class DashboardScreen extends ConsumerWidget {
                         (useCompactAspectRatio ? 1.28 : 1.58) /
                         textScale.clamp(1, 2),
                   ),
-                  itemBuilder: (_, index) =>
-                      QuickAccessTile(item: _items[index]),
+                  itemBuilder: (_, index) {
+                    final item = _items[index];
+                    return QuickAccessTile(
+                      item: item,
+                      onTap: item.title == 'Messages' ? openMessages : null,
+                    );
+                  },
                 );
               },
             ),
