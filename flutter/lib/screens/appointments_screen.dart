@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../models/appointment.dart';
 import '../repositories/mock_repositories.dart';
 import '../theme/app_colors.dart';
+import '../theme/clearview_tokens.dart';
 import '../utils/appointment_date_format.dart';
 import '../widgets/ui_components.dart';
 import 'accessibility_settings_screen.dart';
@@ -15,14 +16,17 @@ class AppointmentsScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final appointments = ref.watch(appointmentRepositoryProvider).getAll();
+
     void openSettings() => Navigator.of(context).push(
       MaterialPageRoute(builder: (_) => const AccessibilitySettingsScreen()),
     );
+
     return Scaffold(
       body: AppPage(
         child: Column(
           children: [
             const _AppointmentsHeader(),
+
             Expanded(
               child: SingleChildScrollView(
                 padding: const EdgeInsets.fromLTRB(18, 20, 18, 22),
@@ -34,6 +38,7 @@ class AppointmentsScreen extends ConsumerWidget {
                       style: Theme.of(context).textTheme.titleLarge,
                     ),
                     const SizedBox(height: 17),
+
                     for (final appointment in appointments) ...[
                       AppointmentListCard(
                         appointment: appointment,
@@ -47,10 +52,31 @@ class AppointmentsScreen extends ConsumerWidget {
                       ),
                       const SizedBox(height: 20),
                     ],
+
+                    const SizedBox(height: 4),
+
+                    Semantics(
+                      button: true,
+                      label: 'Schedule Appointment',
+                      hint: 'Scheduling is not available in this prototype',
+                      child: PrimaryButton(
+                        label: 'Schedule Appointment',
+                        onPressed: () {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text(
+                                'Scheduling is not available in this prototype.',
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+                    ),
                   ],
                 ),
               ),
             ),
+
             ClearViewBottomNavigation(
               selectedItem: ClearViewNavigationItem.visits,
               // TODO(navigation): Replace stack-based root navigation when
@@ -70,17 +96,22 @@ class _AppointmentsHeader extends StatelessWidget {
   const _AppointmentsHeader();
 
   @override
-  Widget build(BuildContext context) => Container(
-    width: double.infinity,
-    padding: const EdgeInsets.fromLTRB(18, 25, 18, 13),
-    decoration: const BoxDecoration(
-      border: Border(bottom: BorderSide(color: Color(0xFFD9E2EA))),
-    ),
-    child: Text(
-      'Appointments',
-      style: Theme.of(context).textTheme.headlineMedium,
-    ),
-  );
+  Widget build(BuildContext context) {
+    final tokens = context.clearViewTokens;
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.fromLTRB(18, 25, 18, 13),
+      decoration: BoxDecoration(
+        border: Border(
+          bottom: BorderSide(color: tokens.border, width: tokens.borderWidth),
+        ),
+      ),
+      child: Text(
+        'Appointments',
+        style: Theme.of(context).textTheme.headlineMedium,
+      ),
+    );
+  }
 }
 
 class AppointmentListCard extends StatelessWidget {
@@ -147,27 +178,30 @@ class _AppointmentListDetails extends StatelessWidget {
   final Appointment appointment;
 
   @override
-  Widget build(BuildContext context) => Column(
-    crossAxisAlignment: CrossAxisAlignment.start,
-    children: [
-      Text(
-        appointment.clinicianName,
-        style: Theme.of(context).textTheme.titleMedium,
-      ),
-      const SizedBox(height: 7),
-      Text(
-        '${appointment.specialty} • ${appointment.location}',
-        style: Theme.of(context).textTheme.bodyMedium,
-      ),
-      const SizedBox(height: 14),
-      AppointmentStatusPill(status: appointment.status),
-      const SizedBox(height: 10),
-      const Text(
-        'View details ›',
-        style: TextStyle(color: AppColors.primary, fontWeight: FontWeight.w700),
-      ),
-    ],
-  );
+  Widget build(BuildContext context) {
+    final tokens = context.clearViewTokens;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          appointment.clinicianName,
+          style: Theme.of(context).textTheme.titleMedium,
+        ),
+        const SizedBox(height: 7),
+        Text(
+          '${appointment.specialty} • ${appointment.location}',
+          style: Theme.of(context).textTheme.bodyMedium,
+        ),
+        const SizedBox(height: 14),
+        AppointmentStatusPill(status: appointment.status),
+        const SizedBox(height: 10),
+        Text(
+          'View details ›',
+          style: TextStyle(color: tokens.primary, fontWeight: FontWeight.w700),
+        ),
+      ],
+    );
+  }
 }
 
 class _AppointmentDateBadge extends StatelessWidget {
@@ -175,32 +209,35 @@ class _AppointmentDateBadge extends StatelessWidget {
   final DateTime date;
 
   @override
-  Widget build(BuildContext context) => Container(
-    constraints: const BoxConstraints(minWidth: 74, minHeight: 68),
-    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 10),
-    decoration: BoxDecoration(
-      color: AppColors.aqua,
-      borderRadius: BorderRadius.circular(10),
-    ),
-    child: Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Text(
-          appointmentBadgeLabel(date),
-          style: const TextStyle(
-            color: AppColors.primary,
-            fontWeight: FontWeight.w700,
+  Widget build(BuildContext context) {
+    final tokens = context.clearViewTokens;
+    return Container(
+      constraints: const BoxConstraints(minWidth: 74, minHeight: 68),
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 10),
+      decoration: BoxDecoration(
+        color: tokens.isHighContrast ? tokens.surface : AppColors.aqua,
+        borderRadius: BorderRadius.circular(10),
+        border: tokens.isHighContrast
+            ? Border.all(color: tokens.border, width: tokens.borderWidth)
+            : null,
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(
+            appointmentBadgeLabel(date),
+            style: TextStyle(
+              color: tokens.primary,
+              fontWeight: FontWeight.w700,
+            ),
           ),
-        ),
-        const SizedBox(height: 8),
-        Text(
-          appointmentTimeLabel(date),
-          style: const TextStyle(
-            color: AppColors.ink,
-            fontWeight: FontWeight.w700,
+          const SizedBox(height: 8),
+          Text(
+            appointmentTimeLabel(date),
+            style: TextStyle(color: tokens.ink, fontWeight: FontWeight.w700),
           ),
-        ),
-      ],
-    ),
-  );
+        ],
+      ),
+    );
+  }
 }

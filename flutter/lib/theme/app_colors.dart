@@ -6,6 +6,8 @@ abstract final class AppColors {
   static const ink = Color(0xFF172033);
   static const mutedInk = Color(0xFF526073);
   static const primary = Color(0xFF006178);
+  static const highContrastPrimary = Color(0xFF005A70);
+  static const highContrastInk = Color(0xFF111827);
   static const border = Color(0xFFC5D5E6);
   static const infoBackground = Color(0xFFE2F3FD);
   static const infoBorder = Color(0xFFACD8F1);
