@@ -294,10 +294,12 @@ class DashboardScreen extends ConsumerWidget {
               ),
             ),
             ClearViewBottomNavigation(
-              onSettingsTap: openAccessibility,
+              selectedItem: ClearViewNavigationItem.home,
+              onHomeTap: () {},
               onVisitsTap: openAppointments,
               onMessagesTap: openMessages,
               onRecordsTap: openMedicalNotes,
+              onSettingsTap: openAccessibility,
             ),
           ],
         ),

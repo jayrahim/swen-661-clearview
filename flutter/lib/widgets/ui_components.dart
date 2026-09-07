@@ -409,7 +409,10 @@ class ClearViewBottomNavigation extends StatelessWidget {
       decoration: BoxDecoration(
         color: tokens.surface,
         border: Border(
-          top: BorderSide(color: tokens.border, width: tokens.borderWidth),
+          top: BorderSide(
+            color: tokens.border,
+            width: tokens.borderWidth,
+          ),
         ),
       ),
       child: Row(
@@ -485,7 +488,8 @@ class _NavItem extends StatelessWidget {
                 style: TextStyle(
                   fontSize: 11,
                   color: color,
-                  fontWeight: isSelected ? FontWeight.w700 : FontWeight.w400,
+                  fontWeight:
+                      isSelected ? FontWeight.w700 : FontWeight.w400,
                 ),
               ),
             ],

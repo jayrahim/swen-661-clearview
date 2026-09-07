@@ -20,6 +20,7 @@ String appointmentBadgeLabel(DateTime dateTime) {
     'NOV',
     'DEC',
   ];
+
   return '${months[dateTime.month - 1]} ${dateTime.day}';
 }
 
@@ -36,6 +37,7 @@ String appointmentDetailLabel(DateTime dateTime) {
     'Saturday',
     'Sunday',
   ];
+
   const months = [
     'January',
     'February',
@@ -50,5 +52,27 @@ String appointmentDetailLabel(DateTime dateTime) {
     'November',
     'December',
   ];
-  return '${weekdays[dateTime.weekday - 1]}, ${months[dateTime.month - 1]} ${dateTime.day} • ${appointmentTimeLabel(dateTime)}';
+
+  return '${weekdays[dateTime.weekday - 1]}, '
+      '${months[dateTime.month - 1]} ${dateTime.day} • '
+      '${appointmentTimeLabel(dateTime)}';
+}
+
+String dateOnlyLabel(DateTime date) {
+  const months = [
+    'January',
+    'February',
+    'March',
+    'April',
+    'May',
+    'June',
+    'July',
+    'August',
+    'September',
+    'October',
+    'November',
+    'December',
+  ];
+
+  return '${months[date.month - 1]} ${date.day}, ${date.year}';
 }

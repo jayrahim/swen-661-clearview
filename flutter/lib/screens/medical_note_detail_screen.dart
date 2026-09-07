@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../models/medical_note.dart';
+import '../utils/appointment_date_format.dart';
 
 class MedicalNoteDetailScreen extends StatelessWidget {
   const MedicalNoteDetailScreen({super.key, required this.note});
@@ -28,11 +29,10 @@ class MedicalNoteDetailScreen extends StatelessWidget {
           Text(note.title, style: Theme.of(context).textTheme.headlineSmall),
           const SizedBox(height: 8),
           Text(
-            '${note.author} • ${_formatDate(note.createdAt)}',
+            '${note.author} • ${dateOnlyLabel(note.createdAt)}',
             style: Theme.of(context).textTheme.bodyLarge,
           ),
           const SizedBox(height: 24),
-
           _NoteSection(
             title: 'Summary',
             child: Text(
@@ -40,7 +40,6 @@ class MedicalNoteDetailScreen extends StatelessWidget {
               style: Theme.of(context).textTheme.bodyLarge,
             ),
           ),
-
           if (note.assessment.isNotEmpty) ...[
             const SizedBox(height: 24),
             _NoteSection(
@@ -48,7 +47,7 @@ class MedicalNoteDetailScreen extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  for (final item in note.assessment) ...[
+                  for (final item in note.assessment)
                     Padding(
                       padding: const EdgeInsets.only(bottom: 8),
                       child: Text(
@@ -56,12 +55,10 @@ class MedicalNoteDetailScreen extends StatelessWidget {
                         style: Theme.of(context).textTheme.bodyLarge,
                       ),
                     ),
-                  ],
                 ],
               ),
             ),
           ],
-
           if (note.plan.isNotEmpty) ...[
             const SizedBox(height: 24),
             _NoteSection(
@@ -72,9 +69,7 @@ class MedicalNoteDetailScreen extends StatelessWidget {
               ),
             ),
           ],
-
           const SizedBox(height: 24),
-
           Semantics(
             container: true,
             label: 'Need help understanding this note? Message your care team with a question.',
@@ -101,25 +96,6 @@ class MedicalNoteDetailScreen extends StatelessWidget {
         ],
       ),
     );
-  }
-
-  String _formatDate(DateTime date) {
-    const months = [
-      'January',
-      'February',
-      'March',
-      'April',
-      'May',
-      'June',
-      'July',
-      'August',
-      'September',
-      'October',
-      'November',
-      'December',
-    ];
-
-    return '${months[date.month - 1]} ${date.day}, ${date.year}';
   }
 }
 

@@ -9,6 +9,8 @@ import '../utils/appointment_date_format.dart';
 import '../widgets/ui_components.dart';
 import 'accessibility_settings_screen.dart';
 import 'appointment_detail_screen.dart';
+import 'dashboard_screen.dart';
+import 'medical_notes_screen.dart';
 
 class AppointmentsScreen extends ConsumerWidget {
   const AppointmentsScreen({super.key});
@@ -17,9 +19,28 @@ class AppointmentsScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final appointments = ref.watch(appointmentRepositoryProvider).getAll();
 
-    void openSettings() => Navigator.of(context).push(
-      MaterialPageRoute(builder: (_) => const AccessibilitySettingsScreen()),
-    );
+    void openHome() {
+      Navigator.of(context).pushAndRemoveUntil(
+        MaterialPageRoute(builder: (_) => const DashboardScreen()),
+        (route) => false,
+      );
+    }
+
+    void openVisits() {
+      // Already on the Visits screen.
+    }
+
+    void openRecords() {
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(builder: (_) => const MedicalNotesScreen()),
+      );
+    }
+
+    void openSettings() {
+      Navigator.of(context).push(
+        MaterialPageRoute(builder: (_) => const AccessibilitySettingsScreen()),
+      );
+    }
 
     return Scaffold(
       body: AppPage(
@@ -42,13 +63,15 @@ class AppointmentsScreen extends ConsumerWidget {
                     for (final appointment in appointments) ...[
                       AppointmentListCard(
                         appointment: appointment,
-                        onTap: () => Navigator.of(context).push(
-                          MaterialPageRoute(
-                            builder: (_) => AppointmentDetailScreen(
-                              appointment: appointment,
+                        onTap: () {
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (_) => AppointmentDetailScreen(
+                                appointment: appointment,
+                              ),
                             ),
-                          ),
-                        ),
+                          );
+                        },
                       ),
                       const SizedBox(height: 20),
                     ],
@@ -79,10 +102,17 @@ class AppointmentsScreen extends ConsumerWidget {
 
             ClearViewBottomNavigation(
               selectedItem: ClearViewNavigationItem.visits,
-              // TODO(navigation): Replace stack-based root navigation when
-              // deep links or centralized routes are introduced.
-              onHomeTap: () =>
-                  Navigator.of(context).popUntil((route) => route.isFirst),
+
+              // HOME → Dashboard
+              onHomeTap: openHome,
+
+              // VISITS → Appointments
+              onVisitsTap: openVisits,
+
+              // RECORDS → Medical Notes
+              onRecordsTap: openRecords,
+
+              // SETTINGS → Accessibility Settings
               onSettingsTap: openSettings,
             ),
           ],
@@ -98,6 +128,7 @@ class _AppointmentsHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final tokens = context.clearViewTokens;
+
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.fromLTRB(18, 25, 18, 13),
@@ -127,7 +158,11 @@ class AppointmentListCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final appointmentLabel =
-        '${appointment.clinicianName}, ${appointment.specialty}, ${appointmentAccessibilityLabel(appointment.scheduledAt)}, ${appointment.status.label}';
+        '${appointment.clinicianName}, '
+        '${appointment.specialty}, '
+        '${appointmentAccessibilityLabel(appointment.scheduledAt)}, '
+        '${appointment.status.label}';
+
     return Semantics(
       button: true,
       label: appointmentLabel,
@@ -141,12 +176,15 @@ class AppointmentListCard extends StatelessWidget {
               builder: (context, constraints) {
                 final stackContent =
                     MediaQuery.textScalerOf(context).scale(1) > 1.2;
+
                 final dateBadge = _AppointmentDateBadge(
                   date: appointment.scheduledAt,
                 );
+
                 final details = _AppointmentListDetails(
                   appointment: appointment,
                 );
+
                 return stackContent
                     ? Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -175,11 +213,13 @@ class AppointmentListCard extends StatelessWidget {
 
 class _AppointmentListDetails extends StatelessWidget {
   const _AppointmentListDetails({required this.appointment});
+
   final Appointment appointment;
 
   @override
   Widget build(BuildContext context) {
     final tokens = context.clearViewTokens;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -206,11 +246,13 @@ class _AppointmentListDetails extends StatelessWidget {
 
 class _AppointmentDateBadge extends StatelessWidget {
   const _AppointmentDateBadge({required this.date});
+
   final DateTime date;
 
   @override
   Widget build(BuildContext context) {
     final tokens = context.clearViewTokens;
+
     return Container(
       constraints: const BoxConstraints(minWidth: 74, minHeight: 68),
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 10),
