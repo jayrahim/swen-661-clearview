@@ -10,6 +10,7 @@ import '../widgets/ui_components.dart';
 import 'accessibility_settings_screen.dart';
 import 'appointment_detail_screen.dart';
 import 'appointments_screen.dart';
+import 'messages_screen.dart';
 
 class DashboardScreen extends ConsumerWidget {
   const DashboardScreen({super.key});
@@ -51,6 +52,11 @@ class DashboardScreen extends ConsumerWidget {
     );
     void openAppointments() => Navigator.of(context)
         .push(MaterialPageRoute(builder: (_) => const AppointmentsScreen()));
+    void openMessages() {
+      Navigator.of(context)
+          .push(MaterialPageRoute(builder: (_) => const MessagesScreen()));
+    }
+
     return Scaffold(
       body: AppPage(
         child: Column(
@@ -197,8 +203,14 @@ class DashboardScreen extends ConsumerWidget {
                                 .scale(1)
                                 .clamp(1, 2),
                       ),
-                      itemBuilder: (_, index) =>
-                          QuickAccessTile(item: _items[index]),
+                      itemBuilder: (_, index) {
+                        final item = _items[index];
+
+                        return QuickAccessTile(
+                          item: item,
+                          onTap: item.title == 'Messages' ? openMessages : null,
+                        );
+                      },
                     ),
                     const SizedBox(height: 42),
                     Semantics(
@@ -269,6 +281,7 @@ class DashboardScreen extends ConsumerWidget {
             ClearViewBottomNavigation(
               onSettingsTap: openAccessibility,
               onVisitsTap: openAppointments,
+              onMessagesTap: openMessages,
             ),
           ],
         ),
