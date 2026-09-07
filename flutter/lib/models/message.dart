@@ -6,6 +6,10 @@ class Message {
     required this.preview,
     required this.sentAt,
     this.isRead = false,
+    this.body,
+    this.statusMessage,
+    this.statusDetail,
+    this.showLabResultsAction = false,
   });
 
   final String id;
@@ -14,4 +18,9 @@ class Message {
   final String preview;
   final DateTime sentAt;
   final bool isRead;
+
+  final String? body;
+  final String? statusMessage;
+  final String? statusDetail;
+  final bool showLabResultsAction;
 }
