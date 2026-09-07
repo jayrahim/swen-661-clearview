@@ -9,6 +9,7 @@ class Message {
     this.body,
     this.statusMessage,
     this.statusDetail,
+    this.showLabResultsAction = false,
   });
 
   final String id;
@@ -21,4 +22,5 @@ class Message {
   final String? body;
   final String? statusMessage;
   final String? statusDetail;
+  final bool showLabResultsAction;
 }

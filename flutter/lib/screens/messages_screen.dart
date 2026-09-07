@@ -3,7 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../models/message.dart';
 import '../repositories/mock_repositories.dart';
-import '../theme/app_colors.dart';
+import '../theme/clearview_tokens.dart';
+import '../utils/message_date_format.dart';
 import '../widgets/ui_components.dart';
 import 'accessibility_settings_screen.dart';
 import 'appointments_screen.dart';
@@ -17,22 +18,16 @@ class MessagesScreen extends ConsumerWidget {
     final repository = ref.watch(messageRepositoryProvider);
     final messages = repository.getAll();
 
-    final unreadCount =
-        messages.where((message) => !message.isRead).length;
+    final unreadCount = messages.where((message) => !message.isRead).length;
 
     void openAppointments() {
-      Navigator.of(context).push(
-        MaterialPageRoute(
-          builder: (_) => const AppointmentsScreen(),
-        ),
-      );
+      Navigator.of(context)
+          .push(MaterialPageRoute(builder: (_) => const AppointmentsScreen()));
     }
 
     void openSettings() {
       Navigator.of(context).push(
-        MaterialPageRoute(
-          builder: (_) => const AccessibilitySettingsScreen(),
-        ),
+        MaterialPageRoute(builder: (_) => const AccessibilitySettingsScreen()),
       );
     }
 
@@ -46,9 +41,7 @@ class MessagesScreen extends ConsumerWidget {
                 child: ListView(
                   padding: const EdgeInsets.all(24),
                   children: [
-                    _MessagesHeader(
-                      unreadCount: unreadCount,
-                    ),
+                    _MessagesHeader(unreadCount: unreadCount),
                     const SizedBox(height: 24),
                     ...messages.map(
                       (message) => Padding(
@@ -58,9 +51,8 @@ class MessagesScreen extends ConsumerWidget {
                           onTap: () {
                             Navigator.of(context).push(
                               MaterialPageRoute(
-                                builder: (_) => MessageDetailScreen(
-                                  message: message,
-                                ),
+                                builder: (_) =>
+                                    MessageDetailScreen(message: message),
                               ),
                             );
                           },
@@ -74,9 +66,7 @@ class MessagesScreen extends ConsumerWidget {
             ClearViewBottomNavigation(
               selectedItem: ClearViewNavigationItem.messages,
               onHomeTap: () =>
-                  Navigator.of(context).popUntil(
-                (route) => route.isFirst,
-              ),
+                  Navigator.of(context).popUntil((route) => route.isFirst),
               onVisitsTap: openAppointments,
               onSettingsTap: openSettings,
             ),
@@ -88,15 +78,14 @@ class MessagesScreen extends ConsumerWidget {
 }
 
 class _MessagesHeader extends StatelessWidget {
-  const _MessagesHeader({
-    required this.unreadCount,
-  });
+  const _MessagesHeader({required this.unreadCount});
 
   final int unreadCount;
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final tokens = context.clearViewTokens;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -115,12 +104,7 @@ class _MessagesHeader extends StatelessWidget {
               label: 'User profile',
               child: const CircleAvatar(
                 radius: 22,
-                child: Text(
-                  'A',
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
+                child: Text('A', style: TextStyle(fontWeight: FontWeight.bold)),
               ),
             ),
           ],
@@ -129,19 +113,20 @@ class _MessagesHeader extends StatelessWidget {
         Semantics(
           label: '$unreadCount unread messages',
           child: Container(
-            padding: const EdgeInsets.symmetric(
-              horizontal: 14,
-              vertical: 8,
-            ),
+            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
             decoration: BoxDecoration(
-              color: AppColors.unreadBadgeBackground,
+              color: tokens.infoBackground,
+              border: Border.all(
+                color: tokens.infoBorder,
+                width: tokens.borderWidth,
+              ),
               borderRadius: BorderRadius.circular(20),
             ),
             child: Text(
               '$unreadCount unread',
               style: theme.textTheme.labelLarge?.copyWith(
                 fontWeight: FontWeight.w600,
-                color: AppColors.unreadBadgeText,
+                color: tokens.ink,
               ),
             ),
           ),
@@ -152,10 +137,7 @@ class _MessagesHeader extends StatelessWidget {
 }
 
 class _MessageCard extends StatelessWidget {
-  const _MessageCard({
-    required this.message,
-    required this.onTap,
-  });
+  const _MessageCard({required this.message, required this.onTap});
 
   final Message message;
   final VoidCallback onTap;
@@ -169,7 +151,7 @@ class _MessageCard extends StatelessWidget {
       label:
           '${message.isRead ? "Read" : "Unread"} message from '
           '${message.sender}. ${message.subject}. '
-          '${_formatSentAt(message.sentAt)}',
+          '${formatMessageDate(message.sentAt)}',
       child: InkWell(
         onTap: onTap,
         borderRadius: BorderRadius.circular(16),
@@ -183,10 +165,7 @@ class _MessageCard extends StatelessWidget {
                   child: Container(
                     width: 10,
                     height: 10,
-                    margin: const EdgeInsets.only(
-                      top: 7,
-                      right: 12,
-                    ),
+                    margin: const EdgeInsets.only(top: 7, right: 12),
                     decoration: BoxDecoration(
                       color: theme.colorScheme.primary,
                       shape: BoxShape.circle,
@@ -215,7 +194,7 @@ class _MessageCard extends StatelessWidget {
                     ),
                     const SizedBox(height: 6),
                     Text(
-                      _formatSentAt(message.sentAt),
+                      formatMessageDate(message.sentAt),
                       style: theme.textTheme.bodyMedium,
                     ),
                   ],
@@ -227,46 +206,4 @@ class _MessageCard extends StatelessWidget {
       ),
     );
   }
-}
-
-String _formatSentAt(DateTime sentAt) {
-  const months = [
-    'Jan',
-    'Feb',
-    'Mar',
-    'Apr',
-    'May',
-    'Jun',
-    'Jul',
-    'Aug',
-    'Sep',
-    'Oct',
-    'Nov',
-    'Dec',
-  ];
-
-  if (sentAt.day == 27 && sentAt.month == 8) {
-    return 'Today • ${_formatTime(sentAt)}';
-  }
-
-  if (sentAt.day == 26 && sentAt.month == 8) {
-    return 'Yesterday • ${_formatTime(sentAt)}';
-  }
-
-  return '${months[sentAt.month - 1]} '
-      '${sentAt.day} • ${_formatTime(sentAt)}';
-}
-
-String _formatTime(DateTime dateTime) {
-  final hour = dateTime.hour == 0
-      ? 12
-      : dateTime.hour > 12
-          ? dateTime.hour - 12
-          : dateTime.hour;
-
-  final minute =
-      dateTime.minute.toString().padLeft(2, '0');
-  final period = dateTime.hour >= 12 ? 'PM' : 'AM';
-
-  return '$hour:$minute $period';
 }

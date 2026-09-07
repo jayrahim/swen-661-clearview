@@ -1,19 +1,18 @@
 import 'package:flutter/material.dart';
 
-import '../theme/app_colors.dart';
 import '../models/message.dart';
+import '../theme/clearview_tokens.dart';
+import '../utils/message_date_format.dart';
 import '../widgets/ui_components.dart';
 
 class MessageDetailScreen extends StatelessWidget {
-  const MessageDetailScreen({
-    super.key,
-    required this.message,
-  });
+  const MessageDetailScreen({super.key, required this.message});
 
   final Message message;
 
   @override
   Widget build(BuildContext context) {
+    final tokens = context.clearViewTokens;
     return Scaffold(
       body: AppPage(
         child: SafeArea(
@@ -22,21 +21,18 @@ class MessageDetailScreen extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                _Header(
-                  onBack: () => Navigator.of(context).pop(),
-                ),
+                _Header(onBack: () => Navigator.of(context).pop()),
                 const SizedBox(height: 20),
 
                 Text(
                   message.sender,
-                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.w700,
-                      ),
+                  style: Theme.of(context).textTheme.titleMedium
+                      ?.copyWith(fontWeight: FontWeight.w700),
                 ),
                 const SizedBox(height: 5),
 
                 Text(
-                  _formatSentAt(message.sentAt),
+                  formatMessageDate(message.sentAt),
                   style: Theme.of(context).textTheme.bodySmall,
                 ),
 
@@ -46,9 +42,8 @@ class MessageDetailScreen extends StatelessWidget {
 
                 Text(
                   message.subject,
-                  style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                        fontWeight: FontWeight.w700,
-                      ),
+                  style: Theme.of(context).textTheme.titleLarge
+                      ?.copyWith(fontWeight: FontWeight.w700),
                 ),
 
                 const SizedBox(height: 14),
@@ -57,9 +52,8 @@ class MessageDetailScreen extends StatelessWidget {
                   label: 'Message from ${message.sender}',
                   child: Text(
                     message.body ?? message.preview,
-                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                          height: 1.5,
-                        ),
+                    style: Theme.of(context).textTheme.bodyMedium
+                        ?.copyWith(height: 1.5),
                   ),
                 ),
 
@@ -73,37 +67,38 @@ class MessageDetailScreen extends StatelessWidget {
 
                 const SizedBox(height: 24),
 
-PrimaryButton(
-  label: 'View lab results',
-  onPressed: () => _showPrototypeMessage(
-    context,
-    'Lab results are not available in this prototype.',
-  ),
-),
+                if (message.showLabResultsAction) ...[
+                  PrimaryButton(
+                    label: 'View lab results',
+                    onPressed: () => _showPrototypeMessage(
+                      context,
+                      'Lab results are not available in this prototype.',
+                    ),
+                  ),
+                ],
+                const SizedBox(height: 8),
 
-const SizedBox(height: 8),
-
-SizedBox(
-  width: double.infinity,
-  height: 53,
-  child: OutlinedButton(
-    onPressed: () => _showPrototypeMessage(
-      context,
-      'Reply is not available in this prototype.',
-    ),
-    style: OutlinedButton.styleFrom(
-      foregroundColor: AppColors.primary,
-      side: const BorderSide(
-        color: AppColors.primary,
-        width: 2,
-      ),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(11),
-      ),
-    ),
-    child: const Text('Reply'),
-  ),
-),
+                SizedBox(
+                  width: double.infinity,
+                  height: 53,
+                  child: OutlinedButton(
+                    onPressed: () => _showPrototypeMessage(
+                      context,
+                      'Reply is not available in this prototype.',
+                    ),
+                    style: OutlinedButton.styleFrom(
+                      foregroundColor: tokens.primary,
+                      side: BorderSide(
+                        color: tokens.primary,
+                        width: tokens.borderWidth,
+                      ),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(11),
+                      ),
+                    ),
+                    child: const Text('Reply'),
+                  ),
+                ),
               ],
             ),
           ),
@@ -111,19 +106,15 @@ SizedBox(
       ),
     );
   }
+
   void _showPrototypeMessage(BuildContext context, String message) {
-  ScaffoldMessenger.of(context).showSnackBar(
-    SnackBar(
-      content: Text(message),
-    ),
-  );
-}
+    ScaffoldMessenger.of(context)
+        .showSnackBar(SnackBar(content: Text(message)));
+  }
 }
 
 class _Header extends StatelessWidget {
-  const _Header({
-    required this.onBack,
-  });
+  const _Header({required this.onBack});
 
   final VoidCallback onBack;
 
@@ -144,39 +135,35 @@ class _Header extends StatelessWidget {
         Expanded(
           child: Text(
             'Message',
-            style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                  fontWeight: FontWeight.w700,
-                ),
+            style: Theme.of(context).textTheme.titleLarge
+                ?.copyWith(fontWeight: FontWeight.w700),
           ),
         ),
-        const CircleAvatar(
-          child: Text('A'),
-        ),
+        const CircleAvatar(child: Text('A')),
       ],
     );
   }
 }
 
 class _StatusCard extends StatelessWidget {
-  const _StatusCard({
-    required this.title,
-    this.detail,
-  });
+  const _StatusCard({required this.title, this.detail});
 
   final String title;
   final String? detail;
 
   @override
   Widget build(BuildContext context) {
+    final tokens = context.clearViewTokens;
     return Semantics(
       label: '$title${detail != null ? '. $detail' : ''}',
       child: Container(
         width: double.infinity,
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: const Color(0xFFEAF7EF),
+          color: tokens.infoBackground,
           border: Border.all(
-            color: const Color(0xFFB7DDC5),
+            color: tokens.infoBorder,
+            width: tokens.borderWidth,
           ),
           borderRadius: BorderRadius.circular(12),
         ),
@@ -186,17 +173,12 @@ class _StatusCard extends StatelessWidget {
             children: [
               Text(
                 title,
-                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      fontWeight: FontWeight.w600,
-                      color: const Color(0xFF176B42),
-                    ),
+                style: Theme.of(context).textTheme.bodyMedium
+                    ?.copyWith(fontWeight: FontWeight.w600, color: tokens.ink),
               ),
               if (detail != null) ...[
                 const SizedBox(height: 8),
-                Text(
-                  detail!,
-                  style: Theme.of(context).textTheme.bodySmall,
-                ),
+                Text(detail!, style: Theme.of(context).textTheme.bodySmall),
               ],
             ],
           ),
@@ -204,12 +186,4 @@ class _StatusCard extends StatelessWidget {
       ),
     );
   }
-}
-
-String _formatSentAt(DateTime dateTime) {
-  final hour = dateTime.hour % 12 == 0 ? 12 : dateTime.hour % 12;
-  final minute = dateTime.minute.toString().padLeft(2, '0');
-  final period = dateTime.hour >= 12 ? 'PM' : 'AM';
-
-  return 'Today • $hour:$minute $period';
 }

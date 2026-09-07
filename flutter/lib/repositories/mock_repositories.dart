@@ -66,6 +66,7 @@ class MessageRepository {
           'before our next visit.',
       statusMessage: '✓ Results reviewed by care team',
       statusDetail: 'No urgent follow-up is required.',
+      showLabResultsAction: true,
     ),
     Message(
       id: 'msg-2',

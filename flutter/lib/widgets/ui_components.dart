@@ -148,36 +148,46 @@ class AppointmentStatusStyle {
 }
 
 class QuickAccessTile extends StatelessWidget {
-  const QuickAccessTile({super.key, required this.item});
+  const QuickAccessTile({super.key, required this.item, this.onTap});
+
   final QuickAccessItem item;
+  final VoidCallback? onTap;
 
   @override
   Widget build(BuildContext context) {
     final tokens = context.clearViewTokens;
     return Semantics(
+      button: onTap != null,
       label: '${item.title}, ${item.subtitle}',
       child: ExcludeSemantics(
-        child: Container(
-          padding: const EdgeInsets.all(14),
-          decoration: BoxDecoration(
-            color: tokens.isHighContrast
-                ? tokens.surface
-                : item.backgroundColor,
-            borderRadius: BorderRadius.circular(12),
-            border: tokens.isHighContrast
-                ? Border.all(color: tokens.border, width: tokens.borderWidth)
-                : null,
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(item.title, style: Theme.of(context).textTheme.titleMedium),
-              Text(
-                item.subtitle,
-                style: TextStyle(color: item.subtitleColor, fontSize: 14),
-              ),
-            ],
+        child: InkWell(
+          onTap: onTap,
+          borderRadius: BorderRadius.circular(12),
+          child: Container(
+            padding: const EdgeInsets.all(14),
+            decoration: BoxDecoration(
+              color: tokens.isHighContrast
+                  ? tokens.surface
+                  : item.backgroundColor,
+              borderRadius: BorderRadius.circular(12),
+              border: tokens.isHighContrast
+                  ? Border.all(color: tokens.border, width: tokens.borderWidth)
+                  : null,
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  item.title,
+                  style: Theme.of(context).textTheme.titleMedium,
+                ),
+                Text(
+                  item.subtitle,
+                  style: TextStyle(color: item.subtitleColor, fontSize: 14),
+                ),
+              ],
+            ),
           ),
         ),
       ),
@@ -312,10 +322,10 @@ class ClearViewBottomNavigation extends StatelessWidget {
             onTap: onVisitsTap,
           ),
           _NavItem(
-           icon: Icons.mail_outline,
-           label: 'Messages',
-           isSelected: selectedItem == ClearViewNavigationItem.messages,
-           onTap: onMessagesTap,
+            icon: Icons.mail_outline,
+            label: 'Messages',
+            isSelected: selectedItem == ClearViewNavigationItem.messages,
+            onTap: onMessagesTap,
           ),
           const _NavItem(icon: Icons.view_headline_outlined, label: 'Records'),
           _NavItem(
