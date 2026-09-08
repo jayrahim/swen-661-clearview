@@ -75,6 +75,75 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
+  testWidgets('Messages retains side navigation when opened on a tablet', (
+    tester,
+  ) async {
+    await pumpScreen(
+      tester,
+      size: const Size(1024, 768),
+      child: const DashboardScreen(),
+    );
+
+    final messagesNavigation = find.descendant(
+      of: find.byKey(const Key('clearview-side-navigation')),
+      matching: find.text('Messages'),
+    );
+    await tester.tap(messagesNavigation);
+    await tester.pumpAndSettle();
+
+    expect(find.byType(MessagesScreen), findsOneWidget);
+    expect(find.byKey(const Key('clearview-side-navigation')), findsOneWidget);
+    expect(find.byType(ClearViewBottomNavigation), findsNothing);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('Settings side navigation opens Accessibility Settings', (
+    tester,
+  ) async {
+    await pumpScreen(
+      tester,
+      size: const Size(1024, 768),
+      child: const DashboardScreen(),
+    );
+
+    final settingsNavigation = find.descendant(
+      of: find.byKey(const Key('clearview-side-navigation')),
+      matching: find.text('Settings'),
+    );
+    await tester.tap(settingsNavigation);
+    await tester.pumpAndSettle();
+
+    expect(find.byType(AccessibilitySettingsScreen), findsOneWidget);
+    expect(find.byKey(const Key('clearview-side-navigation')), findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('navigation uses the phone layout below the tablet breakpoint', (
+    tester,
+  ) async {
+    await pumpScreen(
+      tester,
+      size: const Size(599, 900),
+      child: const DashboardScreen(),
+    );
+
+    expect(find.byType(ClearViewBottomNavigation), findsOneWidget);
+    expect(find.byKey(const Key('clearview-side-navigation')), findsNothing);
+  });
+
+  testWidgets('navigation uses the tablet layout at the tablet breakpoint', (
+    tester,
+  ) async {
+    await pumpScreen(
+      tester,
+      size: const Size(600, 900),
+      child: const DashboardScreen(),
+    );
+
+    expect(find.byKey(const Key('clearview-side-navigation')), findsOneWidget);
+    expect(find.byType(ClearViewBottomNavigation), findsNothing);
+  });
+
   testWidgets('dashboard uses two Quick Access columns on a landscape phone', (
     tester,
   ) async {
@@ -218,6 +287,72 @@ void main() {
 
     expect(find.byKey(const Key('clearview-side-navigation')), findsOneWidget);
     expect(find.text('High contrast'), findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('Messages supports a tablet with larger text', (tester) async {
+    await pumpScreen(
+      tester,
+      size: const Size(1024, 768),
+      textScale: 2,
+      child: const MessagesScreen(),
+    );
+
+    expect(find.byKey(const Key('clearview-side-navigation')), findsOneWidget);
+    expect(find.text('2 unread'), findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('Appointments supports a tablet with larger text', (
+    tester,
+  ) async {
+    await pumpScreen(
+      tester,
+      size: const Size(1024, 768),
+      textScale: 2,
+      child: const DashboardScreen(),
+    );
+
+    final visitsNavigation = find.descendant(
+      of: find.byKey(const Key('clearview-side-navigation')),
+      matching: find.text('Visits'),
+    );
+    await tester.tap(visitsNavigation);
+    await tester.pumpAndSettle();
+
+    expect(find.byType(AppointmentsScreen), findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('Appointment Detail supports a tablet with larger text', (
+    tester,
+  ) async {
+    await pumpScreen(
+      tester,
+      size: const Size(1024, 768),
+      textScale: 2,
+      child: const DashboardScreen(),
+    );
+
+    await tester.tap(find.text('View details  →'));
+    await tester.pumpAndSettle();
+
+    expect(find.byType(AppointmentDetailScreen), findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('Accessibility Settings supports a tablet with larger text', (
+    tester,
+  ) async {
+    await pumpScreen(
+      tester,
+      size: const Size(1024, 768),
+      textScale: 2,
+      child: const AccessibilitySettingsScreen(),
+    );
+
+    expect(find.byKey(const Key('clearview-side-navigation')), findsOneWidget);
+    expect(find.text('Reset preferences'), findsOneWidget);
     expect(tester.takeException(), isNull);
   });
 

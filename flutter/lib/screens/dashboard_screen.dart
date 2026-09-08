@@ -16,24 +16,28 @@ class DashboardScreen extends ConsumerWidget {
 
   static const _items = [
     QuickAccessItem(
+      kind: QuickAccessKind.messages,
       title: 'Messages',
       subtitle: '2 unread',
       backgroundColor: AppColors.blueTile,
       subtitleColor: Color(0xFF00679D),
     ),
     QuickAccessItem(
+      kind: QuickAccessKind.medicalNotes,
       title: 'Medical notes',
       subtitle: '3 recent',
       backgroundColor: AppColors.aqua,
       subtitleColor: AppColors.primary,
     ),
     QuickAccessItem(
+      kind: QuickAccessKind.prescriptions,
       title: 'Prescriptions',
       subtitle: '4 active',
       backgroundColor: AppColors.yellowTile,
       subtitleColor: Color(0xFF9B5800),
     ),
     QuickAccessItem(
+      kind: QuickAccessKind.referrals,
       title: 'Referrals',
       subtitle: '1 pending',
       backgroundColor: AppColors.purpleTile,
@@ -227,7 +231,10 @@ class DashboardScreen extends ConsumerWidget {
                     final item = _items[index];
                     return QuickAccessTile(
                       item: item,
-                      onTap: item.title == 'Messages' ? openMessages : null,
+                      onTap: switch (item.kind) {
+                        QuickAccessKind.messages => openMessages,
+                        _ => null,
+                      },
                     );
                   },
                 );

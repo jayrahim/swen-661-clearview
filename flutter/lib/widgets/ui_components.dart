@@ -9,7 +9,8 @@ import '../theme/clearview_tokens.dart';
 ///
 /// Phone layouts retain the approved bottom navigation. Tablet layouts use a
 /// side rail so content has the available horizontal space without stretching
-/// the phone navigation across a wide display.
+/// the phone navigation across a wide display. Root-tab screens should use
+/// this shell so each navigation destination preserves that adaptive behavior.
 class ClearViewResponsiveScaffold extends StatelessWidget {
   const ClearViewResponsiveScaffold({
     super.key,
@@ -18,6 +19,7 @@ class ClearViewResponsiveScaffold extends StatelessWidget {
     this.onHomeTap,
     this.onVisitsTap,
     this.onMessagesTap,
+    this.onRecordsTap,
     this.selectedItem = ClearViewNavigationItem.home,
     this.isRootTab = true,
     this.showTabletNavigation = true,
@@ -29,6 +31,7 @@ class ClearViewResponsiveScaffold extends StatelessWidget {
   final VoidCallback? onHomeTap;
   final VoidCallback? onVisitsTap;
   final VoidCallback? onMessagesTap;
+  final VoidCallback? onRecordsTap;
   final ClearViewNavigationItem selectedItem;
 
   /// Root tabs show the persistent phone navigation; stack-pushed subpages
@@ -45,6 +48,7 @@ class ClearViewResponsiveScaffold extends StatelessWidget {
       onHomeTap: onHomeTap,
       onVisitsTap: onVisitsTap,
       onMessagesTap: onMessagesTap,
+      onRecordsTap: onRecordsTap,
       onSettingsTap: onSettingsTap,
     );
 
@@ -67,6 +71,7 @@ class ClearViewResponsiveScaffold extends StatelessWidget {
                     onHomeTap: onHomeTap,
                     onVisitsTap: onVisitsTap,
                     onMessagesTap: onMessagesTap,
+                    onRecordsTap: onRecordsTap,
                     onSettingsTap: onSettingsTap,
                   ),
                   Expanded(child: content),
@@ -239,8 +244,9 @@ class AppointmentStatusStyle {
 }
 
 class QuickAccessTile extends StatelessWidget {
-  const QuickAccessTile({super.key, required this.item});
+  const QuickAccessTile({super.key, required this.item, this.onTap});
   final QuickAccessItem item;
+  final VoidCallback? onTap;
 
   @override
   Widget build(BuildContext context) {
@@ -270,6 +276,7 @@ class QuickAccessTile extends StatelessWidget {
       ),
     );
     return Semantics(
+      button: onTap != null,
       label: '${item.title}, ${item.subtitle}',
       child: onTap == null
           ? ExcludeSemantics(child: content)
@@ -374,6 +381,7 @@ class ClearViewSideNavigation extends StatelessWidget {
     this.onHomeTap,
     this.onVisitsTap,
     this.onMessagesTap,
+    this.onRecordsTap,
     this.selectedItem = ClearViewNavigationItem.home,
   });
 
@@ -381,6 +389,7 @@ class ClearViewSideNavigation extends StatelessWidget {
   final VoidCallback? onHomeTap;
   final VoidCallback? onVisitsTap;
   final VoidCallback? onMessagesTap;
+  final VoidCallback? onRecordsTap;
   final ClearViewNavigationItem selectedItem;
 
   @override
@@ -416,9 +425,11 @@ class ClearViewSideNavigation extends StatelessWidget {
             isSelected: selectedItem == ClearViewNavigationItem.messages,
             onTap: onMessagesTap,
           ),
-          const _SideNavigationItem(
+          _SideNavigationItem(
             icon: Icons.view_headline_outlined,
             label: 'Records',
+            isSelected: selectedItem == ClearViewNavigationItem.records,
+            onTap: onRecordsTap,
           ),
           _SideNavigationItem(
             icon: Icons.settings,
@@ -486,11 +497,15 @@ class ClearViewBottomNavigation extends StatelessWidget {
     this.onSettingsTap,
     this.onHomeTap,
     this.onVisitsTap,
+    this.onMessagesTap,
+    this.onRecordsTap,
     this.selectedItem = ClearViewNavigationItem.home,
   });
   final VoidCallback? onSettingsTap;
   final VoidCallback? onHomeTap;
   final VoidCallback? onVisitsTap;
+  final VoidCallback? onMessagesTap;
+  final VoidCallback? onRecordsTap;
   final ClearViewNavigationItem selectedItem;
 
   @override
@@ -519,8 +534,18 @@ class ClearViewBottomNavigation extends StatelessWidget {
             isSelected: selectedItem == ClearViewNavigationItem.visits,
             onTap: onVisitsTap,
           ),
-          const _NavItem(icon: Icons.mail_outline, label: 'Messages'),
-          const _NavItem(icon: Icons.view_headline_outlined, label: 'Records'),
+          _NavItem(
+            icon: Icons.mail_outline,
+            label: 'Messages',
+            isSelected: selectedItem == ClearViewNavigationItem.messages,
+            onTap: onMessagesTap,
+          ),
+          _NavItem(
+            icon: Icons.view_headline_outlined,
+            label: 'Records',
+            isSelected: selectedItem == ClearViewNavigationItem.records,
+            onTap: onRecordsTap,
+          ),
           _NavItem(
             icon: Icons.settings,
             label: 'Settings',
