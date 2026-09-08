@@ -9,6 +9,7 @@ import '../utils/appointment_date_format.dart';
 import '../widgets/ui_components.dart';
 import 'accessibility_settings_screen.dart';
 import 'appointment_detail_screen.dart';
+import 'medical_notes_screen.dart';
 
 class AppointmentsScreen extends ConsumerWidget {
   const AppointmentsScreen({super.key});
@@ -20,6 +21,8 @@ class AppointmentsScreen extends ConsumerWidget {
     void openSettings() => Navigator.of(context).push(
       MaterialPageRoute(builder: (_) => const AccessibilitySettingsScreen()),
     );
+    void openMedicalNotes() => Navigator.of(context)
+        .push(MaterialPageRoute(builder: (_) => const MedicalNotesScreen()));
 
     return Scaffold(
       body: AppPage(
@@ -84,6 +87,7 @@ class AppointmentsScreen extends ConsumerWidget {
               onHomeTap: () =>
                   Navigator.of(context).popUntil((route) => route.isFirst),
               onSettingsTap: openSettings,
+              onRecordsTap: openMedicalNotes,
             ),
           ],
         ),

@@ -9,6 +9,7 @@ import '../widgets/ui_components.dart';
 import 'accessibility_settings_screen.dart';
 import 'appointments_screen.dart';
 import 'message_detail_screen.dart';
+import 'medical_notes_screen.dart';
 
 class MessagesScreen extends ConsumerWidget {
   const MessagesScreen({super.key});
@@ -29,6 +30,11 @@ class MessagesScreen extends ConsumerWidget {
       Navigator.of(context).push(
         MaterialPageRoute(builder: (_) => const AccessibilitySettingsScreen()),
       );
+    }
+
+    void openMedicalNotes() {
+      Navigator.of(context)
+          .push(MaterialPageRoute(builder: (_) => const MedicalNotesScreen()));
     }
 
     return Scaffold(
@@ -69,6 +75,7 @@ class MessagesScreen extends ConsumerWidget {
                   Navigator.of(context).popUntil((route) => route.isFirst),
               onVisitsTap: openAppointments,
               onSettingsTap: openSettings,
+              onRecordsTap: openMedicalNotes,
             ),
           ],
         ),

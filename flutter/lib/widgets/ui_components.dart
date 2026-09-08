@@ -156,40 +156,38 @@ class QuickAccessTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final tokens = context.clearViewTokens;
+    final content = Container(
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: tokens.isHighContrast ? tokens.surface : item.backgroundColor,
+        borderRadius: BorderRadius.circular(12),
+        border: tokens.isHighContrast
+            ? Border.all(color: tokens.border, width: tokens.borderWidth)
+            : null,
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(item.title, style: Theme.of(context).textTheme.titleMedium),
+          Text(
+            item.subtitle,
+            style: TextStyle(color: item.subtitleColor, fontSize: 14),
+          ),
+        ],
+      ),
+    );
     return Semantics(
       button: onTap != null,
       label: '${item.title}, ${item.subtitle}',
       child: ExcludeSemantics(
-        child: InkWell(
-          onTap: onTap,
-          borderRadius: BorderRadius.circular(12),
-          child: Container(
-            padding: const EdgeInsets.all(14),
-            decoration: BoxDecoration(
-              color: tokens.isHighContrast
-                  ? tokens.surface
-                  : item.backgroundColor,
-              borderRadius: BorderRadius.circular(12),
-              border: tokens.isHighContrast
-                  ? Border.all(color: tokens.border, width: tokens.borderWidth)
-                  : null,
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  item.title,
-                  style: Theme.of(context).textTheme.titleMedium,
-                ),
-                Text(
-                  item.subtitle,
-                  style: TextStyle(color: item.subtitleColor, fontSize: 14),
-                ),
-              ],
-            ),
-          ),
-        ),
+        child: onTap == null
+            ? content
+            : InkWell(
+                onTap: onTap,
+                borderRadius: BorderRadius.circular(12),
+                child: content,
+              ),
       ),
     );
   }
@@ -287,12 +285,14 @@ class ClearViewBottomNavigation extends StatelessWidget {
     this.onHomeTap,
     this.onVisitsTap,
     this.onMessagesTap,
+    this.onRecordsTap,
     this.selectedItem = ClearViewNavigationItem.home,
   });
   final VoidCallback onSettingsTap;
   final VoidCallback? onHomeTap;
   final VoidCallback? onVisitsTap;
   final VoidCallback? onMessagesTap;
+  final VoidCallback? onRecordsTap;
   final ClearViewNavigationItem selectedItem;
 
   @override
@@ -327,7 +327,12 @@ class ClearViewBottomNavigation extends StatelessWidget {
             isSelected: selectedItem == ClearViewNavigationItem.messages,
             onTap: onMessagesTap,
           ),
-          const _NavItem(icon: Icons.view_headline_outlined, label: 'Records'),
+          _NavItem(
+            icon: Icons.view_headline_outlined,
+            label: 'Records',
+            isSelected: selectedItem == ClearViewNavigationItem.records,
+            onTap: onRecordsTap,
+          ),
           _NavItem(
             icon: Icons.settings,
             label: 'Settings',
@@ -358,28 +363,57 @@ class _NavItem extends StatelessWidget {
     final color = isSelected ? tokens.primary : tokens.mutedInk;
     return Expanded(
       child: Semantics(
-        button: true,
+        button: onTap != null,
         selected: isSelected,
         label: label,
-        child: InkWell(
-          onTap: onTap,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(icon, size: 18, color: color),
-              const SizedBox(height: 7),
-              Text(
-                label,
-                style: TextStyle(
-                  fontSize: 11,
+        child: onTap == null
+            ? _NavItemContent(
+                icon: icon,
+                label: label,
+                color: color,
+                isSelected: isSelected,
+              )
+            : InkWell(
+                onTap: onTap,
+                child: _NavItemContent(
+                  icon: icon,
+                  label: label,
                   color: color,
-                  fontWeight: isSelected ? FontWeight.w700 : FontWeight.w400,
+                  isSelected: isSelected,
                 ),
               ),
-            ],
-          ),
-        ),
       ),
     );
   }
+}
+
+class _NavItemContent extends StatelessWidget {
+  const _NavItemContent({
+    required this.icon,
+    required this.label,
+    required this.color,
+    required this.isSelected,
+  });
+
+  final IconData icon;
+  final String label;
+  final Color color;
+  final bool isSelected;
+
+  @override
+  Widget build(BuildContext context) => Column(
+    mainAxisAlignment: MainAxisAlignment.center,
+    children: [
+      Icon(icon, size: 18, color: color),
+      const SizedBox(height: 7),
+      Text(
+        label,
+        style: TextStyle(
+          fontSize: 11,
+          color: color,
+          fontWeight: isSelected ? FontWeight.w700 : FontWeight.w400,
+        ),
+      ),
+    ],
+  );
 }

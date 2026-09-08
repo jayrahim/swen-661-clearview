@@ -12,6 +12,7 @@ import 'accessibility_settings_screen.dart';
 import 'appointment_detail_screen.dart';
 import 'appointments_screen.dart';
 import 'messages_screen.dart';
+import 'medical_notes_screen.dart';
 
 class DashboardScreen extends ConsumerWidget {
   const DashboardScreen({super.key});
@@ -22,24 +23,28 @@ class DashboardScreen extends ConsumerWidget {
       subtitle: '2 unread',
       backgroundColor: AppColors.blueTile,
       subtitleColor: Color(0xFF00679D),
+      kind: QuickAccessKind.messages,
     ),
     QuickAccessItem(
-      title: 'Medical Notes',
+      title: 'Medical notes',
       subtitle: '3 recent',
       backgroundColor: AppColors.aqua,
       subtitleColor: AppColors.primary,
+      kind: QuickAccessKind.medicalNotes,
     ),
     QuickAccessItem(
       title: 'Prescriptions',
       subtitle: '4 active',
       backgroundColor: AppColors.yellowTile,
       subtitleColor: Color(0xFF9B5800),
+      kind: QuickAccessKind.prescriptions,
     ),
     QuickAccessItem(
       title: 'Referrals',
       subtitle: '1 pending',
       backgroundColor: AppColors.purpleTile,
       subtitleColor: Color(0xFF67477D),
+      kind: QuickAccessKind.referrals,
     ),
   ];
 
@@ -56,6 +61,11 @@ class DashboardScreen extends ConsumerWidget {
     void openMessages() {
       Navigator.of(context)
           .push(MaterialPageRoute(builder: (_) => const MessagesScreen()));
+    }
+
+    void openMedicalNotes() {
+      Navigator.of(context)
+          .push(MaterialPageRoute(builder: (_) => const MedicalNotesScreen()));
     }
 
     return Scaffold(
@@ -111,6 +121,7 @@ class DashboardScreen extends ConsumerWidget {
                         appointment: appointment,
                         preferences: preferences,
                         onMessagesTap: openMessages,
+                        onMedicalNotesTap: openMedicalNotes,
                         onAccessibilityTap: openAccessibility,
                       ),
                     ] else ...[
@@ -219,9 +230,12 @@ class DashboardScreen extends ConsumerWidget {
 
                           return QuickAccessTile(
                             item: item,
-                            onTap: item.title == 'Messages'
-                                ? openMessages
-                                : null,
+                            onTap: switch (item.kind) {
+                              QuickAccessKind.messages => openMessages,
+                              QuickAccessKind.medicalNotes => openMedicalNotes,
+                              QuickAccessKind.prescriptions ||
+                              QuickAccessKind.referrals => null,
+                            },
                           );
                         },
                       ),
@@ -298,6 +312,7 @@ class DashboardScreen extends ConsumerWidget {
               onSettingsTap: openAccessibility,
               onVisitsTap: openAppointments,
               onMessagesTap: openMessages,
+              onRecordsTap: openMedicalNotes,
             ),
           ],
         ),
@@ -311,12 +326,14 @@ class _ReducedClutterDashboardContent extends StatelessWidget {
     required this.appointment,
     required this.preferences,
     required this.onMessagesTap,
+    required this.onMedicalNotesTap,
     required this.onAccessibilityTap,
   });
 
   final Appointment appointment;
   final AccessibilityPreferences preferences;
   final VoidCallback onMessagesTap;
+  final VoidCallback onMedicalNotesTap;
   final VoidCallback onAccessibilityTap;
 
   @override
@@ -384,9 +401,10 @@ class _ReducedClutterDashboardContent extends StatelessWidget {
         ),
         const SizedBox(height: 12),
 
-        const _EssentialActionCard(
-          title: 'Medical Notes',
+        _EssentialActionCard(
+          title: 'Medical notes',
           subtitle: '3 recent',
+          onTap: onMedicalNotesTap,
         ),
         const SizedBox(height: 12),
 
@@ -405,18 +423,16 @@ class _EssentialActionCard extends StatelessWidget {
   const _EssentialActionCard({
     required this.title,
     required this.subtitle,
-    this.onTap,
+    required this.onTap,
   });
 
   final String title;
   final String subtitle;
-  final VoidCallback? onTap;
+  final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {
     final tokens = context.clearViewTokens;
-    final isInteractive = onTap != null;
-
     final card = AppCard(
       child: ConstrainedBox(
         constraints: const BoxConstraints(minHeight: 48),
@@ -433,18 +449,12 @@ class _EssentialActionCard extends StatelessWidget {
                 ],
               ),
             ),
-            if (isInteractive) ...[
-              const SizedBox(width: 12),
-              Icon(Icons.chevron_right, color: tokens.primary, size: 30),
-            ],
+            const SizedBox(width: 12),
+            Icon(Icons.chevron_right, color: tokens.primary, size: 30),
           ],
         ),
       ),
     );
-
-    if (!isInteractive) {
-      return Semantics(label: '$title, $subtitle', child: card);
-    }
 
     return Semantics(
       button: true,
