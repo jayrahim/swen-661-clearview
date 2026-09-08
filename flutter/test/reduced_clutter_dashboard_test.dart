@@ -10,7 +10,7 @@ import 'package:clearview_flutter/state/accessibility_preferences.dart';
 import 'package:clearview_flutter/widgets/ui_components.dart';
 
 void main() {
-  testWidgets('reduced clutter can be enabled and simplifies the dashboard', (
+  testWidgets('Reduced clutter can be enabled and simplifies the dashboard', (
     tester,
   ) async {
     final container = ProviderContainer();
@@ -34,12 +34,12 @@ void main() {
       isTrue,
     );
 
-    expect(find.text('Reduced clutter'), findsOneWidget);
+    expect(find.text('Reduced Clutter'), findsOneWidget);
     expect(find.text('Essential actions'), findsOneWidget);
     expect(find.text('Quick Access'), findsNothing);
   });
 
-  testWidgets('reduced clutter appointment action opens appointment detail', (
+  testWidgets('Reduced clutter appointment action opens appointment detail', (
     tester,
   ) async {
     final container = ProviderContainer();
@@ -69,7 +69,7 @@ void main() {
   });
 
   testWidgets(
-    'reduced clutter accessibility action opens accessibility settings',
+    'Reduced clutter accessibility action opens accessibility settings',
     (tester) async {
       final container = ProviderContainer();
       addTearDown(container.dispose);
@@ -98,73 +98,67 @@ void main() {
   );
 
   testWidgets(
-  'reduced clutter hides interactive affordances for cards without handlers',
-  (tester) async {
-    final container = ProviderContainer();
-    addTearDown(container.dispose);
+    'Reduced clutter only shows interactive affordances for cards with handlers',
+    (tester) async {
+      final container = ProviderContainer();
+      addTearDown(container.dispose);
 
-    container
-        .read(accessibilityPreferencesProvider.notifier)
-        .toggleReducedClutter();
+      container
+          .read(accessibilityPreferencesProvider.notifier)
+          .toggleReducedClutter();
 
-    await tester.pumpWidget(
-      UncontrolledProviderScope(
-        container: container,
-        child: const MaterialApp(home: DashboardScreen()),
-      ),
-    );
+      await tester.pumpWidget(
+        UncontrolledProviderScope(
+          container: container,
+          child: const MaterialApp(home: DashboardScreen()),
+        ),
+      );
 
-    await tester.pumpAndSettle();
+      await tester.pumpAndSettle();
 
-    final messagesCard = find.ancestor(
-      of: find.text('2 unread'),
-      matching: find.byType(AppCard),
-    );
+      final messagesCard = find.ancestor(
+        of: find.text('2 unread'),
+        matching: find.byType(AppCard),
+      );
 
-    final medicalNotesCard = find.ancestor(
-      of: find.text('3 recent'),
-      matching: find.byType(AppCard),
-    );
+      final medicalNotesCard = find.ancestor(
+        of: find.text('3 recent'),
+        matching: find.byType(AppCard),
+      );
 
-    expect(messagesCard, findsOneWidget);
-    expect(medicalNotesCard, findsOneWidget);
+      expect(messagesCard, findsOneWidget);
+      expect(medicalNotesCard, findsOneWidget);
 
-    expect(
-      find.descendant(
-        of: messagesCard,
-        matching: find.byType(InkWell),
-      ),
-      findsNothing,
-    );
+      expect(
+        find.ancestor(of: messagesCard, matching: find.byType(InkWell)),
+        findsOneWidget,
+      );
 
-    expect(
-      find.descendant(
-        of: medicalNotesCard,
-        matching: find.byType(InkWell),
-      ),
-      findsNothing,
-    );
+      expect(
+        find.descendant(of: medicalNotesCard, matching: find.byType(InkWell)),
+        findsNothing,
+      );
 
-    expect(
-      find.descendant(
-        of: messagesCard,
-        matching: find.byIcon(Icons.chevron_right),
-      ),
-      findsNothing,
-    );
+      expect(
+        find.descendant(
+          of: messagesCard,
+          matching: find.byIcon(Icons.chevron_right),
+        ),
+        findsOneWidget,
+      );
 
-    expect(
-      find.descendant(
-        of: medicalNotesCard,
-        matching: find.byIcon(Icons.chevron_right),
-      ),
-      findsNothing,
-    );
-  },
-);
+      expect(
+        find.descendant(
+          of: medicalNotesCard,
+          matching: find.byIcon(Icons.chevron_right),
+        ),
+        findsNothing,
+      );
+    },
+  );
 
   testWidgets(
-    'reduced clutter preference summary reflects current accessibility state',
+    'Reduced clutter preference summary reflects current accessibility state',
     (tester) async {
       final container = ProviderContainer();
       addTearDown(container.dispose);

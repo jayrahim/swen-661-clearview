@@ -83,7 +83,7 @@ class AccessibilitySettingsScreen extends ConsumerWidget {
                     ),
                     const SizedBox(height: 18),
                     AccessibilityOptionCard(
-                      title: 'Reduced clutter',
+                      title: 'Reduced Clutter',
                       description: 'Show fewer secondary items',
                       value: preferences.reducedClutter ? 'On' : 'Off',
                       onTap: controller.toggleReducedClutter,

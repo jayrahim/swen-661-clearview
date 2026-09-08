@@ -24,7 +24,7 @@ class DashboardScreen extends ConsumerWidget {
       subtitleColor: Color(0xFF00679D),
     ),
     QuickAccessItem(
-      title: 'Medical notes',
+      title: 'Medical Notes',
       subtitle: '3 recent',
       backgroundColor: AppColors.aqua,
       subtitleColor: AppColors.primary,
@@ -110,6 +110,7 @@ class DashboardScreen extends ConsumerWidget {
                       _ReducedClutterDashboardContent(
                         appointment: appointment,
                         preferences: preferences,
+                        onMessagesTap: openMessages,
                         onAccessibilityTap: openAccessibility,
                       ),
                     ] else ...[
@@ -309,11 +310,13 @@ class _ReducedClutterDashboardContent extends StatelessWidget {
   const _ReducedClutterDashboardContent({
     required this.appointment,
     required this.preferences,
+    required this.onMessagesTap,
     required this.onAccessibilityTap,
   });
 
   final Appointment appointment;
   final AccessibilityPreferences preferences;
+  final VoidCallback onMessagesTap;
   final VoidCallback onAccessibilityTap;
 
   @override
@@ -324,7 +327,7 @@ class _ReducedClutterDashboardContent extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         StatusPill(
-          label: 'Reduced clutter',
+          label: 'Reduced Clutter',
           backgroundColor: tokens.surface,
           foregroundColor: tokens.primary,
           borderColor: tokens.border,
@@ -374,11 +377,15 @@ class _ReducedClutterDashboardContent extends StatelessWidget {
         ),
         const SizedBox(height: 16),
 
-        const _EssentialActionCard(title: 'Messages', subtitle: '2 unread'),
+        _EssentialActionCard(
+          title: 'Messages',
+          subtitle: '2 unread',
+          onTap: onMessagesTap,
+        ),
         const SizedBox(height: 12),
 
         const _EssentialActionCard(
-          title: 'Medical notes',
+          title: 'Medical Notes',
           subtitle: '3 recent',
         ),
         const SizedBox(height: 12),
