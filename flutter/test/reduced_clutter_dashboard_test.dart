@@ -36,7 +36,34 @@ void main() {
 
     expect(find.text('Reduced Clutter'), findsOneWidget);
     expect(find.text('Essential actions'), findsOneWidget);
-    expect(find.text('Quick Access'), findsNothing);
+    expect(find.text('Quick access'), findsNothing);
+  });
+
+  testWidgets('disabling reduced clutter restores normal dashboard content', (
+    tester,
+  ) async {
+    final container = ProviderContainer();
+    addTearDown(container.dispose);
+    final controller = container.read(
+      accessibilityPreferencesProvider.notifier,
+    );
+    controller.toggleReducedClutter();
+
+    await tester.pumpWidget(
+      UncontrolledProviderScope(
+        container: container,
+        child: const MaterialApp(home: DashboardScreen()),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.text('Essential actions'), findsOneWidget);
+
+    controller.toggleReducedClutter();
+    await tester.pumpAndSettle();
+
+    expect(find.text('Quick access'), findsOneWidget);
+    expect(find.text('Essential actions'), findsNothing);
   });
 
   testWidgets('Reduced clutter appointment action opens appointment detail', (
@@ -199,6 +226,40 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.text('Extra large text • High contrast'), findsOneWidget);
+    },
+  );
+
+  testWidgets(
+    'Reduced clutter remains usable at 2x text scaling with High Contrast',
+    (tester) async {
+      final container = ProviderContainer();
+      addTearDown(container.dispose);
+      container
+          .read(accessibilityPreferencesProvider.notifier)
+          .toggleReducedClutter();
+
+      await tester.pumpWidget(
+        MediaQuery(
+          data: MediaQueryData(textScaler: TextScaler.linear(2)),
+          child: UncontrolledProviderScope(
+            container: container,
+            child: const ClearViewApp(),
+          ),
+        ),
+      );
+
+      await tester.ensureVisible(find.text('Sign in'));
+      await tester.tap(find.text('Sign in'));
+      await tester.pumpAndSettle();
+
+      // High Contrast is enabled by the default accessibility preferences.
+      expect(
+        container.read(accessibilityPreferencesProvider).highContrast,
+        isTrue,
+      );
+      expect(find.text('Reduced Clutter'), findsOneWidget);
+      expect(find.text('Essential actions'), findsOneWidget);
+      expect(tester.takeException(), isNull);
     },
   );
 }
