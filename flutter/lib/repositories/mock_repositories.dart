@@ -3,10 +3,12 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../models/appointment.dart';
 import '../models/medical_note.dart';
 import '../models/message.dart';
+import 'repository_contracts.dart';
 
-class AppointmentRepository {
-  const AppointmentRepository();
-  static final _appointments = [
+class MockAppointmentRepository implements AppointmentRepository {
+  const MockAppointmentRepository();
+
+  static final List<Appointment> _appointments = List.unmodifiable([
     Appointment(
       id: 'appt-1',
       clinicianName: 'Dr. Elena Martinez',
@@ -41,16 +43,20 @@ class AppointmentRepository {
       visitFormat: VisitFormat.inPersonAppointment,
       preparationNote: 'Please contact the clinic to confirm this appointment.',
     ),
-  ];
-  List<Appointment> getAll() => List.unmodifiable(_appointments);
+  ]);
+
+  @override
+  List<Appointment> getAll() => _appointments;
+
+  @override
   Appointment? getById(String id) =>
       _appointments.where((item) => item.id == id).firstOrNull;
 }
 
-class MessageRepository {
-  const MessageRepository();
+class MockMessageRepository implements MessageRepository {
+  const MockMessageRepository();
 
-  static final _messages = [
+  static final List<Message> _messages = List.unmodifiable([
     Message(
       id: 'msg-1',
       sender: 'Dr. David Chen',
@@ -92,17 +98,20 @@ class MessageRepository {
       sentAt: DateTime(2026, 8, 19, 14, 3),
       isRead: true,
     ),
-  ];
+  ]);
 
-  List<Message> getAll() => List.unmodifiable(_messages);
+  @override
+  List<Message> getAll() => _messages;
 
+  @override
   Message? getById(String id) =>
       _messages.where((item) => item.id == id).firstOrNull;
 }
 
-class MedicalNoteRepository {
-  const MedicalNoteRepository();
-  static final _notes = [
+class MockMedicalNoteRepository implements MedicalNoteRepository {
+  const MockMedicalNoteRepository();
+
+  static final List<MedicalNote> _notes = List.unmodifiable([
     MedicalNote(
       id: 'note-1',
       title: 'Primary Care Follow-up',
@@ -136,16 +145,22 @@ class MedicalNoteRepository {
       plan: 'Continue the current care plan and contact the clinic with concerns.',
       status: MedicalNoteStatus.reviewed,
     ),
-  ];
-  List<MedicalNote> getAll() => List.unmodifiable(_notes);
+  ]);
+
+  @override
+  List<MedicalNote> getAll() => _notes;
+
+  @override
   MedicalNote? getById(String id) =>
       _notes.where((item) => item.id == id).firstOrNull;
 }
 
-final appointmentRepositoryProvider = Provider(
-  (ref) => const AppointmentRepository(),
+final appointmentRepositoryProvider = Provider<AppointmentRepository>(
+  (ref) => const MockAppointmentRepository(),
 );
-final messageRepositoryProvider = Provider((ref) => const MessageRepository());
-final medicalNoteRepositoryProvider = Provider(
-  (ref) => const MedicalNoteRepository(),
+final messageRepositoryProvider = Provider<MessageRepository>(
+  (ref) => const MockMessageRepository(),
+);
+final medicalNoteRepositoryProvider = Provider<MedicalNoteRepository>(
+  (ref) => const MockMedicalNoteRepository(),
 );

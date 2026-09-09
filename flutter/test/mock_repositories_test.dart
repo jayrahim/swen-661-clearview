@@ -5,7 +5,7 @@ import 'package:clearview_flutter/repositories/mock_repositories.dart';
 
 void main() {
   test('appointment repository retrieves synthetic appointments by id', () {
-    const repository = AppointmentRepository();
+    const repository = MockAppointmentRepository();
     final appointments = repository.getAll();
 
     expect(appointments, hasLength(3));
@@ -16,8 +16,8 @@ void main() {
   });
 
   test('message and medical note repositories supply synthetic data', () {
-    const messages = MessageRepository();
-    const notes = MedicalNoteRepository();
+    const messages = MockMessageRepository();
+    const notes = MockMedicalNoteRepository();
 
     expect(messages.getAll(), hasLength(4));
 
