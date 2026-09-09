@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../models/appointment.dart';
 import '../theme/clearview_tokens.dart';
 import '../utils/appointment_date_format.dart';
+import '../widgets/prototype_feedback.dart';
 import '../widgets/ui_components.dart';
 
 class AppointmentDetailScreen extends StatelessWidget {
@@ -11,11 +12,13 @@ class AppointmentDetailScreen extends StatelessWidget {
     required this.appointment,
     required this.onVisitsTap,
     required this.onSettingsTap,
+    this.onMessagesTap,
   });
 
   final Appointment appointment;
   final VoidCallback onVisitsTap;
   final VoidCallback onSettingsTap;
+  final VoidCallback? onMessagesTap;
 
   @override
   Widget build(BuildContext context) {
@@ -25,6 +28,7 @@ class AppointmentDetailScreen extends StatelessWidget {
       isRootTab: false,
       onHomeTap: () => Navigator.of(context).popUntil((route) => route.isFirst),
       onVisitsTap: onVisitsTap,
+      onMessagesTap: onMessagesTap,
       onSettingsTap: onSettingsTap,
       contentWidth: ClearViewContentWidth.reading,
       child: Column(
@@ -135,7 +139,7 @@ class AppointmentDetailScreen extends StatelessWidget {
                   const SizedBox(height: 24),
                   PrimaryButton(
                     label: 'Get directions',
-                    onPressed: () => _showPrototypeMessage(
+                    onPressed: () => showPrototypeFeedback(
                       context,
                       'Directions are not available in this prototype.',
                     ),
@@ -145,7 +149,7 @@ class AppointmentDetailScreen extends StatelessWidget {
                     width: double.infinity,
                     height: 53,
                     child: OutlinedButton(
-                      onPressed: () => _showPrototypeMessage(
+                      onPressed: () => showPrototypeFeedback(
                         context,
                         'Rescheduling is not available in this prototype.',
                       ),
@@ -167,10 +171,6 @@ class AppointmentDetailScreen extends StatelessWidget {
       ),
     );
   }
-}
-
-void _showPrototypeMessage(BuildContext context, String message) {
-  ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message)));
 }
 
 class _DetailSection extends StatelessWidget {

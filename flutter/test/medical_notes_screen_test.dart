@@ -6,6 +6,7 @@ import 'package:clearview_flutter/main.dart';
 import 'package:clearview_flutter/screens/dashboard_screen.dart';
 import 'package:clearview_flutter/screens/medical_note_detail_screen.dart';
 import 'package:clearview_flutter/screens/medical_notes_screen.dart';
+import 'package:clearview_flutter/screens/messages_screen.dart';
 import 'package:clearview_flutter/state/accessibility_preferences.dart';
 import 'package:clearview_flutter/theme/clearview_tokens.dart';
 
@@ -117,6 +118,18 @@ void main() {
       );
     },
   );
+
+  testWidgets('Messages navigation opens Messages from Medical Notes', (
+    tester,
+  ) async {
+    await tester.pumpWidget(buildNotesApp());
+
+    await tester.tap(find.text('Messages'));
+    await tester.pumpAndSettle();
+
+    expect(find.byType(MessagesScreen), findsOneWidget);
+    expect(find.text('2 unread'), findsOneWidget);
+  });
 
   testWidgets('Medical Notes tolerates 2x text scaling without an exception', (
     tester,

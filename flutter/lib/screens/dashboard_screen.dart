@@ -59,18 +59,19 @@ class DashboardScreen extends ConsumerWidget {
           MaterialPageRoute(builder: (_) => const AppointmentsScreen()),
           (route) => route.isFirst,
         );
+    void openMessages() =>
+        Navigator.of(context)
+            .push(MaterialPageRoute(builder: (_) => const MessagesScreen()));
     void openAccessibility() => Navigator.of(context).push(
       MaterialPageRoute(
         builder: (_) => AccessibilitySettingsScreen(
           onVisitsTap: openAppointmentsFromNavigation,
+          onMessagesTap: openMessages,
         ),
       ),
     );
     void openAppointments() => Navigator.of(context)
         .push(MaterialPageRoute(builder: (_) => const AppointmentsScreen()));
-    void openMessages() =>
-        Navigator.of(context)
-            .push(MaterialPageRoute(builder: (_) => const MessagesScreen()));
     void openMedicalNotes() => Navigator.of(context)
         .push(MaterialPageRoute(builder: (_) => const MedicalNotesScreen()));
     return ClearViewResponsiveScaffold(
@@ -133,6 +134,7 @@ class DashboardScreen extends ConsumerWidget {
                       appointment: appointment,
                       onVisitsTap: openAppointmentsFromNavigation,
                       onSettingsTap: openAccessibility,
+                      onMessagesTap: openMessages,
                     ),
                   ),
                 ),
@@ -207,6 +209,7 @@ class DashboardScreen extends ConsumerWidget {
                               appointment: appointment,
                               onVisitsTap: openAppointmentsFromNavigation,
                               onSettingsTap: openAccessibility,
+                              onMessagesTap: openMessages,
                             ),
                           ),
                         ),

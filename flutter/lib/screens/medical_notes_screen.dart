@@ -7,9 +7,11 @@ import '../theme/app_colors.dart';
 import '../theme/clearview_tokens.dart';
 import '../utils/appointment_date_format.dart';
 import '../widgets/ui_components.dart';
+import '../widgets/prototype_feedback.dart';
 import 'accessibility_settings_screen.dart';
 import 'appointments_screen.dart';
 import 'medical_note_detail_screen.dart';
+import 'messages_screen.dart';
 
 class MedicalNotesScreen extends ConsumerWidget {
   const MedicalNotesScreen({super.key});
@@ -23,11 +25,18 @@ class MedicalNotesScreen extends ConsumerWidget {
           .push(MaterialPageRoute(builder: (_) => const AppointmentsScreen()));
     }
 
+    void openMessages() {
+      Navigator.of(context)
+          .push(MaterialPageRoute(builder: (_) => const MessagesScreen()));
+    }
+
     void openSettings() {
       Navigator.of(context).push(
         MaterialPageRoute(
-          builder: (_) =>
-              AccessibilitySettingsScreen(onVisitsTap: openAppointments),
+          builder: (_) => AccessibilitySettingsScreen(
+            onVisitsTap: openAppointments,
+            onMessagesTap: openMessages,
+          ),
         ),
       );
     }
@@ -36,15 +45,15 @@ class MedicalNotesScreen extends ConsumerWidget {
       selectedItem: ClearViewNavigationItem.records,
       onHomeTap: () => Navigator.of(context).popUntil((route) => route.isFirst),
       onVisitsTap: openAppointments,
+      onMessagesTap: openMessages,
       onSettingsTap: openSettings,
       contentWidth: ClearViewContentWidth.reading,
       child: Column(
         children: [
           _MedicalNotesHeader(
-            onFilterTap: () => ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text('Filtering is not available in this prototype.'),
-              ),
+            onFilterTap: () => showPrototypeFeedback(
+              context,
+              'Filtering is not available in this prototype.',
             ),
           ),
           Expanded(
@@ -67,6 +76,7 @@ class MedicalNotesScreen extends ConsumerWidget {
                             note: note,
                             onVisitsTap: openAppointments,
                             onSettingsTap: openSettings,
+                            onMessagesTap: openMessages,
                           ),
                         ),
                       ),

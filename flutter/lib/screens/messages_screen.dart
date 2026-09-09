@@ -31,6 +31,7 @@ class MessagesScreen extends ConsumerWidget {
       MaterialPageRoute(
         builder: (_) => AccessibilitySettingsScreen(
           onVisitsTap: openAppointmentsFromNavigation,
+          onMessagesTap: () => Navigator.of(context).pop(),
         ),
       ),
     );
