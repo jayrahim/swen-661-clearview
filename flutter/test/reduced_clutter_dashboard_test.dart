@@ -6,6 +6,7 @@ import 'package:clearview_flutter/main.dart';
 import 'package:clearview_flutter/screens/appointment_detail_screen.dart';
 import 'package:clearview_flutter/screens/dashboard_screen.dart';
 import 'package:clearview_flutter/screens/accessibility_settings_screen.dart';
+import 'package:clearview_flutter/screens/medical_notes_screen.dart';
 import 'package:clearview_flutter/state/accessibility_preferences.dart';
 import 'package:clearview_flutter/widgets/ui_components.dart';
 
@@ -125,7 +126,7 @@ void main() {
   );
 
   testWidgets(
-    'Reduced clutter only shows interactive affordances for cards with handlers',
+    'Reduced clutter essential actions expose only available destinations',
     (tester) async {
       final container = ProviderContainer();
       addTearDown(container.dispose);
@@ -162,8 +163,8 @@ void main() {
       );
 
       expect(
-        find.descendant(of: medicalNotesCard, matching: find.byType(InkWell)),
-        findsNothing,
+        find.ancestor(of: medicalNotesCard, matching: find.byType(InkWell)),
+        findsOneWidget,
       );
 
       expect(
@@ -179,10 +180,35 @@ void main() {
           of: medicalNotesCard,
           matching: find.byIcon(Icons.chevron_right),
         ),
-        findsNothing,
+        findsOneWidget,
       );
     },
   );
+
+  testWidgets('Reduced clutter Medical notes action opens Medical Notes', (
+    tester,
+  ) async {
+    final container = ProviderContainer();
+    addTearDown(container.dispose);
+    container
+        .read(accessibilityPreferencesProvider.notifier)
+        .toggleReducedClutter();
+
+    await tester.pumpWidget(
+      UncontrolledProviderScope(
+        container: container,
+        child: const MaterialApp(home: DashboardScreen()),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    final medicalNotes = find.text('Medical notes');
+    await tester.ensureVisible(medicalNotes);
+    await tester.tap(medicalNotes);
+    await tester.pumpAndSettle();
+
+    expect(find.byType(MedicalNotesScreen), findsOneWidget);
+  });
 
   testWidgets(
     'Reduced clutter preference summary reflects current accessibility state',

@@ -23,6 +23,42 @@ String appointmentBadgeLabel(DateTime dateTime) {
   return '${months[dateTime.month - 1]} ${dateTime.day}';
 }
 
+String shortDateLabel(DateTime dateTime) {
+  const months = [
+    'Jan',
+    'Feb',
+    'Mar',
+    'Apr',
+    'May',
+    'Jun',
+    'Jul',
+    'Aug',
+    'Sep',
+    'Oct',
+    'Nov',
+    'Dec',
+  ];
+  return '${months[dateTime.month - 1]} ${dateTime.day}';
+}
+
+String dateOnlyLabel(DateTime dateTime) {
+  const months = [
+    'January',
+    'February',
+    'March',
+    'April',
+    'May',
+    'June',
+    'July',
+    'August',
+    'September',
+    'October',
+    'November',
+    'December',
+  ];
+  return '${months[dateTime.month - 1]} ${dateTime.day}, ${dateTime.year}';
+}
+
 String appointmentAccessibilityLabel(DateTime dateTime) =>
     '${appointmentBadgeLabel(dateTime)} at ${appointmentTimeLabel(dateTime)}';
 

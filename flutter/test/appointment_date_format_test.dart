@@ -15,6 +15,8 @@ void main() {
       final appointment = DateTime(2026, 9, 4, 10, 30);
 
       expect(appointmentBadgeLabel(appointment), 'SEP 4');
+      expect(shortDateLabel(appointment), 'Sep 4');
+      expect(dateOnlyLabel(appointment), 'September 4, 2026');
       expect(appointmentAccessibilityLabel(appointment), 'SEP 4 at 10:30 AM');
       expect(
         appointmentDetailLabel(appointment),
