@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../models/appointment.dart';
+import '../navigation/clearview_navigation.dart';
 import '../theme/clearview_tokens.dart';
 import '../utils/appointment_date_format.dart';
 import '../widgets/prototype_feedback.dart';
@@ -26,7 +27,7 @@ class AppointmentDetailScreen extends StatelessWidget {
     return ClearViewResponsiveScaffold(
       selectedItem: ClearViewNavigationItem.visits,
       isRootTab: false,
-      onHomeTap: () => Navigator.of(context).popUntil((route) => route.isFirst),
+      onHomeTap: () => ClearViewNavigation.returnHome(context),
       onVisitsTap: onVisitsTap,
       onMessagesTap: onMessagesTap,
       onSettingsTap: onSettingsTap,

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../models/appointment.dart';
+import '../navigation/clearview_navigation.dart';
 import '../repositories/mock_repositories.dart';
 import '../theme/app_colors.dart';
 import '../theme/clearview_tokens.dart';
@@ -21,27 +22,22 @@ class AppointmentsScreen extends ConsumerWidget {
     final appointments = ref.watch(appointmentRepositoryProvider).getAll();
 
     void openAppointmentsFromNavigation() =>
-        Navigator.of(context).pushAndRemoveUntil(
-          MaterialPageRoute(builder: (_) => const AppointmentsScreen()),
-          (route) => route.isFirst,
-        );
+        ClearViewNavigation.openRootTab(context, const AppointmentsScreen());
     void openMessages() =>
-        Navigator.of(context)
-            .push(MaterialPageRoute(builder: (_) => const MessagesScreen()));
-    void openSettings() => Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (_) => AccessibilitySettingsScreen(
-          onVisitsTap: openAppointmentsFromNavigation,
-          onMessagesTap: openMessages,
-        ),
+        ClearViewNavigation.push(context, const MessagesScreen());
+    void openSettings() => ClearViewNavigation.push(
+      context,
+      AccessibilitySettingsScreen(
+        onVisitsTap: openAppointmentsFromNavigation,
+        onMessagesTap: openMessages,
       ),
     );
-    void openMedicalNotes() => Navigator.of(context)
-        .push(MaterialPageRoute(builder: (_) => const MedicalNotesScreen()));
+    void openMedicalNotes() =>
+        ClearViewNavigation.push(context, const MedicalNotesScreen());
 
     return ClearViewResponsiveScaffold(
       selectedItem: ClearViewNavigationItem.visits,
-      onHomeTap: () => Navigator.of(context).popUntil((route) => route.isFirst),
+      onHomeTap: () => ClearViewNavigation.returnHome(context),
       onSettingsTap: openSettings,
       onMessagesTap: openMessages,
       onRecordsTap: openMedicalNotes,
@@ -65,14 +61,13 @@ class AppointmentsScreen extends ConsumerWidget {
                   for (final appointment in appointments) ...[
                     AppointmentListCard(
                       appointment: appointment,
-                      onTap: () => Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (_) => AppointmentDetailScreen(
-                            appointment: appointment,
-                            onVisitsTap: openAppointmentsFromNavigation,
-                            onSettingsTap: openSettings,
-                            onMessagesTap: openMessages,
-                          ),
+                      onTap: () => ClearViewNavigation.push(
+                        context,
+                        AppointmentDetailScreen(
+                          appointment: appointment,
+                          onVisitsTap: openAppointmentsFromNavigation,
+                          onSettingsTap: openSettings,
+                          onMessagesTap: openMessages,
                         ),
                       ),
                     ),

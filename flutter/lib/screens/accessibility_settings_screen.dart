@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../navigation/clearview_navigation.dart';
 import '../state/accessibility_preferences.dart';
 import '../theme/clearview_tokens.dart';
 import '../widgets/ui_components.dart';
@@ -24,7 +25,7 @@ class AccessibilitySettingsScreen extends ConsumerWidget {
     return ClearViewResponsiveScaffold(
       selectedItem: ClearViewNavigationItem.settings,
       isRootTab: false,
-      onHomeTap: () => Navigator.of(context).popUntil((route) => route.isFirst),
+      onHomeTap: () => ClearViewNavigation.returnHome(context),
       onVisitsTap: onVisitsTap,
       onMessagesTap: onMessagesTap,
       contentWidth: ClearViewContentWidth.reading,

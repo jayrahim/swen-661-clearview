@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../models/appointment.dart';
 import '../models/quick_access_item.dart';
+import '../navigation/clearview_navigation.dart';
 import '../repositories/mock_repositories.dart';
 import '../state/accessibility_preferences.dart';
 import '../theme/app_colors.dart';
@@ -55,25 +56,20 @@ class DashboardScreen extends ConsumerWidget {
     final tokens = context.clearViewTokens;
     final appointment = ref.watch(appointmentRepositoryProvider).getAll().first;
     void openAppointmentsFromNavigation() =>
-        Navigator.of(context).pushAndRemoveUntil(
-          MaterialPageRoute(builder: (_) => const AppointmentsScreen()),
-          (route) => route.isFirst,
-        );
+        ClearViewNavigation.openRootTab(context, const AppointmentsScreen());
     void openMessages() =>
-        Navigator.of(context)
-            .push(MaterialPageRoute(builder: (_) => const MessagesScreen()));
-    void openAccessibility() => Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (_) => AccessibilitySettingsScreen(
-          onVisitsTap: openAppointmentsFromNavigation,
-          onMessagesTap: openMessages,
-        ),
+        ClearViewNavigation.push(context, const MessagesScreen());
+    void openAccessibility() => ClearViewNavigation.push(
+      context,
+      AccessibilitySettingsScreen(
+        onVisitsTap: openAppointmentsFromNavigation,
+        onMessagesTap: openMessages,
       ),
     );
-    void openAppointments() => Navigator.of(context)
-        .push(MaterialPageRoute(builder: (_) => const AppointmentsScreen()));
-    void openMedicalNotes() => Navigator.of(context)
-        .push(MaterialPageRoute(builder: (_) => const MedicalNotesScreen()));
+    void openAppointments() =>
+        ClearViewNavigation.push(context, const AppointmentsScreen());
+    void openMedicalNotes() =>
+        ClearViewNavigation.push(context, const MedicalNotesScreen());
     return ClearViewResponsiveScaffold(
       onSettingsTap: openAccessibility,
       onVisitsTap: openAppointments,
@@ -128,14 +124,13 @@ class DashboardScreen extends ConsumerWidget {
                 onMessagesTap: openMessages,
                 onMedicalNotesTap: openMedicalNotes,
                 onAccessibilityTap: openAccessibility,
-                onAppointmentTap: () => Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (_) => AppointmentDetailScreen(
-                      appointment: appointment,
-                      onVisitsTap: openAppointmentsFromNavigation,
-                      onSettingsTap: openAccessibility,
-                      onMessagesTap: openMessages,
-                    ),
+                onAppointmentTap: () => ClearViewNavigation.push(
+                  context,
+                  AppointmentDetailScreen(
+                    appointment: appointment,
+                    onVisitsTap: openAppointmentsFromNavigation,
+                    onSettingsTap: openAccessibility,
+                    onMessagesTap: openMessages,
                   ),
                 ),
               )
@@ -203,14 +198,13 @@ class DashboardScreen extends ConsumerWidget {
                       button: true,
                       label: 'View appointment details',
                       child: TextButton(
-                        onPressed: () => Navigator.of(context).push(
-                          MaterialPageRoute(
-                            builder: (_) => AppointmentDetailScreen(
-                              appointment: appointment,
-                              onVisitsTap: openAppointmentsFromNavigation,
-                              onSettingsTap: openAccessibility,
-                              onMessagesTap: openMessages,
-                            ),
+                        onPressed: () => ClearViewNavigation.push(
+                          context,
+                          AppointmentDetailScreen(
+                            appointment: appointment,
+                            onVisitsTap: openAppointmentsFromNavigation,
+                            onSettingsTap: openAccessibility,
+                            onMessagesTap: openMessages,
                           ),
                         ),
                         child: const Text('View details  →'),
