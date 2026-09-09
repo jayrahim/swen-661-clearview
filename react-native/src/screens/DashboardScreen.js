@@ -1,4 +1,4 @@
-import { StyleSheet, Text, useWindowDimensions, View } from 'react-native';
+import { Pressable, StyleSheet, Text, useWindowDimensions, View } from 'react-native';
 
 import { AppCard } from '../components/AppCard';
 import { BottomNavigation } from '../components/BottomNavigation';
@@ -6,23 +6,27 @@ import { QuickAccessTile } from '../components/QuickAccessTile';
 import { ScreenContainer } from '../components/ScreenContainer';
 import { nextAppointment, quickAccessItems } from '../data/dashboardData';
 import { colors, spacing, typography } from '../theme/tokens';
+import { useAccessibilityPreferences } from '../state/accessibilityPreferences';
+import { resolveTheme, scaledFontSize } from '../theme/tokens';
 
-export function DashboardScreen() {
+export function DashboardScreen({ onOpenAccessibility }) {
   const { width } = useWindowDimensions();
   const isTablet = width >= 600;
+  const { preferences } = useAccessibilityPreferences();
+  const theme = resolveTheme(preferences);
 
   return (
-    <View style={styles.screen}>
+    <View style={[styles.screen, { backgroundColor: theme.colors.background }]}>
       <ScreenContainer>
         <View style={styles.content}>
           <View style={styles.header}>
-            <Text accessibilityRole="header" style={styles.greeting}>
+            <Text accessibilityRole="header" style={[styles.greeting, { fontSize: scaledFontSize(23, theme) }]}>
               Good morning, Maya
             </Text>
-            <Text style={styles.accessibilityLabel}>Accessibility</Text>
+            <Pressable accessibilityLabel="Accessibility settings" accessibilityRole="button" onPress={onOpenAccessibility} style={styles.accessibilityShortcut}><Text style={styles.accessibilityLabel}>Accessibility</Text></Pressable>
           </View>
 
-          <Text style={styles.date}>Thursday, August 27</Text>
+          <Text style={[styles.date, { fontSize: scaledFontSize(16, theme) }]}>Thursday, August 27</Text>
 
           <AppCard>
             <View style={styles.appointmentHeader}>
@@ -40,7 +44,7 @@ export function DashboardScreen() {
           <Text accessibilityRole="header" style={styles.sectionTitle}>
             Quick access
           </Text>
-          <View style={isTablet ? styles.tabletTiles : styles.phoneTiles}>
+          {!preferences.reducedClutter && <View style={isTablet ? styles.tabletTiles : styles.phoneTiles}>
             {quickAccessItems.map((item) => (
               <QuickAccessTile
                 item={item}
@@ -48,19 +52,19 @@ export function DashboardScreen() {
                 style={isTablet ? styles.tabletTile : styles.phoneTile}
               />
             ))}
-          </View>
+          </View>}
 
-          <AppCard style={styles.preferencesCard}>
+          <Pressable accessibilityLabel="Accessibility preferences" accessibilityRole="button" onPress={onOpenAccessibility}><AppCard style={styles.preferencesCard}>
             <View style={styles.preferencesContent}>
               <View>
                 <Text style={styles.preferencesTitle}>Accessibility preferences</Text>
-                <Text style={styles.preferencesDetail}>Text: Large • High contrast: On</Text>
+                <Text style={[styles.preferencesDetail, { fontSize: scaledFontSize(14, theme) }]}>Text: {preferences.textSize.label} • High contrast: {preferences.highContrast ? 'On' : 'Off'}</Text>
               </View>
               <Text accessibilityElementsHidden style={styles.chevron}>
                 ›
               </Text>
             </View>
-          </AppCard>
+          </AppCard></Pressable>
         </View>
       </ScreenContainer>
       <BottomNavigation activeItem="home" />
@@ -75,6 +79,7 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     marginTop: spacing.xs,
   },
+  accessibilityShortcut: { minHeight: 48, justifyContent: 'center' },
   appointmentHeader: {
     alignItems: 'flex-start',
     flexDirection: 'row',

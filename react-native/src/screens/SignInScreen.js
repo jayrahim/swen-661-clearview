@@ -10,10 +10,14 @@ import {
 import { PrimaryButton } from '../components/PrimaryButton';
 import { ScreenContainer } from '../components/ScreenContainer';
 import { colors, layout, spacing, typography } from '../theme/tokens';
+import { useAccessibilityPreferences } from '../state/accessibilityPreferences';
+import { resolveTheme, scaledFontSize } from '../theme/tokens';
 
 export function SignInScreen({ onSignIn }) {
   const [passwordVisible, setPasswordVisible] = useState(false);
   const [prototypeMessage, setPrototypeMessage] = useState(null);
+  const { preferences } = useAccessibilityPreferences();
+  const theme = resolveTheme(preferences);
 
   return (
     <ScreenContainer>
@@ -21,8 +25,8 @@ export function SignInScreen({ onSignIn }) {
         <Text style={styles.brand}>CareConnect</Text>
         <Text style={styles.product}>ClearView</Text>
 
-        <Text style={styles.title}>Sign in to manage your care</Text>
-        <Text style={styles.description}>
+        <Text style={[styles.title, { fontSize: scaledFontSize(26, theme) }]}>Sign in to manage your care</Text>
+        <Text style={[styles.description, { fontSize: scaledFontSize(16, theme) }]}>
           Use your CareConnect account to view appointments, messages, and health information.
         </Text>
 

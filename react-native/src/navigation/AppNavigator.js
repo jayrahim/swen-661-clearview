@@ -1,6 +1,7 @@
 import { useState } from 'react';
 
 import { DashboardScreen } from '../screens/DashboardScreen';
+import { AccessibilitySettingsScreen } from '../screens/AccessibilitySettingsScreen';
 import { SignInScreen } from '../screens/SignInScreen';
 
 /**
@@ -11,7 +12,11 @@ export function AppNavigator() {
   const [screen, setScreen] = useState('sign-in');
 
   if (screen === 'dashboard') {
-    return <DashboardScreen />;
+    return <DashboardScreen onOpenAccessibility={() => setScreen('accessibility')} />;
+  }
+
+  if (screen === 'accessibility') {
+    return <AccessibilitySettingsScreen onBack={() => setScreen('dashboard')} />;
   }
 
   return <SignInScreen onSignIn={() => setScreen('dashboard')} />;
