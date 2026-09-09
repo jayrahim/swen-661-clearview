@@ -22,7 +22,6 @@ class ClearViewResponsiveScaffold extends StatelessWidget {
     this.onRecordsTap,
     this.selectedItem = ClearViewNavigationItem.home,
     this.isRootTab = true,
-    this.showTabletNavigation = true,
     this.contentWidth = ClearViewContentWidth.wide,
   });
 
@@ -37,7 +36,6 @@ class ClearViewResponsiveScaffold extends StatelessWidget {
   /// Root tabs show the persistent phone navigation; stack-pushed subpages
   /// retain their approved back-arrow presentation instead.
   final bool isRootTab;
-  final bool showTabletNavigation;
   final ClearViewContentWidth contentWidth;
 
   @override
@@ -63,7 +61,7 @@ class ClearViewResponsiveScaffold extends StatelessWidget {
 
     return Scaffold(
       body: SafeArea(
-        child: isTablet && showTabletNavigation
+        child: isTablet
             ? Row(
                 children: [
                   ClearViewSideNavigation(
