@@ -1,6 +1,7 @@
 import { screen } from '@testing-library/react-native';
 
 import { DashboardScreen } from '../src/screens/DashboardScreen';
+import { defaultAccessibilityPreferences } from '../src/state/accessibilityPreferences';
 import { renderWithProviders } from '../src/test-utils/renderWithProviders';
 
 describe('DashboardScreen', () => {
@@ -19,5 +20,17 @@ describe('DashboardScreen', () => {
     expect(screen.getByLabelText('Home').props.accessibilityState).toEqual({
       selected: true,
     });
+  });
+
+  test('hides Quick Access tiles when Reduced Clutter is enabled', async () => {
+    await renderWithProviders(<DashboardScreen />, {
+      initialPreferences: {
+        ...defaultAccessibilityPreferences,
+        reducedClutter: true,
+      },
+    });
+
+    expect(screen.queryByLabelText('Messages, 2 unread')).toBeNull();
+    expect(screen.getByText('Text: Large • High contrast: On')).toBeVisible();
   });
 });

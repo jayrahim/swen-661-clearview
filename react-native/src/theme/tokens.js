@@ -60,3 +60,15 @@ export const borderWidths = {
   normal: 1,
   highContrast: 2,
 };
+
+export function resolveTheme(preferences) {
+  return {
+    colors: preferences.highContrast ? highContrastColors : colors,
+    borderWidth: preferences.highContrast ? borderWidths.highContrast : borderWidths.normal,
+    textScale: preferences.textSize.scale,
+  };
+}
+
+export function scaledFontSize(size, theme) {
+  return size * theme.textScale;
+}
