@@ -25,60 +25,61 @@ class MedicalNotesScreen extends ConsumerWidget {
 
     void openSettings() {
       Navigator.of(context).push(
-        MaterialPageRoute(builder: (_) => const AccessibilitySettingsScreen()),
+        MaterialPageRoute(
+          builder: (_) =>
+              AccessibilitySettingsScreen(onVisitsTap: openAppointments),
+        ),
       );
     }
 
-    return Scaffold(
-      body: AppPage(
-        child: Column(
-          children: [
-            _MedicalNotesHeader(
-              onFilterTap: () => ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: Text(
-                    'Filtering is not available in this prototype.',
-                  ),
-                ),
+    return ClearViewResponsiveScaffold(
+      selectedItem: ClearViewNavigationItem.records,
+      onHomeTap: () => Navigator.of(context).popUntil((route) => route.isFirst),
+      onVisitsTap: openAppointments,
+      onSettingsTap: openSettings,
+      contentWidth: ClearViewContentWidth.reading,
+      child: Column(
+        children: [
+          _MedicalNotesHeader(
+            onFilterTap: () => ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text('Filtering is not available in this prototype.'),
               ),
             ),
-            Expanded(
-              child: SingleChildScrollView(
-                padding: const EdgeInsets.fromLTRB(18, 20, 18, 24),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Recent notes',
-                      style: Theme.of(context).textTheme.titleLarge,
-                    ),
-                    const SizedBox(height: 17),
-                    for (final note in notes) ...[
-                      _MedicalNoteCard(
-                        note: note,
-                        onTap: () => Navigator.of(context).push(
-                          MaterialPageRoute(
-                            builder: (_) => MedicalNoteDetailScreen(note: note),
+          ),
+          Expanded(
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.fromLTRB(18, 20, 18, 24),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Recent notes',
+                    style: Theme.of(context).textTheme.titleLarge,
+                  ),
+                  const SizedBox(height: 17),
+                  for (final note in notes) ...[
+                    _MedicalNoteCard(
+                      note: note,
+                      onTap: () => Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (_) => MedicalNoteDetailScreen(
+                            note: note,
+                            onVisitsTap: openAppointments,
+                            onSettingsTap: openSettings,
                           ),
                         ),
                       ),
-                      const SizedBox(height: 20),
-                    ],
-                    const SizedBox(height: 23),
-                    _AccessibilityGuidance(),
+                    ),
+                    const SizedBox(height: 20),
                   ],
-                ),
+                  const SizedBox(height: 23),
+                  _AccessibilityGuidance(),
+                ],
               ),
             ),
-            ClearViewBottomNavigation(
-              selectedItem: ClearViewNavigationItem.records,
-              onHomeTap: () =>
-                  Navigator.of(context).popUntil((route) => route.isFirst),
-              onVisitsTap: openAppointments,
-              onSettingsTap: openSettings,
-            ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

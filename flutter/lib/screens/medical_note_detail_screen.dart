@@ -6,100 +6,111 @@ import '../utils/appointment_date_format.dart';
 import '../widgets/ui_components.dart';
 
 class MedicalNoteDetailScreen extends StatelessWidget {
-  const MedicalNoteDetailScreen({super.key, required this.note});
+  const MedicalNoteDetailScreen({
+    super.key,
+    required this.note,
+    this.onVisitsTap,
+    this.onSettingsTap,
+  });
 
   final MedicalNote note;
+  final VoidCallback? onVisitsTap;
+  final VoidCallback? onSettingsTap;
 
   @override
   Widget build(BuildContext context) {
     final tokens = context.clearViewTokens;
-    return Scaffold(
-      body: AppPage(
-        child: Column(
-          children: [
-            Container(
-              width: double.infinity,
-              padding: const EdgeInsets.fromLTRB(10, 25, 18, 13),
-              decoration: BoxDecoration(
-                border: Border(
-                  bottom: BorderSide(
-                    color: tokens.border,
-                    width: tokens.borderWidth,
-                  ),
+    return ClearViewResponsiveScaffold(
+      selectedItem: ClearViewNavigationItem.records,
+      isRootTab: false,
+      onHomeTap: () => Navigator.of(context).popUntil((route) => route.isFirst),
+      onVisitsTap: onVisitsTap,
+      onSettingsTap: onSettingsTap,
+      contentWidth: ClearViewContentWidth.reading,
+      child: Column(
+        children: [
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.fromLTRB(10, 25, 18, 13),
+            decoration: BoxDecoration(
+              border: Border(
+                bottom: BorderSide(
+                  color: tokens.border,
+                  width: tokens.borderWidth,
                 ),
               ),
-              child: Row(
-                children: [
-                  IconButton(
-                    tooltip: 'Back to medical notes',
-                    constraints: const BoxConstraints(
-                      minWidth: 48,
-                      minHeight: 48,
-                    ),
-                    icon: Icon(Icons.arrow_back_ios_new, color: tokens.primary),
-                    onPressed: () => Navigator.of(context).pop(),
+            ),
+            child: Row(
+              children: [
+                IconButton(
+                  tooltip: 'Back to medical notes',
+                  constraints: const BoxConstraints(
+                    minWidth: 48,
+                    minHeight: 48,
                   ),
-                  const SizedBox(width: 8),
-                  Expanded(
-                    child: Text(
-                      'Visit Note',
-                      style: Theme.of(context).textTheme.headlineMedium,
+                  icon: Icon(Icons.arrow_back_ios_new, color: tokens.primary),
+                  onPressed: () => Navigator.of(context).pop(),
+                ),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: Text(
+                    'Visit Note',
+                    style: Theme.of(context).textTheme.headlineMedium,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Expanded(
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.fromLTRB(18, 20, 18, 28),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Semantics(
+                    container: true,
+                    label:
+                        '${note.title}, ${note.author}, ${dateOnlyLabel(note.createdAt)}',
+                    child: ExcludeSemantics(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            note.title,
+                            style: Theme.of(context).textTheme.headlineMedium,
+                          ),
+                          const SizedBox(height: 9),
+                          Text(
+                            '${note.author} • ${dateOnlyLabel(note.createdAt)}',
+                            style: Theme.of(context).textTheme.bodyMedium,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 38),
+                  _NoteSection(label: 'Summary', values: [note.summary]),
+                  _NoteSection(label: 'Assessment', values: note.assessment),
+                  _NoteSection(
+                    label: 'Plan',
+                    values: [note.plan],
+                    showDivider: false,
+                  ),
+                  const SizedBox(height: 34),
+                  _CareTeamPrompt(
+                    onTap: () => ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text(
+                          'Messaging the care team is not available in this prototype.',
+                        ),
+                      ),
                     ),
                   ),
                 ],
               ),
             ),
-            Expanded(
-              child: SingleChildScrollView(
-                padding: const EdgeInsets.fromLTRB(18, 20, 18, 28),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Semantics(
-                      container: true,
-                      label:
-                          '${note.title}, ${note.author}, ${dateOnlyLabel(note.createdAt)}',
-                      child: ExcludeSemantics(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              note.title,
-                              style: Theme.of(context).textTheme.headlineMedium,
-                            ),
-                            const SizedBox(height: 9),
-                            Text(
-                              '${note.author} • ${dateOnlyLabel(note.createdAt)}',
-                              style: Theme.of(context).textTheme.bodyMedium,
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 38),
-                    _NoteSection(label: 'Summary', values: [note.summary]),
-                    _NoteSection(label: 'Assessment', values: note.assessment),
-                    _NoteSection(
-                      label: 'Plan',
-                      values: [note.plan],
-                      showDivider: false,
-                    ),
-                    const SizedBox(height: 34),
-                    _CareTeamPrompt(
-                      onTap: () => ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text(
-                            'Messaging the care team is not available in this prototype.',
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

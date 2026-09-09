@@ -9,6 +9,7 @@ import '../utils/appointment_date_format.dart';
 import '../widgets/ui_components.dart';
 import 'accessibility_settings_screen.dart';
 import 'appointment_detail_screen.dart';
+import 'medical_notes_screen.dart';
 
 class AppointmentsScreen extends ConsumerWidget {
   const AppointmentsScreen({super.key});
@@ -29,11 +30,14 @@ class AppointmentsScreen extends ConsumerWidget {
         ),
       ),
     );
+    void openMedicalNotes() => Navigator.of(context)
+        .push(MaterialPageRoute(builder: (_) => const MedicalNotesScreen()));
 
     return ClearViewResponsiveScaffold(
       selectedItem: ClearViewNavigationItem.visits,
       onHomeTap: () => Navigator.of(context).popUntil((route) => route.isFirst),
       onSettingsTap: openSettings,
+      onRecordsTap: openMedicalNotes,
       contentWidth: ClearViewContentWidth.reading,
       child: Column(
         children: [

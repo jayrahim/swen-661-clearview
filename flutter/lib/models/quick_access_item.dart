@@ -9,7 +9,6 @@ class QuickAccessItem {
     required this.subtitle,
     required this.backgroundColor,
     required this.subtitleColor,
-    required this.kind,
   });
 
   final QuickAccessKind kind;
@@ -17,5 +16,4 @@ class QuickAccessItem {
   final String subtitle;
   final Color backgroundColor;
   final Color subtitleColor;
-  final QuickAccessKind kind;
 }

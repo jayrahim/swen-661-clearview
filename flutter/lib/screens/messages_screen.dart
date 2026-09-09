@@ -34,9 +34,8 @@ class MessagesScreen extends ConsumerWidget {
         ),
       ),
     );
-    void openMedicalNotes() => Navigator.of(context).push(
-      MaterialPageRoute(builder: (_) => const MedicalNotesScreen()),
-    );
+    void openMedicalNotes() => Navigator.of(context)
+        .push(MaterialPageRoute(builder: (_) => const MedicalNotesScreen()));
 
     return ClearViewResponsiveScaffold(
       selectedItem: ClearViewNavigationItem.messages,
