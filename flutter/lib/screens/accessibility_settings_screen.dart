@@ -12,10 +12,12 @@ class AccessibilitySettingsScreen extends ConsumerWidget {
     super.key,
     this.onVisitsTap,
     this.onMessagesTap,
+    this.onRecordsTap,
   });
 
   final VoidCallback? onVisitsTap;
   final VoidCallback? onMessagesTap;
+  final VoidCallback? onRecordsTap;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -28,6 +30,7 @@ class AccessibilitySettingsScreen extends ConsumerWidget {
       onHomeTap: () => ClearViewNavigation.returnHome(context),
       onVisitsTap: onVisitsTap,
       onMessagesTap: onMessagesTap,
+      onRecordsTap: onRecordsTap,
       contentWidth: ClearViewContentWidth.reading,
       child: Column(
         children: [

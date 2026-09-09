@@ -7,6 +7,7 @@ import 'package:clearview_flutter/screens/appointment_detail_screen.dart';
 import 'package:clearview_flutter/screens/appointments_screen.dart';
 import 'package:clearview_flutter/screens/dashboard_screen.dart';
 import 'package:clearview_flutter/screens/messages_screen.dart';
+import 'package:clearview_flutter/screens/medical_notes_screen.dart';
 import 'package:clearview_flutter/state/accessibility_preferences.dart';
 import 'package:clearview_flutter/theme/app_theme.dart';
 import 'package:clearview_flutter/widgets/ui_components.dart';
@@ -140,6 +141,33 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.byType(MessagesScreen), findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('Settings side navigation opens Records', (tester) async {
+    await pumpScreen(
+      tester,
+      size: const Size(1024, 768),
+      child: const DashboardScreen(),
+    );
+
+    await tester.tap(
+      find.descendant(
+        of: find.byKey(const Key('clearview-side-navigation')),
+        matching: find.text('Settings'),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    await tester.tap(
+      find.descendant(
+        of: find.byKey(const Key('clearview-side-navigation')),
+        matching: find.text('Records'),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.byType(MedicalNotesScreen), findsOneWidget);
     expect(tester.takeException(), isNull);
   });
 

@@ -25,16 +25,16 @@ class AppointmentsScreen extends ConsumerWidget {
         ClearViewNavigation.openRootTab(context, const AppointmentsScreen());
     void openMessages() =>
         ClearViewNavigation.push(context, const MessagesScreen());
+    void openMedicalNotes() =>
+        ClearViewNavigation.push(context, const MedicalNotesScreen());
     void openSettings() => ClearViewNavigation.push(
       context,
       AccessibilitySettingsScreen(
         onVisitsTap: openAppointmentsFromNavigation,
         onMessagesTap: openMessages,
+        onRecordsTap: openMedicalNotes,
       ),
     );
-    void openMedicalNotes() =>
-        ClearViewNavigation.push(context, const MedicalNotesScreen());
-
     return ClearViewResponsiveScaffold(
       selectedItem: ClearViewNavigationItem.visits,
       onHomeTap: () => ClearViewNavigation.returnHome(context),

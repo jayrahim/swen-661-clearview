@@ -59,17 +59,18 @@ class DashboardScreen extends ConsumerWidget {
         ClearViewNavigation.openRootTab(context, const AppointmentsScreen());
     void openMessages() =>
         ClearViewNavigation.push(context, const MessagesScreen());
+    void openMedicalNotes() =>
+        ClearViewNavigation.push(context, const MedicalNotesScreen());
     void openAccessibility() => ClearViewNavigation.push(
       context,
       AccessibilitySettingsScreen(
         onVisitsTap: openAppointmentsFromNavigation,
         onMessagesTap: openMessages,
+        onRecordsTap: openMedicalNotes,
       ),
     );
     void openAppointments() =>
         ClearViewNavigation.push(context, const AppointmentsScreen());
-    void openMedicalNotes() =>
-        ClearViewNavigation.push(context, const MedicalNotesScreen());
     return ClearViewResponsiveScaffold(
       onSettingsTap: openAccessibility,
       onVisitsTap: openAppointments,
