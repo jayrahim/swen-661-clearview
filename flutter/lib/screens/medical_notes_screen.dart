@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../models/medical_note.dart';
+import '../navigation/clearview_navigation.dart';
 import '../repositories/mock_repositories.dart';
 import '../theme/app_colors.dart';
 import '../theme/clearview_tokens.dart';
@@ -20,30 +21,23 @@ class MedicalNotesScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final notes = ref.watch(medicalNoteRepositoryProvider).getAll();
 
-    void openAppointments() {
-      Navigator.of(context)
-          .push(MaterialPageRoute(builder: (_) => const AppointmentsScreen()));
-    }
+    void openAppointments() =>
+        ClearViewNavigation.push(context, const AppointmentsScreen());
 
-    void openMessages() {
-      Navigator.of(context)
-          .push(MaterialPageRoute(builder: (_) => const MessagesScreen()));
-    }
+    void openMessages() =>
+        ClearViewNavigation.push(context, const MessagesScreen());
 
-    void openSettings() {
-      Navigator.of(context).push(
-        MaterialPageRoute(
-          builder: (_) => AccessibilitySettingsScreen(
-            onVisitsTap: openAppointments,
-            onMessagesTap: openMessages,
-          ),
-        ),
-      );
-    }
+    void openSettings() => ClearViewNavigation.push(
+      context,
+      AccessibilitySettingsScreen(
+        onVisitsTap: openAppointments,
+        onMessagesTap: openMessages,
+      ),
+    );
 
     return ClearViewResponsiveScaffold(
       selectedItem: ClearViewNavigationItem.records,
-      onHomeTap: () => Navigator.of(context).popUntil((route) => route.isFirst),
+      onHomeTap: () => ClearViewNavigation.returnHome(context),
       onVisitsTap: openAppointments,
       onMessagesTap: openMessages,
       onSettingsTap: openSettings,
@@ -70,14 +64,13 @@ class MedicalNotesScreen extends ConsumerWidget {
                   for (final note in notes) ...[
                     _MedicalNoteCard(
                       note: note,
-                      onTap: () => Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (_) => MedicalNoteDetailScreen(
-                            note: note,
-                            onVisitsTap: openAppointments,
-                            onSettingsTap: openSettings,
-                            onMessagesTap: openMessages,
-                          ),
+                      onTap: () => ClearViewNavigation.push(
+                        context,
+                        MedicalNoteDetailScreen(
+                          note: note,
+                          onVisitsTap: openAppointments,
+                          onSettingsTap: openSettings,
+                          onMessagesTap: openMessages,
                         ),
                       ),
                     ),

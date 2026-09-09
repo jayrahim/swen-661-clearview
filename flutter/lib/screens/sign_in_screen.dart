@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../navigation/clearview_navigation.dart';
 import '../theme/clearview_tokens.dart';
 import '../widgets/ui_components.dart';
 import '../widgets/prototype_feedback.dart';
@@ -90,8 +91,9 @@ class _SignInScreenState extends State<SignInScreen> {
               const SizedBox(height: 30),
               PrimaryButton(
                 label: 'Sign in',
-                onPressed: () => Navigator.of(context).pushReplacement(
-                  MaterialPageRoute(builder: (_) => const DashboardScreen()),
+                onPressed: () => ClearViewNavigation.replace(
+                  context,
+                  const DashboardScreen(),
                 ),
               ),
               const SizedBox(height: 16),

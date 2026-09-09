@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../models/medical_note.dart';
+import '../navigation/clearview_navigation.dart';
 import '../theme/clearview_tokens.dart';
 import '../utils/appointment_date_format.dart';
 import '../widgets/ui_components.dart';
@@ -26,7 +27,7 @@ class MedicalNoteDetailScreen extends StatelessWidget {
     return ClearViewResponsiveScaffold(
       selectedItem: ClearViewNavigationItem.records,
       isRootTab: false,
-      onHomeTap: () => Navigator.of(context).popUntil((route) => route.isFirst),
+      onHomeTap: () => ClearViewNavigation.returnHome(context),
       onVisitsTap: onVisitsTap,
       onMessagesTap: onMessagesTap,
       onSettingsTap: onSettingsTap,

@@ -146,6 +146,22 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
+  testWidgets('message detail uses side navigation on a tablet', (
+    tester,
+  ) async {
+    tester.view.devicePixelRatio = 1;
+    tester.view.physicalSize = const Size(1024, 768);
+    addTearDown(tester.view.resetDevicePixelRatio);
+    addTearDown(tester.view.resetPhysicalSize);
+
+    await tester.pumpWidget(buildScreen());
+    await tester.pumpAndSettle();
+
+    expect(find.byKey(const Key('clearview-side-navigation')), findsOneWidget);
+    expect(find.text('Your lab results are available'), findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
+
   testWidgets('back button returns to previous screen', (tester) async {
     await tester.pumpWidget(
       MaterialApp(
