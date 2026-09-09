@@ -32,6 +32,7 @@ class MedicalNotesScreen extends ConsumerWidget {
       AccessibilitySettingsScreen(
         onVisitsTap: openAppointments,
         onMessagesTap: openMessages,
+        onRecordsTap: () => Navigator.of(context).pop(),
       ),
     );
 
