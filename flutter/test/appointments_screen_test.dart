@@ -4,6 +4,7 @@ import 'package:flutter_test/flutter_test.dart';
 
 import 'package:clearview_flutter/screens/appointments_screen.dart';
 import 'package:clearview_flutter/screens/dashboard_screen.dart';
+import 'package:clearview_flutter/screens/messages_screen.dart';
 
 Widget buildAppointmentsApp() =>
     ProviderScope(child: MaterialApp(home: const AppointmentsScreen()));
@@ -79,6 +80,19 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.text('Good morning, Maya'), findsOneWidget);
   });
+
+  testWidgets('Messages navigation opens Messages from Appointments', (
+    tester,
+  ) async {
+    await tester.pumpWidget(buildAppointmentsApp());
+
+    await tester.tap(find.text('Messages'));
+    await tester.pumpAndSettle();
+
+    expect(find.byType(MessagesScreen), findsOneWidget);
+    expect(find.text('2 unread'), findsOneWidget);
+  });
+
   testWidgets('schedule appointment button shows prototype message', (
     tester,
   ) async {

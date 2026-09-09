@@ -4,6 +4,7 @@ import '../models/message.dart';
 import '../theme/clearview_tokens.dart';
 import '../utils/message_date_format.dart';
 import '../widgets/ui_components.dart';
+import '../widgets/prototype_feedback.dart';
 
 class MessageDetailScreen extends StatelessWidget {
   const MessageDetailScreen({super.key, required this.message});
@@ -70,7 +71,7 @@ class MessageDetailScreen extends StatelessWidget {
                 if (message.showLabResultsAction) ...[
                   PrimaryButton(
                     label: 'View lab results',
-                    onPressed: () => _showPrototypeMessage(
+                    onPressed: () => showPrototypeFeedback(
                       context,
                       'Lab results are not available in this prototype.',
                     ),
@@ -82,7 +83,7 @@ class MessageDetailScreen extends StatelessWidget {
                   width: double.infinity,
                   height: 53,
                   child: OutlinedButton(
-                    onPressed: () => _showPrototypeMessage(
+                    onPressed: () => showPrototypeFeedback(
                       context,
                       'Reply is not available in this prototype.',
                     ),
@@ -105,11 +106,6 @@ class MessageDetailScreen extends StatelessWidget {
         ),
       ),
     );
-  }
-
-  void _showPrototypeMessage(BuildContext context, String message) {
-    ScaffoldMessenger.of(context)
-        .showSnackBar(SnackBar(content: Text(message)));
   }
 }
 

@@ -118,6 +118,93 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
+  testWidgets('Settings side navigation opens Messages', (tester) async {
+    await pumpScreen(
+      tester,
+      size: const Size(1024, 768),
+      child: const DashboardScreen(),
+    );
+
+    final settingsNavigation = find.descendant(
+      of: find.byKey(const Key('clearview-side-navigation')),
+      matching: find.text('Settings'),
+    );
+    await tester.tap(settingsNavigation);
+    await tester.pumpAndSettle();
+
+    final messagesNavigation = find.descendant(
+      of: find.byKey(const Key('clearview-side-navigation')),
+      matching: find.text('Messages'),
+    );
+    await tester.tap(messagesNavigation);
+    await tester.pumpAndSettle();
+
+    expect(find.byType(MessagesScreen), findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('Appointment Detail side navigation opens Messages', (
+    tester,
+  ) async {
+    await pumpScreen(
+      tester,
+      size: const Size(1024, 768),
+      child: const DashboardScreen(),
+    );
+
+    await tester.tap(
+      find.descendant(
+        of: find.byKey(const Key('clearview-side-navigation')),
+        matching: find.text('Visits'),
+      ),
+    );
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Dr. Elena Martinez'));
+    await tester.pumpAndSettle();
+
+    await tester.tap(
+      find.descendant(
+        of: find.byKey(const Key('clearview-side-navigation')),
+        matching: find.text('Messages'),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.byType(MessagesScreen), findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('Medical Note Detail side navigation opens Messages', (
+    tester,
+  ) async {
+    await pumpScreen(
+      tester,
+      size: const Size(1024, 768),
+      child: const DashboardScreen(),
+    );
+
+    await tester.tap(
+      find.descendant(
+        of: find.byKey(const Key('clearview-side-navigation')),
+        matching: find.text('Records'),
+      ),
+    );
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Primary Care Follow-up'));
+    await tester.pumpAndSettle();
+
+    await tester.tap(
+      find.descendant(
+        of: find.byKey(const Key('clearview-side-navigation')),
+        matching: find.text('Messages'),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.byType(MessagesScreen), findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
+
   testWidgets('navigation uses the phone layout below the tablet breakpoint', (
     tester,
   ) async {

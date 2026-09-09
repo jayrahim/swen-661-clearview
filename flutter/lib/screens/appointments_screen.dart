@@ -7,9 +7,11 @@ import '../theme/app_colors.dart';
 import '../theme/clearview_tokens.dart';
 import '../utils/appointment_date_format.dart';
 import '../widgets/ui_components.dart';
+import '../widgets/prototype_feedback.dart';
 import 'accessibility_settings_screen.dart';
 import 'appointment_detail_screen.dart';
 import 'medical_notes_screen.dart';
+import 'messages_screen.dart';
 
 class AppointmentsScreen extends ConsumerWidget {
   const AppointmentsScreen({super.key});
@@ -23,10 +25,14 @@ class AppointmentsScreen extends ConsumerWidget {
           MaterialPageRoute(builder: (_) => const AppointmentsScreen()),
           (route) => route.isFirst,
         );
+    void openMessages() =>
+        Navigator.of(context)
+            .push(MaterialPageRoute(builder: (_) => const MessagesScreen()));
     void openSettings() => Navigator.of(context).push(
       MaterialPageRoute(
         builder: (_) => AccessibilitySettingsScreen(
           onVisitsTap: openAppointmentsFromNavigation,
+          onMessagesTap: openMessages,
         ),
       ),
     );
@@ -37,6 +43,7 @@ class AppointmentsScreen extends ConsumerWidget {
       selectedItem: ClearViewNavigationItem.visits,
       onHomeTap: () => Navigator.of(context).popUntil((route) => route.isFirst),
       onSettingsTap: openSettings,
+      onMessagesTap: openMessages,
       onRecordsTap: openMedicalNotes,
       contentWidth: ClearViewContentWidth.reading,
       child: Column(
@@ -64,6 +71,7 @@ class AppointmentsScreen extends ConsumerWidget {
                             appointment: appointment,
                             onVisitsTap: openAppointmentsFromNavigation,
                             onSettingsTap: openSettings,
+                            onMessagesTap: openMessages,
                           ),
                         ),
                       ),
@@ -80,12 +88,9 @@ class AppointmentsScreen extends ConsumerWidget {
                     child: PrimaryButton(
                       label: 'Schedule Appointment',
                       onPressed: () {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content: Text(
-                              'Scheduling is not available in this prototype.',
-                            ),
-                          ),
+                        showPrototypeFeedback(
+                          context,
+                          'Scheduling is not available in this prototype.',
                         );
                       },
                     ),

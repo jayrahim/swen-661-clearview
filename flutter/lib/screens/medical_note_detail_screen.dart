@@ -4,6 +4,7 @@ import '../models/medical_note.dart';
 import '../theme/clearview_tokens.dart';
 import '../utils/appointment_date_format.dart';
 import '../widgets/ui_components.dart';
+import '../widgets/prototype_feedback.dart';
 
 class MedicalNoteDetailScreen extends StatelessWidget {
   const MedicalNoteDetailScreen({
@@ -11,11 +12,13 @@ class MedicalNoteDetailScreen extends StatelessWidget {
     required this.note,
     this.onVisitsTap,
     this.onSettingsTap,
+    this.onMessagesTap,
   });
 
   final MedicalNote note;
   final VoidCallback? onVisitsTap;
   final VoidCallback? onSettingsTap;
+  final VoidCallback? onMessagesTap;
 
   @override
   Widget build(BuildContext context) {
@@ -25,6 +28,7 @@ class MedicalNoteDetailScreen extends StatelessWidget {
       isRootTab: false,
       onHomeTap: () => Navigator.of(context).popUntil((route) => route.isFirst),
       onVisitsTap: onVisitsTap,
+      onMessagesTap: onMessagesTap,
       onSettingsTap: onSettingsTap,
       contentWidth: ClearViewContentWidth.reading,
       child: Column(
@@ -98,12 +102,9 @@ class MedicalNoteDetailScreen extends StatelessWidget {
                   ),
                   const SizedBox(height: 34),
                   _CareTeamPrompt(
-                    onTap: () => ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text(
-                          'Messaging the care team is not available in this prototype.',
-                        ),
-                      ),
+                    onTap: () => showPrototypeFeedback(
+                      context,
+                      'Messaging the care team is not available in this prototype.',
                     ),
                   ),
                 ],

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../theme/clearview_tokens.dart';
 import '../widgets/ui_components.dart';
+import '../widgets/prototype_feedback.dart';
 import 'dashboard_screen.dart';
 
 class SignInScreen extends StatefulWidget {
@@ -96,7 +97,10 @@ class _SignInScreenState extends State<SignInScreen> {
               const SizedBox(height: 16),
               Center(
                 child: TextButton(
-                  onPressed: () {},
+                  onPressed: () => showPrototypeFeedback(
+                    context,
+                    'Password recovery is not available in this prototype.',
+                  ),
                   child: const Text('Forgot password?'),
                 ),
               ),

@@ -4,11 +4,17 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../state/accessibility_preferences.dart';
 import '../theme/clearview_tokens.dart';
 import '../widgets/ui_components.dart';
+import '../widgets/prototype_feedback.dart';
 
 class AccessibilitySettingsScreen extends ConsumerWidget {
-  const AccessibilitySettingsScreen({super.key, this.onVisitsTap});
+  const AccessibilitySettingsScreen({
+    super.key,
+    this.onVisitsTap,
+    this.onMessagesTap,
+  });
 
   final VoidCallback? onVisitsTap;
+  final VoidCallback? onMessagesTap;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -20,6 +26,7 @@ class AccessibilitySettingsScreen extends ConsumerWidget {
       isRootTab: false,
       onHomeTap: () => Navigator.of(context).popUntil((route) => route.isFirst),
       onVisitsTap: onVisitsTap,
+      onMessagesTap: onMessagesTap,
       contentWidth: ClearViewContentWidth.reading,
       child: Column(
         children: [
@@ -99,6 +106,10 @@ class AccessibilitySettingsScreen extends ConsumerWidget {
                     title: 'Color preference',
                     description: 'Use a calmer accent palette',
                     value: preferences.colorPreference,
+                    onTap: () => showPrototypeFeedback(
+                      context,
+                      'Color preference is not available in this prototype.',
+                    ),
                   ),
                   const SizedBox(height: 31),
                   Semantics(
