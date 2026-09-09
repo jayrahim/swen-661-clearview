@@ -13,7 +13,7 @@ permissions:
 jobs:
   osv-scan:
     name: Scan dependencies for known vulnerabilities
-    uses: google/osv-scanner-action/.github/workflows/osv-scanner-reusable.yml@v2.5.0
+    uses: google/osv-scanner-action/.github/workflows/osv-scanner-reusable.yml@v2.5.1
     with:
       # Scoped to the active Flutter prototype; JS starters are not shipped this term.
       scan-args: |-
