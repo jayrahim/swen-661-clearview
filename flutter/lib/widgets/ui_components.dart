@@ -5,15 +5,111 @@ import '../models/quick_access_item.dart';
 import '../theme/app_colors.dart';
 import '../theme/clearview_tokens.dart';
 
+/// Shared shell for authenticated screens.
+///
+/// Phone layouts retain the approved bottom navigation. Tablet layouts use a
+/// side rail so content has the available horizontal space without stretching
+/// the phone navigation across a wide display. Root-tab screens should use
+/// this shell so each navigation destination preserves that adaptive behavior.
+class ClearViewResponsiveScaffold extends StatelessWidget {
+  const ClearViewResponsiveScaffold({
+    super.key,
+    required this.child,
+    this.onSettingsTap,
+    this.onHomeTap,
+    this.onVisitsTap,
+    this.onMessagesTap,
+    this.onRecordsTap,
+    this.selectedItem = ClearViewNavigationItem.home,
+    this.isRootTab = true,
+    this.showTabletNavigation = true,
+    this.contentWidth = ClearViewContentWidth.wide,
+  });
+
+  final Widget child;
+  final VoidCallback? onSettingsTap;
+  final VoidCallback? onHomeTap;
+  final VoidCallback? onVisitsTap;
+  final VoidCallback? onMessagesTap;
+  final VoidCallback? onRecordsTap;
+  final ClearViewNavigationItem selectedItem;
+
+  /// Root tabs show the persistent phone navigation; stack-pushed subpages
+  /// retain their approved back-arrow presentation instead.
+  final bool isRootTab;
+  final bool showTabletNavigation;
+  final ClearViewContentWidth contentWidth;
+
+  @override
+  Widget build(BuildContext context) {
+    final isTablet = MediaQuery.sizeOf(context).shortestSide >= 600;
+    final navigation = ClearViewBottomNavigation(
+      selectedItem: selectedItem,
+      onHomeTap: onHomeTap,
+      onVisitsTap: onVisitsTap,
+      onMessagesTap: onMessagesTap,
+      onRecordsTap: onRecordsTap,
+      onSettingsTap: onSettingsTap,
+    );
+
+    final content = Center(
+      child: ConstrainedBox(
+        constraints: BoxConstraints(
+          maxWidth: isTablet ? contentWidth.maxWidth : AppPage.phoneMaxWidth,
+        ),
+        child: child,
+      ),
+    );
+
+    return Scaffold(
+      body: SafeArea(
+        child: isTablet && showTabletNavigation
+            ? Row(
+                children: [
+                  ClearViewSideNavigation(
+                    selectedItem: selectedItem,
+                    onHomeTap: onHomeTap,
+                    onVisitsTap: onVisitsTap,
+                    onMessagesTap: onMessagesTap,
+                    onRecordsTap: onRecordsTap,
+                    onSettingsTap: onSettingsTap,
+                  ),
+                  Expanded(child: content),
+                ],
+              )
+            : isRootTab
+            ? Column(
+                children: [
+                  Expanded(child: content),
+                  navigation,
+                ],
+              )
+            : content,
+      ),
+    );
+  }
+}
+
+enum ClearViewContentWidth {
+  reading(760),
+  wide(1120);
+
+  const ClearViewContentWidth(this.maxWidth);
+
+  final double maxWidth;
+}
+
 class AppPage extends StatelessWidget {
   const AppPage({super.key, required this.child});
   final Widget child;
+
+  static const phoneMaxWidth = 480.0;
 
   @override
   Widget build(BuildContext context) => SafeArea(
     child: Center(
       child: ConstrainedBox(
-        constraints: const BoxConstraints(maxWidth: 480),
+        constraints: const BoxConstraints(maxWidth: phoneMaxWidth),
         child: child,
       ),
     ),
@@ -149,7 +245,6 @@ class AppointmentStatusStyle {
 
 class QuickAccessTile extends StatelessWidget {
   const QuickAccessTile({super.key, required this.item, this.onTap});
-
   final QuickAccessItem item;
   final VoidCallback? onTap;
 
@@ -165,11 +260,14 @@ class QuickAccessTile extends StatelessWidget {
             ? Border.all(color: tokens.border, width: tokens.borderWidth)
             : null,
       ),
+      // The responsive grid allows this content to wrap at the user's
+      // chosen text scale instead of shrinking the text.
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        mainAxisSize: MainAxisSize.min,
         children: [
           Text(item.title, style: Theme.of(context).textTheme.titleMedium),
+          const SizedBox(height: 6),
           Text(
             item.subtitle,
             style: TextStyle(color: item.subtitleColor, fontSize: 14),
@@ -180,15 +278,13 @@ class QuickAccessTile extends StatelessWidget {
     return Semantics(
       button: onTap != null,
       label: '${item.title}, ${item.subtitle}',
-      child: ExcludeSemantics(
-        child: onTap == null
-            ? content
-            : InkWell(
-                onTap: onTap,
-                borderRadius: BorderRadius.circular(12),
-                child: content,
-              ),
-      ),
+      child: onTap == null
+          ? ExcludeSemantics(child: content)
+          : InkWell(
+              onTap: onTap,
+              borderRadius: BorderRadius.circular(12),
+              child: ExcludeSemantics(child: content),
+            ),
     );
   }
 }
@@ -278,17 +374,134 @@ class AccessibilityOptionCard extends StatelessWidget {
 
 enum ClearViewNavigationItem { home, visits, messages, records, settings }
 
-class ClearViewBottomNavigation extends StatelessWidget {
-  const ClearViewBottomNavigation({
+class ClearViewSideNavigation extends StatelessWidget {
+  const ClearViewSideNavigation({
     super.key,
-    required this.onSettingsTap,
+    this.onSettingsTap,
     this.onHomeTap,
     this.onVisitsTap,
     this.onMessagesTap,
     this.onRecordsTap,
     this.selectedItem = ClearViewNavigationItem.home,
   });
-  final VoidCallback onSettingsTap;
+
+  final VoidCallback? onSettingsTap;
+  final VoidCallback? onHomeTap;
+  final VoidCallback? onVisitsTap;
+  final VoidCallback? onMessagesTap;
+  final VoidCallback? onRecordsTap;
+  final ClearViewNavigationItem selectedItem;
+
+  @override
+  Widget build(BuildContext context) {
+    final tokens = context.clearViewTokens;
+    return Container(
+      key: const Key('clearview-side-navigation'),
+      width: 104,
+      decoration: BoxDecoration(
+        color: tokens.surface,
+        border: Border(
+          right: BorderSide(color: tokens.border, width: tokens.borderWidth),
+        ),
+      ),
+      child: ListView(
+        padding: const EdgeInsets.only(top: 20),
+        children: [
+          _SideNavigationItem(
+            icon: Icons.circle,
+            label: 'Home',
+            isSelected: selectedItem == ClearViewNavigationItem.home,
+            onTap: onHomeTap,
+          ),
+          _SideNavigationItem(
+            icon: Icons.calendar_today_outlined,
+            label: 'Visits',
+            isSelected: selectedItem == ClearViewNavigationItem.visits,
+            onTap: onVisitsTap,
+          ),
+          _SideNavigationItem(
+            icon: Icons.mail_outline,
+            label: 'Messages',
+            isSelected: selectedItem == ClearViewNavigationItem.messages,
+            onTap: onMessagesTap,
+          ),
+          _SideNavigationItem(
+            icon: Icons.view_headline_outlined,
+            label: 'Records',
+            isSelected: selectedItem == ClearViewNavigationItem.records,
+            onTap: onRecordsTap,
+          ),
+          _SideNavigationItem(
+            icon: Icons.settings,
+            label: 'Settings',
+            isSelected: selectedItem == ClearViewNavigationItem.settings,
+            onTap: onSettingsTap,
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _SideNavigationItem extends StatelessWidget {
+  const _SideNavigationItem({
+    required this.icon,
+    required this.label,
+    this.isSelected = false,
+    this.onTap,
+  });
+
+  final IconData icon;
+  final String label;
+  final bool isSelected;
+  final VoidCallback? onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final tokens = context.clearViewTokens;
+    final color = isSelected ? tokens.primary : tokens.mutedInk;
+    final content = ConstrainedBox(
+      constraints: const BoxConstraints(minWidth: 64, minHeight: 64),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(icon, size: 20, color: color),
+            const SizedBox(height: 5),
+            Text(
+              label,
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                color: color,
+                fontSize: 12,
+                fontWeight: isSelected ? FontWeight.w700 : FontWeight.w400,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+    return Semantics(
+      button: onTap != null,
+      selected: isSelected,
+      label: label,
+      child: onTap == null ? content : InkWell(onTap: onTap, child: content),
+    );
+  }
+}
+
+class ClearViewBottomNavigation extends StatelessWidget {
+  const ClearViewBottomNavigation({
+    super.key,
+    this.onSettingsTap,
+    this.onHomeTap,
+    this.onVisitsTap,
+    this.onMessagesTap,
+    this.onRecordsTap,
+    this.selectedItem = ClearViewNavigationItem.home,
+  });
+  final VoidCallback? onSettingsTap;
   final VoidCallback? onHomeTap;
   final VoidCallback? onVisitsTap;
   final VoidCallback? onMessagesTap;
@@ -367,7 +580,7 @@ class _NavItem extends StatelessWidget {
         selected: isSelected,
         label: label,
         child: onTap == null
-            ? _NavItemContent(
+            ? _BottomNavigationItemContent(
                 icon: icon,
                 label: label,
                 color: color,
@@ -375,7 +588,7 @@ class _NavItem extends StatelessWidget {
               )
             : InkWell(
                 onTap: onTap,
-                child: _NavItemContent(
+                child: _BottomNavigationItemContent(
                   icon: icon,
                   label: label,
                   color: color,
@@ -387,8 +600,8 @@ class _NavItem extends StatelessWidget {
   }
 }
 
-class _NavItemContent extends StatelessWidget {
-  const _NavItemContent({
+class _BottomNavigationItemContent extends StatelessWidget {
+  const _BottomNavigationItemContent({
     required this.icon,
     required this.label,
     required this.color,
@@ -406,12 +619,16 @@ class _NavItemContent extends StatelessWidget {
     children: [
       Icon(icon, size: 18, color: color),
       const SizedBox(height: 7),
-      Text(
-        label,
-        style: TextStyle(
-          fontSize: 11,
-          color: color,
-          fontWeight: isSelected ? FontWeight.w700 : FontWeight.w400,
+      FittedBox(
+        fit: BoxFit.scaleDown,
+        child: Text(
+          label,
+          maxLines: 1,
+          style: TextStyle(
+            fontSize: 11,
+            color: color,
+            fontWeight: isSelected ? FontWeight.w700 : FontWeight.w400,
+          ),
         ),
       ),
     ],

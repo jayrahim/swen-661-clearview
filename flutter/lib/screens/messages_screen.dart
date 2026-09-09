@@ -21,64 +21,50 @@ class MessagesScreen extends ConsumerWidget {
 
     final unreadCount = messages.where((message) => !message.isRead).length;
 
-    void openAppointments() {
-      Navigator.of(context)
-          .push(MaterialPageRoute(builder: (_) => const AppointmentsScreen()));
-    }
+    void openAppointmentsFromNavigation() =>
+        Navigator.of(context).pushAndRemoveUntil(
+          MaterialPageRoute(builder: (_) => const AppointmentsScreen()),
+          (route) => route.isFirst,
+        );
 
-    void openSettings() {
-      Navigator.of(context).push(
-        MaterialPageRoute(builder: (_) => const AccessibilitySettingsScreen()),
-      );
-    }
+    void openSettings() => Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (_) => AccessibilitySettingsScreen(
+          onVisitsTap: openAppointmentsFromNavigation,
+        ),
+      ),
+    );
+    void openMedicalNotes() => Navigator.of(context)
+        .push(MaterialPageRoute(builder: (_) => const MedicalNotesScreen()));
 
-    void openMedicalNotes() {
-      Navigator.of(context)
-          .push(MaterialPageRoute(builder: (_) => const MedicalNotesScreen()));
-    }
-
-    return Scaffold(
-      body: AppPage(
-        child: Column(
-          children: [
-            Expanded(
-              child: SafeArea(
-                bottom: false,
-                child: ListView(
-                  padding: const EdgeInsets.all(24),
-                  children: [
-                    _MessagesHeader(unreadCount: unreadCount),
-                    const SizedBox(height: 24),
-                    ...messages.map(
-                      (message) => Padding(
-                        padding: const EdgeInsets.only(bottom: 16),
-                        child: _MessageCard(
-                          message: message,
-                          onTap: () {
-                            Navigator.of(context).push(
-                              MaterialPageRoute(
-                                builder: (_) =>
-                                    MessageDetailScreen(message: message),
-                              ),
-                            );
-                          },
-                        ),
-                      ),
+    return ClearViewResponsiveScaffold(
+      selectedItem: ClearViewNavigationItem.messages,
+      onHomeTap: () => Navigator.of(context).popUntil((route) => route.isFirst),
+      onVisitsTap: openAppointmentsFromNavigation,
+      onSettingsTap: openSettings,
+      onRecordsTap: openMedicalNotes,
+      contentWidth: ClearViewContentWidth.reading,
+      child: ListView(
+        padding: const EdgeInsets.all(24),
+        children: [
+          _MessagesHeader(unreadCount: unreadCount),
+          const SizedBox(height: 24),
+          ...messages.map(
+            (message) => Padding(
+              padding: const EdgeInsets.only(bottom: 16),
+              child: _MessageCard(
+                message: message,
+                onTap: () {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (_) => MessageDetailScreen(message: message),
                     ),
-                  ],
-                ),
+                  );
+                },
               ),
             ),
-            ClearViewBottomNavigation(
-              selectedItem: ClearViewNavigationItem.messages,
-              onHomeTap: () =>
-                  Navigator.of(context).popUntil((route) => route.isFirst),
-              onVisitsTap: openAppointments,
-              onSettingsTap: openSettings,
-              onRecordsTap: openMedicalNotes,
-            ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
