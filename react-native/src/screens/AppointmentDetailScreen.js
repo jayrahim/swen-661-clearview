@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { PrimaryButton } from '../components/PrimaryButton';
+import { SafeAreaScreen } from '../components/SafeAreaScreen';
 import { appointmentDetailDate } from '../utils/appointmentFormat';
 import { scaledFontSize } from '../theme/tokens';
 import { useClearViewTheme } from '../theme/useClearViewTheme';
@@ -13,7 +14,7 @@ export function AppointmentDetailScreen({ appointment, onBack }) {
     : appointment.location;
 
   return (
-    <View style={[styles.screen, { backgroundColor: theme.colors.background }]}>
+    <SafeAreaScreen style={{ backgroundColor: theme.colors.background }}>
       <ScrollView contentContainerStyle={styles.content}>
         <View style={styles.header}>
           <Pressable
@@ -158,7 +159,7 @@ export function AppointmentDetailScreen({ appointment, onBack }) {
           </Text>
         ) : null}
       </ScrollView>
-    </View>
+    </SafeAreaScreen>
   );
 }
 
@@ -193,9 +194,6 @@ function Section({ label, value, theme }) {
   );
 }
 const styles = StyleSheet.create({
-  screen: {
-    flex: 1,
-  },
   content: {
     padding: 18,
   },
