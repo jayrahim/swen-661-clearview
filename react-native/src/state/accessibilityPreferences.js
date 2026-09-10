@@ -16,8 +16,13 @@ export const defaultAccessibilityPreferences = Object.freeze({
 export function accessibilityPreferencesReducer(state, action) {
   switch (action.type) {
     case 'cycle-text-size': {
-      const index = textSizeOptions.findIndex((option) => option.id === state.textSize.id);
-      return { ...state, textSize: textSizeOptions[(index + 1) % textSizeOptions.length] };
+      const index = textSizeOptions.findIndex(
+        (option) => option.id === state.textSize.id,
+      );
+      return {
+        ...state,
+        textSize: textSizeOptions[(index + 1) % textSizeOptions.length],
+      };
     }
     case 'toggle-high-contrast':
       return { ...state, highContrast: !state.highContrast };
@@ -32,7 +37,10 @@ export function accessibilityPreferencesReducer(state, action) {
 
 const AccessibilityPreferencesContext = createContext(null);
 
-export function AccessibilityPreferencesProvider({ children, initialPreferences }) {
+export function AccessibilityPreferencesProvider({
+  children,
+  initialPreferences,
+}) {
   const [preferences, dispatch] = useReducer(
     accessibilityPreferencesReducer,
     initialPreferences ?? defaultAccessibilityPreferences,
@@ -49,7 +57,9 @@ export function AccessibilityPreferencesProvider({ children, initialPreferences 
 export function useAccessibilityPreferences() {
   const value = useContext(AccessibilityPreferencesContext);
   if (!value) {
-    throw new Error('useAccessibilityPreferences must be used within its provider.');
+    throw new Error(
+      'useAccessibilityPreferences must be used within its provider.',
+    );
   }
   return value;
 }

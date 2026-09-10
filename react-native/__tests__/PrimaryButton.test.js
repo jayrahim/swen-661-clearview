@@ -8,7 +8,9 @@ describe('PrimaryButton', () => {
     const onPress = jest.fn();
     const user = userEvent.setup();
 
-    await renderWithProviders(<PrimaryButton label="Continue" onPress={onPress} />);
+    await renderWithProviders(
+      <PrimaryButton label="Continue" onPress={onPress} />,
+    );
 
     await user.press(screen.getByRole('button', { name: 'Continue' }));
 

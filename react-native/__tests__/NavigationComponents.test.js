@@ -22,7 +22,9 @@ describe('shared navigation components', () => {
       />,
     );
 
-    await user.press(screen.getByRole('button', { name: 'Messages, 2 unread' }));
+    await user.press(
+      screen.getByRole('button', { name: 'Messages, 2 unread' }),
+    );
 
     expect(onPress).toHaveBeenCalledTimes(1);
   });
@@ -32,7 +34,10 @@ describe('shared navigation components', () => {
     const user = userEvent.setup();
 
     await renderWithProviders(
-      <BottomNavigation activeItem="home" onNavigate={{ messages: onMessages }} />,
+      <BottomNavigation
+        activeItem="home"
+        onNavigate={{ messages: onMessages }}
+      />,
     );
 
     await user.press(screen.getByLabelText('Messages'));

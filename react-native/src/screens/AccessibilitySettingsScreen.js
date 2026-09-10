@@ -3,11 +3,16 @@ import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { ScreenContainer } from '../components/ScreenContainer';
 import { useAccessibilityPreferences } from '../state/accessibilityPreferences';
-import { resolveTheme, scaledFontSize } from '../theme/tokens';
+import { scaledFontSize } from '../theme/tokens';
+import { useClearViewTheme } from '../theme/useClearViewTheme';
 
 const options = [
   ['Text size', 'Adjust text across the app', 'cycle-text-size'],
-  ['High contrast', 'Increase contrast for text and controls', 'toggle-high-contrast'],
+  [
+    'High contrast',
+    'Increase contrast for text and controls',
+    'toggle-high-contrast',
+  ],
   ['Reduced clutter', 'Show fewer secondary items', 'toggle-reduced-clutter'],
 ];
 
@@ -21,7 +26,7 @@ function cardSurface(theme) {
 
 export function AccessibilitySettingsScreen({ onBack }) {
   const { preferences, dispatch } = useAccessibilityPreferences();
-  const theme = resolveTheme(preferences);
+  const { theme } = useClearViewTheme();
   const [prototypeMessage, setPrototypeMessage] = useState(null);
   const valueFor = (action) => {
     if (action === 'cycle-text-size') return preferences.textSize.label;
@@ -33,11 +38,16 @@ export function AccessibilitySettingsScreen({ onBack }) {
 
   return (
     <ScreenContainer>
-      <View style={[styles.content, { backgroundColor: theme.colors.background }]}>
+      <View
+        style={[styles.content, { backgroundColor: theme.colors.background }]}
+      >
         <View
           style={[
             styles.header,
-            { borderColor: theme.colors.border, borderWidth: theme.borderWidth },
+            {
+              borderColor: theme.colors.border,
+              borderWidth: theme.borderWidth,
+            },
           ]}
         >
           <Pressable
@@ -46,14 +56,27 @@ export function AccessibilitySettingsScreen({ onBack }) {
             onPress={onBack}
             style={styles.back}
           >
-            <Text style={[styles.backLabel, { color: theme.colors.primary }]}>‹</Text>
+            <Text style={[styles.backLabel, { color: theme.colors.primary }]}>
+              ‹
+            </Text>
           </Pressable>
-          <Text accessibilityRole="header" style={[styles.title, { color: theme.colors.ink }]}>
+          <Text
+            accessibilityRole="header"
+            style={[styles.title, { color: theme.colors.ink }]}
+          >
             Accessibility
           </Text>
         </View>
         <View style={styles.body}>
-          <Text style={[styles.description, { color: theme.colors.mutedInk, fontSize: scaledFontSize(16, theme) }]}>
+          <Text
+            style={[
+              styles.description,
+              {
+                color: theme.colors.mutedInk,
+                fontSize: scaledFontSize(16, theme),
+              },
+            ]}
+          >
             Make CareConnect easier to see and use.
           </Text>
           {options.map(([title, description, action]) => (
@@ -65,26 +88,92 @@ export function AccessibilitySettingsScreen({ onBack }) {
               style={[styles.card, cardSurface(theme)]}
             >
               <View style={styles.optionCopy}>
-                <Text style={[styles.optionTitle, { color: theme.colors.ink, fontSize: scaledFontSize(16, theme) }]}>{title}</Text>
-                <Text style={[styles.optionDescription, { color: theme.colors.mutedInk, fontSize: scaledFontSize(14, theme) }]}>{description}</Text>
+                <Text
+                  style={[
+                    styles.optionTitle,
+                    {
+                      color: theme.colors.ink,
+                      fontSize: scaledFontSize(16, theme),
+                    },
+                  ]}
+                >
+                  {title}
+                </Text>
+                <Text
+                  style={[
+                    styles.optionDescription,
+                    {
+                      color: theme.colors.mutedInk,
+                      fontSize: scaledFontSize(14, theme),
+                    },
+                  ]}
+                >
+                  {description}
+                </Text>
               </View>
-              <View style={[styles.value, { borderColor: theme.colors.primary, borderWidth: theme.borderWidth }]}>
-                <Text style={[styles.valueText, { color: theme.colors.primary }]}>{valueFor(action)}</Text>
+              <View
+                style={[
+                  styles.value,
+                  {
+                    borderColor: theme.colors.primary,
+                    borderWidth: theme.borderWidth,
+                  },
+                ]}
+              >
+                <Text
+                  style={[styles.valueText, { color: theme.colors.primary }]}
+                >
+                  {valueFor(action)}
+                </Text>
               </View>
             </Pressable>
           ))}
           <Pressable
             accessibilityLabel="Color preference, Cool. Use a calmer accent palette"
             accessibilityRole="button"
-            onPress={() => setPrototypeMessage('Color preference is not available in this prototype.')}
+            onPress={() =>
+              setPrototypeMessage(
+                'Color preference is not available in this prototype.',
+              )
+            }
             style={[styles.card, cardSurface(theme)]}
           >
             <View style={styles.optionCopy}>
-              <Text style={[styles.optionTitle, { color: theme.colors.ink, fontSize: scaledFontSize(16, theme) }]}>Color preference</Text>
-              <Text style={[styles.optionDescription, { color: theme.colors.mutedInk, fontSize: scaledFontSize(14, theme) }]}>Use a calmer accent palette</Text>
+              <Text
+                style={[
+                  styles.optionTitle,
+                  {
+                    color: theme.colors.ink,
+                    fontSize: scaledFontSize(16, theme),
+                  },
+                ]}
+              >
+                Color preference
+              </Text>
+              <Text
+                style={[
+                  styles.optionDescription,
+                  {
+                    color: theme.colors.mutedInk,
+                    fontSize: scaledFontSize(14, theme),
+                  },
+                ]}
+              >
+                Use a calmer accent palette
+              </Text>
             </View>
-            <View style={[styles.value, { borderColor: theme.colors.primary, borderWidth: theme.borderWidth }]}>
-              <Text style={[styles.valueText, { color: theme.colors.primary }]}>Cool</Text>
+            <View
+              style={[
+                styles.value,
+                {
+                  borderColor: theme.colors.primary,
+                  borderWidth: theme.borderWidth,
+                },
+              ]}
+            >
+              <Text style={[styles.valueText, { color: theme.colors.primary }]}>
+                Cool
+              </Text>
             </View>
           </Pressable>
           {prototypeMessage ? (
@@ -105,13 +194,18 @@ export function AccessibilitySettingsScreen({ onBack }) {
               },
             ]}
           >
-            <Text style={[styles.previewTitle, { color: theme.colors.primary }]}>
+            <Text
+              style={[styles.previewTitle, { color: theme.colors.primary }]}
+            >
               Live preview
             </Text>
             <Text
               style={[
                 styles.previewText,
-                { color: theme.colors.ink, fontSize: scaledFontSize(16, theme) },
+                {
+                  color: theme.colors.ink,
+                  fontSize: scaledFontSize(16, theme),
+                },
               ]}
             >
               Appointments and messages remain readable at your selected size.
@@ -123,7 +217,10 @@ export function AccessibilitySettingsScreen({ onBack }) {
             onPress={() => dispatch({ type: 'reset' })}
             style={[
               styles.reset,
-              { borderColor: theme.colors.primary, borderWidth: theme.borderWidth },
+              {
+                borderColor: theme.colors.primary,
+                borderWidth: theme.borderWidth,
+              },
             ]}
           >
             <Text style={[styles.resetText, { color: theme.colors.primary }]}>

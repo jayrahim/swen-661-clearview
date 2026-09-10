@@ -7,7 +7,10 @@ import { AccessibilityPreferencesProvider } from '../state/accessibilityPreferen
  * Stable test seam for app-level providers. Add shared state providers here as
  * feature PRs introduce them instead of duplicating provider setup in tests.
  */
-export async function renderWithProviders(ui, { initialPreferences, ...options } = {}) {
+export async function renderWithProviders(
+  ui,
+  { initialPreferences, ...options } = {},
+) {
   return render(
     <SafeAreaProvider>
       <AccessibilityPreferencesProvider initialPreferences={initialPreferences}>

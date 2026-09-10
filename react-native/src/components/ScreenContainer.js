@@ -10,7 +10,9 @@ export function ScreenContainer({ children, scroll = true, style }) {
   return (
     <SafeAreaView style={styles.safeArea}>
       {scroll ? (
-        <ScrollView contentContainerStyle={styles.scrollContent}>{content}</ScrollView>
+        <ScrollView contentContainerStyle={styles.scrollContent}>
+          {content}
+        </ScrollView>
       ) : (
         content
       )}

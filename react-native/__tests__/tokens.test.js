@@ -1,4 +1,9 @@
-import { borderWidths, colors, highContrastColors, layout } from '../src/theme/tokens';
+import {
+  borderWidths,
+  colors,
+  highContrastColors,
+  layout,
+} from '../src/theme/tokens';
 
 describe('ClearView design tokens', () => {
   test('reserves an accessible minimum interactive target', () => {
