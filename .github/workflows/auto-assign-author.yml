@@ -1,0 +1,42 @@
+name: Assign author
+
+on:
+  issues:
+    types: [opened, reopened]
+  pull_request:
+    types: [opened, reopened]
+
+permissions:
+  issues: write
+  pull-requests: write
+
+jobs:
+  assign-author:
+    # Skip external contributors to avoid fork-token limitations and assigning
+    # unrelated public issues; team-owned work remains eligible.
+    if: >-
+      (github.event_name == 'issues' &&
+      (github.event.issue.author_association == 'OWNER' ||
+      github.event.issue.author_association == 'COLLABORATOR' ||
+      github.event.issue.author_association == 'MEMBER')) ||
+      (github.event_name == 'pull_request' &&
+      github.event.pull_request.head.repo.full_name == github.repository &&
+      (github.event.pull_request.author_association == 'OWNER' ||
+      github.event.pull_request.author_association == 'COLLABORATOR' ||
+      github.event.pull_request.author_association == 'MEMBER'))
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Assign author
+        uses: actions/github-script@v9
+        with:
+          script: |
+            const author = context.payload.issue?.user.login ??
+              context.payload.pull_request?.user.login;
+
+            await github.rest.issues.addAssignees({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              assignees: [author],
+            });
