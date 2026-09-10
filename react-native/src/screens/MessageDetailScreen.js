@@ -1,121 +1,129 @@
-import { Ionicons } from '@expo/vector-icons';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
-import { usePrototypeFeedback } from '../components/PrototypeFeedback';
+import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 
 import { AppCard } from '../components/AppCard';
 import { PrimaryButton } from '../components/PrimaryButton';
-import { ScreenContainer } from '../components/ScreenContainer';
-import { colors, layout, spacing, typography } from '../theme/tokens';
+import { usePrototypeFeedback } from '../components/PrototypeFeedback';
+import { SafeAreaScreen } from '../components/SafeAreaScreen';
+import { layout, scaledFontSize, spacing } from '../theme/tokens';
+import { useClearViewTheme } from '../theme/useClearViewTheme';
 
 export function MessageDetailScreen({ message, onBack }) {
-  const { showPrototypeFeedback } = usePrototypeFeedback(); 
+  const { theme } = useClearViewTheme();
+  const { showPrototypeFeedback } = usePrototypeFeedback();
   const showLabResultsAction = message.type === 'lab-results';
 
   return (
-    <View style={styles.screen}>
-      <ScreenContainer>
-        <View style={styles.content}>
+    <SafeAreaScreen style={{ backgroundColor: theme.colors.background }}>
+      <ScrollView contentContainerStyle={styles.content}>
+        <View style={styles.header}>
           <Pressable
             accessibilityLabel="Back to messages"
             accessibilityRole="button"
             onPress={onBack}
-            style={({ pressed }) => [
-              styles.backButton,
-              pressed && styles.pressed,
-            ]}
+            style={styles.back}
           >
-            <Ionicons
-              color={colors.primary}
-              name="arrow-back"
-              size={24}
-            />
-
-            <Text style={styles.backText}>
-              Messages
+            <Text
+              style={[
+                styles.backText,
+                {
+                  color: theme.colors.primary,
+                  fontSize: scaledFontSize(34, theme),
+                },
+              ]}
+            >
+              ‹
             </Text>
           </Pressable>
 
-          <Text accessibilityRole="header" style={styles.subject}>
+          <Text
+            accessibilityRole="header"
+            style={[styles.subject, { color: theme.colors.ink }]}
+          >
             {message.subject}
           </Text>
-
-          <View style={styles.messageInfo}>
-            <Text style={styles.sender}>{message.sender}</Text>
-            <Text style={styles.date}>{message.date}</Text>
-            <Text style={styles.status}>
-              Status: {message.status}
-            </Text>
-          </View>
-
-          <AppCard style={styles.messageCard}>
-            <Text style={styles.body}>
-              {message.body}
-            </Text>
-          </AppCard>
-
-          {showLabResultsAction && (
-  <View style={styles.primaryAction}>
-    <PrimaryButton
-  label="View lab results"
-  onPress={() =>
-    showPrototypeFeedback(
-      'Viewing lab results is not available in this prototype.',
-    )
-  }
-/>
-  </View>
-)}
-
-<Pressable
-  accessibilityLabel="Reply to message"
-  accessibilityRole="button"
-  onPress={() =>
-    showPrototypeFeedback(
-      'Replying to messages is not available in this prototype.',
-    )
-  }
-  style={({ pressed }) => [
-    styles.replyButton,
-    pressed && styles.pressed,
-  ]}
->
-  <Text style={styles.replyText}>Reply</Text>
-</Pressable>
         </View>
-      </ScreenContainer>
-         </View>
+
+        <View style={styles.messageInfo}>
+          <Text style={[styles.sender, { color: theme.colors.ink }]}>
+            {message.sender}
+          </Text>
+
+          <Text style={[styles.date, { color: theme.colors.mutedInk }]}>
+            {message.date}
+          </Text>
+
+          <Text style={[styles.status, { color: theme.colors.mutedInk }]}>
+            Status: {message.status}
+          </Text>
+        </View>
+
+        <AppCard style={styles.messageCard}>
+          <Text style={[styles.body, { color: theme.colors.ink }]}>
+            {message.body}
+          </Text>
+        </AppCard>
+
+        {showLabResultsAction && (
+          <View style={styles.primaryAction}>
+            <PrimaryButton
+              label="View lab results"
+              onPress={() =>
+                showPrototypeFeedback(
+                  'Viewing lab results is not part of the scope of this prototype.',
+                )
+              }
+            />
+          </View>
+        )}
+
+        <Pressable
+          accessibilityLabel="Reply to message"
+          accessibilityRole="button"
+          onPress={() =>
+            showPrototypeFeedback(
+              'Replying to messages is not part of the scope of this prototype.',
+            )
+          }
+          style={[
+            styles.replyButton,
+            {
+              borderColor: theme.colors.primary,
+              borderWidth: theme.borderWidth,
+            },
+          ]}
+        >
+          <Text style={[styles.replyText, { color: theme.colors.primary }]}>
+            Reply
+          </Text>
+        </Pressable>
+      </ScrollView>
+    </SafeAreaScreen>
   );
 }
 
 const styles = StyleSheet.create({
-  backButton: {
-    alignItems: 'center',
-    alignSelf: 'flex-start',
-    flexDirection: 'row',
+  back: {
     justifyContent: 'center',
-    marginBottom: spacing.lg,
-    minHeight: layout.minimumTouchTarget,
+    minHeight: 48,
+    minWidth: 48,
   },
   backText: {
-    color: colors.primary,
-    fontSize: typography.body,
     fontWeight: '700',
-    marginLeft: spacing.sm,
   },
   body: {
-    color: colors.ink,
-    fontSize: typography.body,
+    fontSize: 16,
     lineHeight: 27,
   },
   content: {
-    paddingBottom: spacing.xxl,
-    paddingHorizontal: 18,
-    paddingTop: 28,
+    padding: 18,
   },
   date: {
-    color: colors.mutedInk,
-    fontSize: typography.label,
+    fontSize: 14,
     marginTop: spacing.sm,
+  },
+  header: {
+    alignItems: 'center',
+    flexDirection: 'row',
   },
   messageCard: {
     marginTop: spacing.lg,
@@ -123,44 +131,32 @@ const styles = StyleSheet.create({
   messageInfo: {
     marginTop: spacing.md,
   },
-  pressed: {
-    opacity: 0.7,
-  },
   primaryAction: {
     marginTop: spacing.lg,
   },
   replyButton: {
     alignItems: 'center',
-    borderColor: colors.primary,
     borderRadius: 12,
-    borderWidth: 2,
     justifyContent: 'center',
     marginTop: spacing.lg,
     minHeight: layout.minimumTouchTarget,
     paddingHorizontal: spacing.lg,
   },
   replyText: {
-    color: colors.primary,
-    fontSize: typography.body,
+    fontSize: 16,
     fontWeight: '700',
   },
-  screen: {
-    backgroundColor: colors.background,
-    flex: 1,
-  },
   sender: {
-    color: colors.ink,
-    fontSize: typography.body,
+    fontSize: 16,
     fontWeight: '700',
   },
   status: {
-    color: colors.mutedInk,
-    fontSize: typography.label,
+    fontSize: 14,
     marginTop: spacing.sm,
   },
   subject: {
-    color: colors.ink,
-    fontSize: 23,
+    flex: 1,
+    fontSize: 24,
     fontWeight: '700',
   },
 });

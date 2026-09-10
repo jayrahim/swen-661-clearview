@@ -39,16 +39,19 @@ export function navigationReducer(route, action) {
   switch (action.type) {
     case navigationActionTypes.signInComplete:
       return { name: routeNames.dashboard };
+
     case navigationActionTypes.openRoot:
       if (!rootRouteNames.includes(action.name)) return route;
       // Replacing the route clears any active child detail route.
       return { name: action.name };
+
     case navigationActionTypes.openAppointmentDetail:
       return {
         name: routeNames.appointmentDetail,
         appointment: action.appointment,
       };
-      case navigationActionTypes.openMessageDetail:
+
+    case navigationActionTypes.openMessageDetail:
       return {
         name: routeNames.messageDetail,
         message: action.message,
@@ -62,7 +65,9 @@ export function navigationReducer(route, action) {
       if (route.name === routeNames.messageDetail) {
         return { name: routeNames.messages };
       }
+
       return route;
+
     default:
       return route;
   }

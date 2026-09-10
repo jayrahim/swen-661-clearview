@@ -17,9 +17,10 @@ import {
 
 export function AppNavigator() {
   const [route, dispatch] = useReducer(navigationReducer, initialRoute);
-  
+
   const rootNavigation = useMemo(
     () => ({
+      // Records remains intentionally omitted until its route exists.
       home: () =>
         dispatch({
           type: navigationActionTypes.openRoot,
@@ -69,11 +70,7 @@ export function AppNavigator() {
     return (
       <AppointmentDetailScreen
         appointment={route.appointment}
-        onBack={() =>
-          dispatch({
-            type: navigationActionTypes.back,
-          })
-        }
+        onBack={() => dispatch({ type: navigationActionTypes.back })}
       />
     );
   }
@@ -81,7 +78,7 @@ export function AppNavigator() {
   if (route.name === routeNames.messages) {
     return (
       <MessagesScreen
-        onHome={rootNavigation.home}
+        onNavigate={rootNavigation}
         onSelectMessage={(message) =>
           dispatch({
             type: navigationActionTypes.openMessageDetail,
@@ -96,30 +93,18 @@ export function AppNavigator() {
     return (
       <MessageDetailScreen
         message={route.message}
-        onBack={() =>
-          dispatch({
-            type: navigationActionTypes.back,
-          })
-        }
+        onBack={() => dispatch({ type: navigationActionTypes.back })}
       />
     );
   }
 
   if (route.name === routeNames.settings) {
-    return (
-      <AccessibilitySettingsScreen
-        onNavigate={rootNavigation}
-      />
-    );
+    return <AccessibilitySettingsScreen onNavigate={rootNavigation} />;
   }
 
   return (
     <SignInScreen
-      onSignIn={() =>
-        dispatch({
-          type: navigationActionTypes.signInComplete,
-        })
-      }
+      onSignIn={() => dispatch({ type: navigationActionTypes.signInComplete })}
     />
   );
 }

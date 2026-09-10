@@ -28,10 +28,7 @@ const generalMessage = {
 describe('MessageDetailScreen', () => {
   test('renders the selected message details', async () => {
     await renderWithProviders(
-      <MessageDetailScreen
-        message={labMessage}
-        onBack={jest.fn()}
-      />,
+      <MessageDetailScreen message={labMessage} onBack={jest.fn()} />,
     );
 
     expect(
@@ -48,10 +45,7 @@ describe('MessageDetailScreen', () => {
 
   test('shows the lab-results action for a lab message', async () => {
     await renderWithProviders(
-      <MessageDetailScreen
-        message={labMessage}
-        onBack={jest.fn()}
-      />,
+      <MessageDetailScreen message={labMessage} onBack={jest.fn()} />,
     );
 
     expect(
@@ -63,10 +57,7 @@ describe('MessageDetailScreen', () => {
 
   test('does not show the lab-results action for a general message', async () => {
     await renderWithProviders(
-      <MessageDetailScreen
-        message={generalMessage}
-        onBack={jest.fn()}
-      />,
+      <MessageDetailScreen message={generalMessage} onBack={jest.fn()} />,
     );
 
     expect(
@@ -76,14 +67,11 @@ describe('MessageDetailScreen', () => {
     ).toBeNull();
   });
 
-  test('shows prototype feedback when View lab results is pressed', async () => {
+  test('shows an out-of-scope message when View lab results is pressed', async () => {
     const user = userEvent.setup();
 
     await renderWithProviders(
-      <MessageDetailScreen
-        message={labMessage}
-        onBack={jest.fn()}
-      />,
+      <MessageDetailScreen message={labMessage} onBack={jest.fn()} />,
     );
 
     await user.press(
@@ -92,21 +80,18 @@ describe('MessageDetailScreen', () => {
       }),
     );
 
-   expect(
-  screen.getByText(
-    'Viewing lab results is not available in this prototype.',
-  ),
-).toBeVisible();
+    expect(
+      screen.getByText(
+        'Viewing lab results is not part of the scope of this prototype.',
+      ),
+    ).toBeVisible();
   });
 
-  test('shows prototype feedback when Reply is pressed', async () => {
+  test('shows an out-of-scope message when Reply is pressed', async () => {
     const user = userEvent.setup();
 
     await renderWithProviders(
-      <MessageDetailScreen
-        message={generalMessage}
-        onBack={jest.fn()}
-      />,
+      <MessageDetailScreen message={generalMessage} onBack={jest.fn()} />,
     );
 
     await user.press(
@@ -116,10 +101,10 @@ describe('MessageDetailScreen', () => {
     );
 
     expect(
-  screen.getByText(
-    'Replying to messages is not available in this prototype.',
-  ),
-).toBeVisible();
+      screen.getByText(
+        'Replying to messages is not part of the scope of this prototype.',
+      ),
+    ).toBeVisible();
   });
 
   test('returns to Messages when the back button is pressed', async () => {
@@ -127,10 +112,7 @@ describe('MessageDetailScreen', () => {
     const onBack = jest.fn();
 
     await renderWithProviders(
-      <MessageDetailScreen
-        message={labMessage}
-        onBack={onBack}
-      />,
+      <MessageDetailScreen message={labMessage} onBack={onBack} />,
     );
 
     await user.press(
@@ -144,10 +126,7 @@ describe('MessageDetailScreen', () => {
 
   test('preserves the Reply prototype control', async () => {
     await renderWithProviders(
-      <MessageDetailScreen
-        message={generalMessage}
-        onBack={jest.fn()}
-      />,
+      <MessageDetailScreen message={generalMessage} onBack={jest.fn()} />,
     );
 
     expect(

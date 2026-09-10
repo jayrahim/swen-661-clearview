@@ -78,7 +78,6 @@ export function DashboardScreen({ onNavigate = {} }) {
           <Text accessibilityRole="header" style={styles.sectionTitle}>
             Quick access
           </Text>
-          
 
 {!preferences.reducedClutter && (
   <View style={isTablet ? styles.tabletTiles : styles.phoneTiles}>
@@ -128,8 +127,7 @@ export function DashboardScreen({ onNavigate = {} }) {
 </Pressable>
         </View>
       </ScreenContainer>
-
-     <BottomNavigation activeItem="home" onNavigate={onNavigate} />
+        <BottomNavigation activeItem="home" onNavigate={onNavigate} />
     </View>
   );
 }

@@ -1,4 +1,3 @@
-
 import { messages } from '../data/messagesData';
 
 export function getMessages() {

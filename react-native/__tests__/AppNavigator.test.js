@@ -77,4 +77,33 @@ describe('AppNavigator', () => {
     );
     expect(screen.getByRole('header', { name: 'Appointments' })).toBeVisible();
   });
+
+  test('uses Messages as a root route and returns from message detail', async () => {
+    const user = userEvent.setup();
+
+    await renderWithProviders(<AppNavigator />);
+
+    await user.press(screen.getByRole('button', { name: 'Sign in' }));
+    await user.press(
+      screen.getByRole('button', { name: 'Messages, 2 unread' }),
+    );
+    expect(screen.getByRole('header', { name: 'Messages' })).toBeVisible();
+
+    await user.press(
+      screen.getByRole('button', {
+        name: 'Dr. David Chen, Lab results available',
+      }),
+    );
+    expect(
+      screen.getByRole('header', { name: 'Lab results available' }),
+    ).toBeVisible();
+
+    await user.press(screen.getByRole('button', { name: 'Back to messages' }));
+    expect(screen.getByRole('header', { name: 'Messages' })).toBeVisible();
+
+    await user.press(screen.getByRole('tab', { name: 'Home' }));
+    expect(
+      screen.getByRole('header', { name: 'Good morning, Maya' }),
+    ).toBeVisible();
+  });
 });
