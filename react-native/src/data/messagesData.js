@@ -1,4 +1,3 @@
-
 export const messages = Object.freeze([
   {
     id: 'lab-results',

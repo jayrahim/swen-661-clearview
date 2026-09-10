@@ -57,4 +57,20 @@ describe('navigationReducer', () => {
       name: routeNames.appointments,
     });
   });
+
+  test('returns from message detail to its messages parent', () => {
+    const detail = navigationReducer(
+      { name: routeNames.messages },
+      {
+        type: navigationActionTypes.openMessageDetail,
+        message: { id: 'message-1' },
+      },
+    );
+
+    expect(
+      navigationReducer(detail, { type: navigationActionTypes.back }),
+    ).toEqual({
+      name: routeNames.messages,
+    });
+  });
 });
