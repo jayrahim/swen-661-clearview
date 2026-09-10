@@ -10,37 +10,28 @@ export function MedicalNoteDetailScreen({ note, onBack }) {
   const { theme } = useClearViewTheme();
   const { showPrototypeFeedback } = usePrototypeFeedback();
 
+  if (!note) {
+    return (
+      <SafeAreaScreen style={{ backgroundColor: theme.colors.background }}>
+        <View style={styles.content}>
+          <DetailHeader onBack={onBack} theme={theme} />
+          <Text
+            style={{
+              color: theme.colors.ink,
+              fontSize: scaledFontSize(16, theme),
+            }}
+          >
+            This note is no longer available.
+          </Text>
+        </View>
+      </SafeAreaScreen>
+    );
+  }
+
   return (
     <SafeAreaScreen style={{ backgroundColor: theme.colors.background }}>
       <ScrollView contentContainerStyle={styles.content}>
-        <View style={styles.header}>
-          <Pressable
-            accessibilityLabel="Back to medical notes"
-            accessibilityRole="button"
-            onPress={onBack}
-            style={styles.back}
-          >
-            <Text
-              style={{
-                color: theme.colors.primary,
-                fontSize: scaledFontSize(34, theme),
-                fontWeight: '700',
-              }}
-            >
-              ‹
-            </Text>
-          </Pressable>
-          <Text
-            accessibilityRole="header"
-            style={{
-              color: theme.colors.ink,
-              fontSize: scaledFontSize(24, theme),
-              fontWeight: '700',
-            }}
-          >
-            Visit Note
-          </Text>
-        </View>
+        <DetailHeader onBack={onBack} theme={theme} />
         <Text
           style={{
             color: theme.colors.ink,
@@ -105,6 +96,39 @@ export function MedicalNoteDetailScreen({ note, onBack }) {
         </Pressable>
       </ScrollView>
     </SafeAreaScreen>
+  );
+}
+
+function DetailHeader({ onBack, theme }) {
+  return (
+    <View style={styles.header}>
+      <Pressable
+        accessibilityLabel="Back to medical notes"
+        accessibilityRole="button"
+        onPress={onBack}
+        style={styles.back}
+      >
+        <Text
+          style={{
+            color: theme.colors.primary,
+            fontSize: scaledFontSize(34, theme),
+            fontWeight: '700',
+          }}
+        >
+          ‹
+        </Text>
+      </Pressable>
+      <Text
+        accessibilityRole="header"
+        style={{
+          color: theme.colors.ink,
+          fontSize: scaledFontSize(24, theme),
+          fontWeight: '700',
+        }}
+      >
+        Visit Note
+      </Text>
+    </View>
   );
 }
 

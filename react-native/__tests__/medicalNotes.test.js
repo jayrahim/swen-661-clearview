@@ -112,6 +112,21 @@ test('detail renders the selected note, assessment entries, and care-team feedba
   ).toBeVisible();
 });
 
+test('detail keeps a usable back path when a note is unavailable', async () => {
+  const user = userEvent.setup();
+  const onBack = jest.fn();
+
+  await renderWithProviders(<MedicalNoteDetailScreen onBack={onBack} />);
+
+  expect(screen.getByRole('header', { name: 'Visit Note' })).toBeVisible();
+  expect(screen.getByText('This note is no longer available.')).toBeVisible();
+
+  await user.press(
+    screen.getByRole('button', { name: 'Back to medical notes' }),
+  );
+  expect(onBack).toHaveBeenCalledTimes(1);
+});
+
 test('list and detail apply high-contrast tokens and scaled text', async () => {
   const preferences = {
     ...defaultAccessibilityPreferences,
