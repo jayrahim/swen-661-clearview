@@ -1,17 +1,20 @@
 import { StyleSheet, View } from 'react-native';
 
-import { useAccessibilityPreferences } from '../state/accessibilityPreferences';
-import { resolveTheme, spacing } from '../theme/tokens';
+import { useClearViewTheme } from '../theme/useClearViewTheme';
+import { spacing } from '../theme/tokens';
 
 /** Shared bordered surface for ClearView content and action cards. */
 export function AppCard({ children, style }) {
-  const { preferences } = useAccessibilityPreferences();
-  const theme = resolveTheme(preferences);
+  const { theme } = useClearViewTheme();
   return (
     <View
       style={[
         styles.card,
-        { backgroundColor: theme.colors.surface, borderColor: theme.colors.border, borderWidth: theme.borderWidth },
+        {
+          backgroundColor: theme.colors.surface,
+          borderColor: theme.colors.border,
+          borderWidth: theme.borderWidth,
+        },
         style,
       ]}
     >

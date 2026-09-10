@@ -29,6 +29,8 @@ export const highContrastColors = {
   ink: '#111827',
   mutedInk: '#4B5563',
   border: '#111827',
+  infoBackground: '#FFFFFF',
+  infoBorder: '#111827',
 };
 
 export const spacing = {
@@ -64,7 +66,9 @@ export const borderWidths = {
 export function resolveTheme(preferences) {
   return {
     colors: preferences.highContrast ? highContrastColors : colors,
-    borderWidth: preferences.highContrast ? borderWidths.highContrast : borderWidths.normal,
+    borderWidth: preferences.highContrast
+      ? borderWidths.highContrast
+      : borderWidths.normal,
     textScale: preferences.textSize.scale,
   };
 }

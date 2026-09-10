@@ -8,7 +8,9 @@ describe('AccessibilitySettingsScreen', () => {
   test('updates the rendered High Contrast value immediately', async () => {
     const user = userEvent.setup();
 
-    await renderWithProviders(<AccessibilitySettingsScreen onBack={jest.fn()} />);
+    await renderWithProviders(
+      <AccessibilitySettingsScreen onBack={jest.fn()} />,
+    );
 
     await user.press(
       screen.getByRole('button', {
@@ -26,7 +28,9 @@ describe('AccessibilitySettingsScreen', () => {
   test('cycles the current text-size preference', async () => {
     const user = userEvent.setup();
 
-    await renderWithProviders(<AccessibilitySettingsScreen onBack={jest.fn()} />);
+    await renderWithProviders(
+      <AccessibilitySettingsScreen onBack={jest.fn()} />,
+    );
 
     await user.press(
       screen.getByRole('button', {
@@ -45,9 +49,12 @@ describe('AccessibilitySettingsScreen', () => {
       reducedClutter: true,
     };
 
-    await renderWithProviders(<AccessibilitySettingsScreen onBack={jest.fn()} />, {
-      initialPreferences,
-    });
+    await renderWithProviders(
+      <AccessibilitySettingsScreen onBack={jest.fn()} />,
+      {
+        initialPreferences,
+      },
+    );
 
     await user.press(screen.getByRole('button', { name: 'Reset preferences' }));
 
@@ -57,7 +64,9 @@ describe('AccessibilitySettingsScreen', () => {
   test('provides feedback when Color Preference is unavailable', async () => {
     const user = userEvent.setup();
 
-    await renderWithProviders(<AccessibilitySettingsScreen onBack={jest.fn()} />);
+    await renderWithProviders(
+      <AccessibilitySettingsScreen onBack={jest.fn()} />,
+    );
 
     await user.press(
       screen.getByRole('button', {
@@ -65,6 +74,8 @@ describe('AccessibilitySettingsScreen', () => {
       }),
     );
 
-    expect(screen.getByText('Color preference is not available in this prototype.')).toBeVisible();
+    expect(
+      screen.getByText('Color preference is not available in this prototype.'),
+    ).toBeVisible();
   });
 });

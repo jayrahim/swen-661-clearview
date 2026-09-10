@@ -1,6 +1,7 @@
 import { Pressable, StyleSheet, Text } from 'react-native';
 
-import { colors, layout, spacing } from '../theme/tokens';
+import { useClearViewTheme } from '../theme/useClearViewTheme';
+import { layout, scaledFontSize, spacing } from '../theme/tokens';
 
 /** A shared, accessible primary action used by future ClearView screens. */
 export function PrimaryButton({
@@ -9,6 +10,8 @@ export function PrimaryButton({
   accessibilityLabel = label,
   disabled = false,
 }) {
+  const { theme } = useClearViewTheme();
+
   return (
     <Pressable
       accessibilityLabel={accessibilityLabel}
@@ -18,11 +21,19 @@ export function PrimaryButton({
       onPress={onPress}
       style={({ pressed }) => [
         styles.button,
+        { backgroundColor: theme.colors.primary },
         disabled && styles.disabled,
         pressed && !disabled && styles.pressed,
       ]}
     >
-      <Text style={styles.label}>{label}</Text>
+      <Text
+        style={[
+          styles.label,
+          { color: theme.colors.surface, fontSize: scaledFontSize(16, theme) },
+        ]}
+      >
+        {label}
+      </Text>
     </Pressable>
   );
 }
@@ -30,7 +41,6 @@ export function PrimaryButton({
 const styles = StyleSheet.create({
   button: {
     alignItems: 'center',
-    backgroundColor: colors.primary,
     borderRadius: 12,
     justifyContent: 'center',
     minHeight: layout.minimumTouchTarget,
@@ -41,8 +51,6 @@ const styles = StyleSheet.create({
     opacity: 0.5,
   },
   label: {
-    color: colors.surface,
-    fontSize: 16,
     fontWeight: '700',
   },
   pressed: {

@@ -25,7 +25,9 @@ export function BottomNavigation({ activeItem = 'home', onNavigate = {} }) {
         const content = (
           <>
             <Ionicons color={color} name={item.icon} size={20} />
-            <Text style={[styles.label, { color }, isActive && styles.activeLabel]}>
+            <Text
+              style={[styles.label, { color }, isActive && styles.activeLabel]}
+            >
               {item.label}
             </Text>
           </>

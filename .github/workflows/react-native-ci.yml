@@ -32,6 +32,12 @@ jobs:
       - name: Verify Expo dependency compatibility
         run: npx expo install --check
 
+      - name: Check formatting
+        run: npm run format:check
+
+      - name: Lint
+        run: npm run lint
+
       - name: Run tests with coverage
         run: npm run test:coverage -- --runInBand
 
