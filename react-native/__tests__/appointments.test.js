@@ -37,7 +37,7 @@ test('list renders repository data and selects the intended appointment', async 
   const onSelect = jest.fn();
 
   await renderWithProviders(
-    <AppointmentsScreen onHome={jest.fn()} onSelect={onSelect} />,
+    <AppointmentsScreen onNavigate={{ home: jest.fn() }} onSelect={onSelect} />,
   );
 
   expect(screen.getByRole('header', { name: 'Appointments' })).toBeVisible();
@@ -64,7 +64,10 @@ test('list renders repository data and selects the intended appointment', async 
 
 test('list uses the high-contrast badge treatment', async () => {
   await renderWithProviders(
-    <AppointmentsScreen onHome={jest.fn()} onSelect={jest.fn()} />,
+    <AppointmentsScreen
+      onNavigate={{ home: jest.fn() }}
+      onSelect={jest.fn()}
+    />,
     {
       initialPreferences: {
         ...defaultAccessibilityPreferences,

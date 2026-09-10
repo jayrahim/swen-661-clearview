@@ -1,51 +1,30 @@
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
 import { BottomNavigation } from '../components/BottomNavigation';
 import { AppCard } from '../components/AppCard';
+import { SafeAreaScreen } from '../components/SafeAreaScreen';
 import { appointmentRepository } from '../data/appointments';
 import { appointmentBadge, appointmentTime } from '../utils/appointmentFormat';
 import { colors, scaledFontSize } from '../theme/tokens';
 import { useClearViewTheme } from '../theme/useClearViewTheme';
 
-export function AppointmentsScreen({ onBack, onSelect, onHome }) {
+export function AppointmentsScreen({ onNavigate = {}, onSelect }) {
   const { preferences, theme } = useClearViewTheme();
   const appointments = appointmentRepository.getAll();
 
   return (
-    <SafeAreaView
-      edges={['top', 'left', 'right', 'bottom']}
+    <SafeAreaScreen
       style={[styles.screen, { backgroundColor: theme.colors.background }]}
     >
       <ScrollView contentContainerStyle={styles.content}>
-        <View style={styles.header}>
-          <Pressable
-            accessibilityLabel="Back to dashboard"
-            accessibilityRole="button"
-            onPress={onBack}
-            style={styles.back}
-          >
-            <Text
-              style={[
-                styles.backText,
-                {
-                  color: theme.colors.primary,
-                  fontSize: scaledFontSize(34, theme),
-                },
-              ]}
-            >
-              ‹
-            </Text>
-          </Pressable>
-          <Text
-            accessibilityRole="header"
-            style={[
-              styles.title,
-              { color: theme.colors.ink, fontSize: scaledFontSize(24, theme) },
-            ]}
-          >
-            Appointments
-          </Text>
-        </View>
+        <Text
+          accessibilityRole="header"
+          style={[
+            styles.title,
+            { color: theme.colors.ink, fontSize: scaledFontSize(24, theme) },
+          ]}
+        >
+          Appointments
+        </Text>
         <Text
           accessibilityRole="header"
           style={[
@@ -112,16 +91,13 @@ export function AppointmentsScreen({ onBack, onSelect, onHome }) {
           </Pressable>
         ))}
       </ScrollView>
-      <BottomNavigation activeItem="visits" onNavigate={{ home: onHome }} />
-    </SafeAreaView>
+      <BottomNavigation activeItem="visits" onNavigate={onNavigate} />
+    </SafeAreaScreen>
   );
 }
 const styles = StyleSheet.create({
-  screen: { flex: 1, backgroundColor: colors.background },
+  screen: { backgroundColor: colors.background },
   content: { padding: 18 },
-  header: { alignItems: 'center', flexDirection: 'row' },
-  back: { justifyContent: 'center', minHeight: 48, minWidth: 48 },
-  backText: { lineHeight: 36 },
   title: { fontSize: 24, fontWeight: '700' },
   heading: { fontSize: 20, fontWeight: '700', marginTop: 28, marginBottom: 16 },
   card: { marginBottom: 18 },

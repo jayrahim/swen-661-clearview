@@ -24,7 +24,11 @@ function cardSurface(theme) {
   };
 }
 
-export function AccessibilitySettingsScreen({ onBack }) {
+/**
+ * Settings is modeled as a root route but retains Flutter's explicit
+ * return-to-dashboard affordance rather than persistent phone tab navigation.
+ */
+export function AccessibilitySettingsScreen({ onNavigate = {} }) {
   const { preferences, dispatch } = useAccessibilityPreferences();
   const { theme } = useClearViewTheme();
   const [prototypeMessage, setPrototypeMessage] = useState(null);
@@ -53,7 +57,7 @@ export function AccessibilitySettingsScreen({ onBack }) {
           <Pressable
             accessibilityLabel="Back to dashboard"
             accessibilityRole="button"
-            onPress={onBack}
+            onPress={onNavigate.home}
             style={styles.back}
           >
             <Text style={[styles.backLabel, { color: theme.colors.primary }]}>

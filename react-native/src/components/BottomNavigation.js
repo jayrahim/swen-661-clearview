@@ -38,7 +38,7 @@ export function BottomNavigation({ activeItem = 'home', onNavigate = {} }) {
             <View
               accessibilityLabel={item.label}
               accessibilityRole="tab"
-              accessibilityState={{ selected: isActive }}
+              accessibilityState={{ disabled: true, selected: isActive }}
               key={item.key}
               style={styles.item}
             >

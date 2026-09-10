@@ -17,9 +17,7 @@ describe('DashboardScreen', () => {
   test('identifies Home as the selected root navigation item', async () => {
     await renderWithProviders(<DashboardScreen />);
 
-    expect(screen.getByLabelText('Home').props.accessibilityState).toEqual({
-      selected: true,
-    });
+    expect(screen.getByLabelText('Home')).toBeSelected();
   });
 
   test('hides Quick Access tiles when Reduced Clutter is enabled', async () => {

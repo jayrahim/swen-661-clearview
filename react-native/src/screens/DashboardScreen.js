@@ -14,7 +14,7 @@ import { nextAppointment, quickAccessItems } from '../data/dashboardData';
 import { colors, scaledFontSize, spacing, typography } from '../theme/tokens';
 import { useClearViewTheme } from '../theme/useClearViewTheme';
 
-export function DashboardScreen({ onOpenAccessibility, onOpenAppointments }) {
+export function DashboardScreen({ onNavigate = {} }) {
   const { width } = useWindowDimensions();
   const isTablet = width >= 600;
   const { preferences, theme } = useClearViewTheme();
@@ -33,7 +33,7 @@ export function DashboardScreen({ onOpenAccessibility, onOpenAppointments }) {
             <Pressable
               accessibilityLabel="Accessibility settings"
               accessibilityRole="button"
-              onPress={onOpenAccessibility}
+              onPress={onNavigate.settings}
               style={styles.accessibilityShortcut}
             >
               <Text style={styles.accessibilityLabel}>Accessibility</Text>
@@ -47,7 +47,7 @@ export function DashboardScreen({ onOpenAccessibility, onOpenAppointments }) {
           <Pressable
             accessibilityLabel="View appointment details"
             accessibilityRole="button"
-            onPress={onOpenAppointments}
+            onPress={onNavigate.visits}
           >
             <AppCard>
               <View style={styles.appointmentHeader}>
@@ -93,7 +93,7 @@ export function DashboardScreen({ onOpenAccessibility, onOpenAppointments }) {
           <Pressable
             accessibilityLabel="Accessibility preferences"
             accessibilityRole="button"
-            onPress={onOpenAccessibility}
+            onPress={onNavigate.settings}
           >
             <AppCard style={styles.preferencesCard}>
               <View style={styles.preferencesContent}>
@@ -119,10 +119,7 @@ export function DashboardScreen({ onOpenAccessibility, onOpenAppointments }) {
           </Pressable>
         </View>
       </ScreenContainer>
-      <BottomNavigation
-        activeItem="home"
-        onNavigate={{ visits: onOpenAppointments }}
-      />
+      <BottomNavigation activeItem="home" onNavigate={onNavigate} />
     </View>
   );
 }

@@ -17,6 +17,41 @@ describe('AppNavigator', () => {
     expect(screen.getByText('Next appointment')).toBeVisible();
   });
 
+  test('switches from Dashboard to the Appointments root and returns through Home', async () => {
+    const user = userEvent.setup();
+
+    await renderWithProviders(<AppNavigator />);
+
+    await user.press(screen.getByRole('button', { name: 'Sign in' }));
+    await user.press(screen.getByRole('tab', { name: 'Visits' }));
+    expect(screen.getByRole('header', { name: 'Appointments' })).toBeVisible();
+    expect(
+      screen.queryByRole('button', { name: 'Back to dashboard' }),
+    ).not.toBeOnTheScreen();
+
+    await user.press(screen.getByRole('tab', { name: 'Home' }));
+    expect(
+      screen.getByRole('header', { name: 'Good morning, Maya' }),
+    ).toBeVisible();
+  });
+
+  test('opens Settings as a root destination and returns to Dashboard', async () => {
+    const user = userEvent.setup();
+
+    await renderWithProviders(<AppNavigator />);
+
+    await user.press(screen.getByRole('button', { name: 'Sign in' }));
+    await user.press(
+      screen.getByRole('button', { name: 'Accessibility settings' }),
+    );
+    expect(screen.getByRole('header', { name: 'Accessibility' })).toBeVisible();
+
+    await user.press(screen.getByRole('button', { name: 'Back to dashboard' }));
+    expect(
+      screen.getByRole('header', { name: 'Good morning, Maya' }),
+    ).toBeVisible();
+  });
+
   test('preserves the selected appointment through detail and back navigation', async () => {
     const user = userEvent.setup();
 
@@ -41,24 +76,5 @@ describe('AppNavigator', () => {
       screen.getByRole('button', { name: 'Back to appointments' }),
     );
     expect(screen.getByRole('header', { name: 'Appointments' })).toBeVisible();
-
-    await user.press(screen.getByRole('tab', { name: 'Home' }));
-    expect(
-      screen.getByRole('header', { name: 'Good morning, Maya' }),
-    ).toBeVisible();
-  });
-
-  test('returns to the dashboard from the appointments header back button', async () => {
-    const user = userEvent.setup();
-
-    await renderWithProviders(<AppNavigator />);
-
-    await user.press(screen.getByRole('button', { name: 'Sign in' }));
-    await user.press(screen.getByRole('tab', { name: 'Visits' }));
-    await user.press(screen.getByRole('button', { name: 'Back to dashboard' }));
-
-    expect(
-      screen.getByRole('header', { name: 'Good morning, Maya' }),
-    ).toBeVisible();
   });
 });
