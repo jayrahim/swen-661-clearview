@@ -97,7 +97,11 @@ export function DashboardScreen({ onNavigate = {} }) {
                     item={displayItem}
                     key={item.id}
                     onPress={
-                      item.id === 'messages' ? onNavigate.messages : undefined
+                      item.id === 'messages'
+                        ? onNavigate.messages
+                        : item.id === 'medical-notes'
+                          ? onNavigate.records
+                          : undefined
                     }
                     style={isTablet ? styles.tabletTile : styles.phoneTile}
                   />
