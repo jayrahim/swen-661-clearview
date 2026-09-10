@@ -29,4 +29,19 @@ describe('PrimaryButton', () => {
 
     expect(onPress).not.toHaveBeenCalled();
   });
+
+  test('passes an accessibility hint to the action', async () => {
+    await renderWithProviders(
+      <PrimaryButton
+        accessibilityHint="Continue to the dashboard"
+        label="Continue"
+        onPress={jest.fn()}
+      />,
+    );
+
+    expect(screen.getByRole('button', { name: 'Continue' })).toHaveProp(
+      'accessibilityHint',
+      'Continue to the dashboard',
+    );
+  });
 });

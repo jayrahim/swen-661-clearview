@@ -8,6 +8,7 @@ export function PrimaryButton({
   label,
   onPress,
   accessibilityLabel = label,
+  accessibilityHint,
   disabled = false,
 }) {
   const { theme } = useClearViewTheme();
@@ -15,6 +16,7 @@ export function PrimaryButton({
   return (
     <Pressable
       accessibilityLabel={accessibilityLabel}
+      accessibilityHint={accessibilityHint}
       accessibilityRole="button"
       accessibilityState={{ disabled }}
       disabled={disabled}
