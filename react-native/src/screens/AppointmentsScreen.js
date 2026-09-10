@@ -1,20 +1,29 @@
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { BottomNavigation } from '../components/BottomNavigation';
 import { AppCard } from '../components/AppCard';
+import { PrimaryButton } from '../components/PrimaryButton';
+import {
+  PrototypeFeedbackAnchor,
+  usePrototypeFeedback,
+} from '../components/PrototypeFeedback';
 import { SafeAreaScreen } from '../components/SafeAreaScreen';
 import { appointmentRepository } from '../data/appointments';
 import { appointmentBadge, appointmentTime } from '../utils/appointmentFormat';
-import { colors, scaledFontSize } from '../theme/tokens';
+import { colors, layout, scaledFontSize, spacing } from '../theme/tokens';
 import { useClearViewTheme } from '../theme/useClearViewTheme';
 
 export function AppointmentsScreen({ onNavigate = {}, onSelect }) {
   const { preferences, theme } = useClearViewTheme();
+  const { showPrototypeFeedback } = usePrototypeFeedback();
   const appointments = appointmentRepository.getAll();
 
   return (
     <SafeAreaScreen
       style={[styles.screen, { backgroundColor: theme.colors.background }]}
     >
+      <PrototypeFeedbackAnchor
+        bottomOffset={layout.bottomNavigationHeight + spacing.md}
+      />
       <ScrollView contentContainerStyle={styles.content}>
         <Text
           accessibilityRole="header"
@@ -90,6 +99,15 @@ export function AppointmentsScreen({ onNavigate = {}, onSelect }) {
             </AppCard>
           </Pressable>
         ))}
+        <PrimaryButton
+          accessibilityHint="Scheduling is not available in this prototype"
+          label="Schedule Appointment"
+          onPress={() =>
+            showPrototypeFeedback(
+              'Scheduling is not available in this prototype.',
+            )
+          }
+        />
       </ScrollView>
       <BottomNavigation activeItem="visits" onNavigate={onNavigate} />
     </SafeAreaScreen>

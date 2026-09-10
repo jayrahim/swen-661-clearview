@@ -85,7 +85,7 @@ const styles = StyleSheet.create({
     borderColor: colors.border,
     borderTopWidth: borderWidths.normal,
     flexDirection: 'row',
-    minHeight: 76,
+    minHeight: layout.bottomNavigationHeight,
   },
   pressed: {
     opacity: 0.7,

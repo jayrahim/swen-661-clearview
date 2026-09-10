@@ -2,6 +2,7 @@ import { StatusBar } from 'expo-status-bar';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 import { AppNavigator } from './src/navigation/AppNavigator';
+import { PrototypeFeedbackProvider } from './src/components/PrototypeFeedback';
 import { AccessibilityPreferencesProvider } from './src/state/accessibilityPreferences';
 
 export default function App() {
@@ -10,7 +11,9 @@ export default function App() {
       <StatusBar style="dark" />
       <SafeAreaProvider>
         <AccessibilityPreferencesProvider>
-          <AppNavigator />
+          <PrototypeFeedbackProvider>
+            <AppNavigator />
+          </PrototypeFeedbackProvider>
         </AccessibilityPreferencesProvider>
       </SafeAreaProvider>
     </>

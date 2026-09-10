@@ -2,6 +2,7 @@ import { render } from '@testing-library/react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 import { AccessibilityPreferencesProvider } from '../state/accessibilityPreferences';
+import { PrototypeFeedbackProvider } from '../components/PrototypeFeedback';
 
 /**
  * Stable test seam for app-level providers. Add shared state providers here as
@@ -14,7 +15,7 @@ export async function renderWithProviders(
   return render(
     <SafeAreaProvider>
       <AccessibilityPreferencesProvider initialPreferences={initialPreferences}>
-        {ui}
+        <PrototypeFeedbackProvider>{ui}</PrototypeFeedbackProvider>
       </AccessibilityPreferencesProvider>
     </SafeAreaProvider>,
     options,

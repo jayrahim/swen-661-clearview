@@ -1,6 +1,6 @@
-import { useState } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
+import { usePrototypeFeedback } from '../components/PrototypeFeedback';
 import { ScreenContainer } from '../components/ScreenContainer';
 import { useAccessibilityPreferences } from '../state/accessibilityPreferences';
 import { scaledFontSize } from '../theme/tokens';
@@ -31,7 +31,7 @@ function cardSurface(theme) {
 export function AccessibilitySettingsScreen({ onNavigate = {} }) {
   const { preferences, dispatch } = useAccessibilityPreferences();
   const { theme } = useClearViewTheme();
-  const [prototypeMessage, setPrototypeMessage] = useState(null);
+  const { showPrototypeFeedback } = usePrototypeFeedback();
   const valueFor = (action) => {
     if (action === 'cycle-text-size') return preferences.textSize.label;
     if (action === 'toggle-high-contrast') {
@@ -136,7 +136,7 @@ export function AccessibilitySettingsScreen({ onNavigate = {} }) {
             accessibilityLabel="Color preference, Cool. Use a calmer accent palette"
             accessibilityRole="button"
             onPress={() =>
-              setPrototypeMessage(
+              showPrototypeFeedback(
                 'Color preference is not available in this prototype.',
               )
             }
@@ -180,14 +180,6 @@ export function AccessibilitySettingsScreen({ onNavigate = {} }) {
               </Text>
             </View>
           </Pressable>
-          {prototypeMessage ? (
-            <Text
-              accessibilityLiveRegion="polite"
-              style={[styles.prototypeMessage, { color: theme.colors.primary }]}
-            >
-              {prototypeMessage}
-            </Text>
-          ) : null}
           <View
             style={[
               styles.preview,
@@ -272,7 +264,6 @@ const styles = StyleSheet.create({
   preview: { borderRadius: 12, marginTop: 12, padding: 14 },
   previewTitle: { fontWeight: '700' },
   previewText: { marginTop: 6 },
-  prototypeMessage: { marginBottom: 12, textAlign: 'center' },
   reset: {
     alignItems: 'center',
     borderRadius: 11,
