@@ -6,6 +6,7 @@ export const routeNames = Object.freeze({
   records: 'records',
   settings: 'settings',
   appointmentDetail: 'appointment-detail',
+  messageDetail: 'message-detail',
 });
 
 export const rootRouteNames = Object.freeze([
@@ -28,6 +29,7 @@ export const navigationActionTypes = Object.freeze({
   signInComplete: 'sign-in-complete',
   openRoot: 'open-root',
   openAppointmentDetail: 'open-appointment-detail',
+  openMessageDetail: 'open-message-detail',
   back: 'back',
 });
 
@@ -46,9 +48,17 @@ export function navigationReducer(route, action) {
         name: routeNames.appointmentDetail,
         appointment: action.appointment,
       };
+    case navigationActionTypes.openMessageDetail:
+      return {
+        name: routeNames.messageDetail,
+        message: action.message,
+      };
     case navigationActionTypes.back:
       if (route.name === routeNames.appointmentDetail) {
         return { name: routeNames.appointments };
+      }
+      if (route.name === routeNames.messageDetail) {
+        return { name: routeNames.messages };
       }
       return route;
     default:

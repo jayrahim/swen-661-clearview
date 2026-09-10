@@ -84,6 +84,9 @@ export function DashboardScreen({ onNavigate = {} }) {
                 <QuickAccessTile
                   item={item}
                   key={item.id}
+                  onPress={
+                    item.id === 'messages' ? onNavigate.messages : undefined
+                  }
                   style={isTablet ? styles.tabletTile : styles.phoneTile}
                 />
               ))}

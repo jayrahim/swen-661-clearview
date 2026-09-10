@@ -1,0 +1,33 @@
+
+export const messages = Object.freeze([
+  {
+    id: 'lab-results',
+    sender: 'Dr. David Chen',
+    subject: 'Lab results available',
+    preview: 'Your recent lab results are ready to review.',
+    body: 'Your recent lab results are now available. Please review them before your next appointment.',
+    date: 'Sep 8, 2026',
+    status: 'Unread',
+    type: 'lab-results',
+  },
+  {
+    id: 'care-team-reminder',
+    sender: 'Care Team',
+    subject: 'Appointment reminder',
+    preview: 'This is a reminder about your upcoming appointment.',
+    body: 'This is a reminder about your upcoming appointment. Please arrive 15 minutes early.',
+    date: 'Sep 7, 2026',
+    status: 'Read',
+    type: 'general',
+  },
+  {
+    id: 'vision-referral',
+    sender: 'Vision Center',
+    subject: 'Referral update',
+    preview: 'Your referral has been processed.',
+    body: 'Your referral to the Vision Center has been processed. Please contact the office to schedule.',
+    date: 'Sep 6, 2026',
+    status: 'Read',
+    type: 'general',
+  },
+]);
