@@ -7,6 +7,8 @@ on:
 
 permissions:
   contents: read
+  issues: write
+  pull-requests: write
 
 jobs:
   validate-flutter:
@@ -34,7 +36,8 @@ jobs:
       - name: Analyze Flutter source
         run: flutter analyze
 
-      - name: Run tests with coverage
+      - id: validation
+        name: Run tests with coverage
         run: flutter test --coverage
 
       - name: Upload coverage report
@@ -43,3 +46,16 @@ jobs:
           name: flutter-coverage
           path: flutter/coverage/lcov.info
           if-no-files-found: error
+
+      - name: Update pull request validation summary
+        if: >-
+          ${{
+          always() &&
+          github.event_name == 'pull_request' &&
+          github.event.pull_request.head.repo.full_name == github.repository
+          }}
+        uses: ./.github/actions/pr-validation-summary
+        with:
+          coverage-path: flutter/coverage/lcov.info
+          outcome: ${{ steps.validation.outcome == 'success' && 'success' || 'failure' }}
+          platform: Flutter
