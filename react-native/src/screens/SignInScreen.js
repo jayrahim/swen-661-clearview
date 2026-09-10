@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 
 import { PrimaryButton } from '../components/PrimaryButton';
+import { usePrototypeFeedback } from '../components/PrototypeFeedback';
 import { ScreenContainer } from '../components/ScreenContainer';
 import {
   colors,
@@ -14,8 +15,8 @@ import { useClearViewTheme } from '../theme/useClearViewTheme';
 
 export function SignInScreen({ onSignIn }) {
   const [passwordVisible, setPasswordVisible] = useState(false);
-  const [prototypeMessage, setPrototypeMessage] = useState(null);
   const { theme } = useClearViewTheme();
+  const { showPrototypeFeedback } = usePrototypeFeedback();
 
   return (
     <ScreenContainer>
@@ -71,7 +72,7 @@ export function SignInScreen({ onSignIn }) {
         <Pressable
           accessibilityRole="button"
           onPress={() =>
-            setPrototypeMessage(
+            showPrototypeFeedback(
               'Password recovery is not available in this prototype.',
             )
           }
@@ -79,15 +80,6 @@ export function SignInScreen({ onSignIn }) {
         >
           <Text style={styles.forgotPasswordLabel}>Forgot password?</Text>
         </Pressable>
-
-        {prototypeMessage ? (
-          <Text
-            accessibilityLiveRegion="polite"
-            style={styles.prototypeMessage}
-          >
-            {prototypeMessage}
-          </Text>
-        ) : null}
 
         <View
           accessible
@@ -196,13 +188,6 @@ const styles = StyleSheet.create({
     fontSize: typography.heading,
     fontWeight: '700',
     marginTop: spacing.xs,
-  },
-  prototypeMessage: {
-    color: colors.primary,
-    fontSize: typography.label,
-    lineHeight: 20,
-    marginTop: spacing.sm,
-    textAlign: 'center',
   },
   title: {
     color: colors.ink,

@@ -1,14 +1,14 @@
-import { useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { PrimaryButton } from '../components/PrimaryButton';
+import { usePrototypeFeedback } from '../components/PrototypeFeedback';
 import { SafeAreaScreen } from '../components/SafeAreaScreen';
 import { appointmentDetailDate } from '../utils/appointmentFormat';
 import { scaledFontSize } from '../theme/tokens';
 import { useClearViewTheme } from '../theme/useClearViewTheme';
 
 export function AppointmentDetailScreen({ appointment, onBack }) {
-  const [message, setMessage] = useState(null);
   const { theme } = useClearViewTheme();
+  const { showPrototypeFeedback } = usePrototypeFeedback();
   const location = appointment.locationDetail
     ? `${appointment.location} • ${appointment.locationDetail}`
     : appointment.location;
@@ -116,13 +116,17 @@ export function AppointmentDetailScreen({ appointment, onBack }) {
         <PrimaryButton
           label="Get directions"
           onPress={() =>
-            setMessage('Directions are not available in this prototype.')
+            showPrototypeFeedback(
+              'Directions are not available in this prototype.',
+            )
           }
         />
         <Pressable
           accessibilityRole="button"
           onPress={() =>
-            setMessage('Rescheduling is not available in this prototype.')
+            showPrototypeFeedback(
+              'Rescheduling is not available in this prototype.',
+            )
           }
           style={[
             styles.outline,
@@ -144,20 +148,6 @@ export function AppointmentDetailScreen({ appointment, onBack }) {
             Reschedule
           </Text>
         </Pressable>
-        {message ? (
-          <Text
-            accessibilityLiveRegion="polite"
-            style={[
-              styles.feedback,
-              {
-                color: theme.colors.primary,
-                fontSize: scaledFontSize(14, theme),
-              },
-            ]}
-          >
-            {message}
-          </Text>
-        ) : null}
       </ScrollView>
     </SafeAreaScreen>
   );
@@ -249,9 +239,5 @@ const styles = StyleSheet.create({
   },
   outlineText: {
     fontWeight: '700',
-  },
-  feedback: {
-    marginTop: 12,
-    textAlign: 'center',
   },
 });

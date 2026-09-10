@@ -4,7 +4,12 @@ import { AppointmentDetailScreen } from '../src/screens/AppointmentDetailScreen'
 import { appointmentRepository } from '../src/data/appointments';
 import { defaultAccessibilityPreferences } from '../src/state/accessibilityPreferences';
 import { renderWithProviders } from '../src/test-utils/renderWithProviders';
-import { resolveTheme, scaledFontSize } from '../src/theme/tokens';
+import {
+  layout,
+  resolveTheme,
+  scaledFontSize,
+  spacing,
+} from '../src/theme/tokens';
 
 describe('appointmentRepository', () => {
   test('returns ordered synthetic appointments without exposing its collection', () => {
@@ -60,6 +65,22 @@ test('list renders repository data and selects the intended appointment', async 
   expect(onSelect).toHaveBeenCalledWith(
     appointmentRepository.getById('appt-2'),
   );
+
+  await user.press(
+    screen.getByRole('button', { name: 'Schedule Appointment' }),
+  );
+  expect(
+    screen.getByRole('button', { name: 'Schedule Appointment' }),
+  ).toHaveProp(
+    'accessibilityHint',
+    'Scheduling is not available in this prototype',
+  );
+  expect(
+    screen.getByText('Scheduling is not available in this prototype.'),
+  ).toBeVisible();
+  expect(
+    screen.getByText('Scheduling is not available in this prototype.').parent,
+  ).toHaveStyle({ bottom: layout.bottomNavigationHeight + spacing.md });
 });
 
 test('list uses the high-contrast badge treatment', async () => {

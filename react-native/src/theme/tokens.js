@@ -43,6 +43,7 @@ export const spacing = {
 };
 
 export const layout = {
+  bottomNavigationHeight: 76,
   minimumTouchTarget: 48,
   phoneMaxWidth: 480,
   tabletBreakpoint: 600,
@@ -65,6 +66,7 @@ export const borderWidths = {
 
 export function resolveTheme(preferences) {
   return {
+    isHighContrast: preferences.highContrast,
     colors: preferences.highContrast ? highContrastColors : colors,
     borderWidth: preferences.highContrast
       ? borderWidths.highContrast
