@@ -79,55 +79,53 @@ export function DashboardScreen({ onNavigate = {} }) {
             Quick access
           </Text>
 
-{!preferences.reducedClutter && (
-  <View style={isTablet ? styles.tabletTiles : styles.phoneTiles}>
-    {quickAccessItems.map((item) => (
-      <QuickAccessTile
-        item={item}
-        key={item.id}
-        onPress={
-          item.id === 'messages'
-            ? onNavigate.messages
-            : undefined
-        }
-        style={isTablet ? styles.tabletTile : styles.phoneTile}
-      />
-    ))}
-  </View>
-)}
+          {!preferences.reducedClutter && (
+            <View style={isTablet ? styles.tabletTiles : styles.phoneTiles}>
+              {quickAccessItems.map((item) => (
+                <QuickAccessTile
+                  item={item}
+                  key={item.id}
+                  onPress={
+                    item.id === 'messages' ? onNavigate.messages : undefined
+                  }
+                  style={isTablet ? styles.tabletTile : styles.phoneTile}
+                />
+              ))}
+            </View>
+          )}
 
-<Pressable
-  accessibilityLabel="Accessibility preferences"
-  accessibilityRole="button"
-  onPress={onNavigate.settings}
->
-  <AppCard style={styles.preferencesCard}>
-    <View style={styles.preferencesContent}>
-      <View>
-        <Text style={styles.preferencesTitle}>
-          Accessibility preferences
-        </Text>
+          <Pressable
+            accessibilityLabel="Accessibility preferences"
+            accessibilityRole="button"
+            onPress={onNavigate.settings}
+          >
+            <AppCard style={styles.preferencesCard}>
+              <View style={styles.preferencesContent}>
+                <View>
+                  <Text style={styles.preferencesTitle}>
+                    Accessibility preferences
+                  </Text>
 
-        <Text
-          style={[
-            styles.preferencesDetail,
-            { fontSize: scaledFontSize(14, theme) },
-          ]}
-        >
-          Text: {preferences.textSize.label} • High contrast:{' '}
-          {preferences.highContrast ? 'On' : 'Off'}
-        </Text>
-      </View>
+                  <Text
+                    style={[
+                      styles.preferencesDetail,
+                      { fontSize: scaledFontSize(14, theme) },
+                    ]}
+                  >
+                    Text: {preferences.textSize.label} • High contrast:{' '}
+                    {preferences.highContrast ? 'On' : 'Off'}
+                  </Text>
+                </View>
 
-      <Text accessibilityElementsHidden style={styles.chevron}>
-        ›
-      </Text>
-    </View>
-  </AppCard>
-</Pressable>
+                <Text accessibilityElementsHidden style={styles.chevron}>
+                  ›
+                </Text>
+              </View>
+            </AppCard>
+          </Pressable>
         </View>
       </ScreenContainer>
-        <BottomNavigation activeItem="home" onNavigate={onNavigate} />
+      <BottomNavigation activeItem="home" onNavigate={onNavigate} />
     </View>
   );
 }
