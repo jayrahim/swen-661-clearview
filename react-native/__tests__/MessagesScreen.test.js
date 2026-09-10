@@ -1,0 +1,139 @@
+import { screen, userEvent } from '@testing-library/react-native';
+
+import { MessagesScreen } from '../src/screens/MessagesScreen';
+import { renderWithProviders } from '../src/test-utils/renderWithProviders';
+
+describe('MessagesScreen', () => {
+  test('renders the Messages list and Compose control', async () => {
+    await renderWithProviders(
+      <MessagesScreen
+        onHome={jest.fn()}
+        onSelectMessage={jest.fn()}
+      />,
+    );
+
+    expect(
+      screen.getByRole('header', { name: 'Messages' }),
+    ).toBeVisible();
+
+    expect(
+      screen.getByRole('button', { name: 'Compose message' }),
+    ).toBeVisible();
+
+    expect(screen.getByText('Dr. David Chen')).toBeVisible();
+    expect(screen.getByText('Lab results available')).toBeVisible();
+    expect(screen.getByText('Care Team')).toBeVisible();
+    expect(screen.getByText('Appointment reminder')).toBeVisible();
+    expect(screen.getByText('Vision Center')).toBeVisible();
+    expect(screen.getByText('Referral update')).toBeVisible();
+  });
+
+  test('shows an out-of-scope message when Compose is pressed', async () => {
+  const user = userEvent.setup();
+
+  await renderWithProviders(
+    <MessagesScreen
+      onHome={jest.fn()}
+      onSelectMessage={jest.fn()}
+    />,
+  );
+
+  await user.press(
+    screen.getByRole('button', {
+      name: 'Compose message',
+    }),
+  );
+
+  expect(
+    screen.getByRole('header', {
+      name: 'Compose Message',
+    }),
+  ).toBeVisible();
+
+  expect(
+    screen.getByText(
+      'Composing a new message is not part of the scope of this prototype.',
+    ),
+  ).toBeVisible();
+
+  await user.press(
+    screen.getByRole('button', {
+      name: 'Close prototype notice',
+    }),
+  );
+
+  expect(
+    screen.queryByText(
+      'Composing a new message is not part of the scope of this prototype.',
+    ),
+  ).toBeNull();
+});
+
+  test('passes the selected message when a message is pressed', async () => {
+    const user = userEvent.setup();
+    const onSelectMessage = jest.fn();
+
+    await renderWithProviders(
+      <MessagesScreen
+        onHome={jest.fn()}
+        onSelectMessage={onSelectMessage}
+      />,
+    );
+
+    await user.press(
+      screen.getByRole('button', {
+        name: 'Dr. David Chen, Lab results available',
+      }),
+    );
+
+    expect(onSelectMessage).toHaveBeenCalledTimes(1);
+
+    expect(onSelectMessage).toHaveBeenCalledWith(
+      expect.objectContaining({
+        sender: 'Dr. David Chen',
+        subject: 'Lab results available',
+        type: 'lab-results',
+      }),
+    );
+  });
+
+  test('returns to Dashboard when the back button is pressed', async () => {
+    const user = userEvent.setup();
+    const onHome = jest.fn();
+
+    await renderWithProviders(
+      <MessagesScreen
+        onHome={onHome}
+        onSelectMessage={jest.fn()}
+      />,
+    );
+
+    await user.press(
+      screen.getByRole('button', {
+        name: 'Back to dashboard',
+      }),
+    );
+
+    expect(onHome).toHaveBeenCalledTimes(1);
+  });
+
+  test('returns to Home from bottom navigation', async () => {
+    const user = userEvent.setup();
+    const onHome = jest.fn();
+
+    await renderWithProviders(
+      <MessagesScreen
+        onHome={onHome}
+        onSelectMessage={jest.fn()}
+      />,
+    );
+
+    await user.press(
+      screen.getByRole('tab', {
+        name: 'Home',
+      }),
+    );
+
+    expect(onHome).toHaveBeenCalledTimes(1);
+  });
+});

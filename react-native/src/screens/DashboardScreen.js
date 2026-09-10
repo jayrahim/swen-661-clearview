@@ -7,7 +7,7 @@ import { ScreenContainer } from '../components/ScreenContainer';
 import { nextAppointment, quickAccessItems } from '../data/dashboardData';
 import { colors, spacing, typography } from '../theme/tokens';
 
-export function DashboardScreen() {
+export function DashboardScreen({ onMessages }) {
   const { width } = useWindowDimensions();
   const isTablet = width >= 600;
 
@@ -42,12 +42,13 @@ export function DashboardScreen() {
           </Text>
           <View style={isTablet ? styles.tabletTiles : styles.phoneTiles}>
             {quickAccessItems.map((item) => (
-              <QuickAccessTile
-                item={item}
-                key={item.id}
-                style={isTablet ? styles.tabletTile : styles.phoneTile}
+               <QuickAccessTile
+                  item={item}
+                  key={item.id}
+                  onPress={item.id === 'messages' ? onMessages : undefined}
+                  style={isTablet ? styles.tabletTile : styles.phoneTile}
               />
-            ))}
+))}
           </View>
 
           <AppCard style={styles.preferencesCard}>
@@ -63,7 +64,8 @@ export function DashboardScreen() {
           </AppCard>
         </View>
       </ScreenContainer>
-      <BottomNavigation activeItem="home" />
+      <BottomNavigation activeItem="home" onNavigate={{messages: onMessages,}}  
+/>
     </View>
   );
 }
