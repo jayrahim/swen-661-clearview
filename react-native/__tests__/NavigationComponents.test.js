@@ -22,24 +22,25 @@ describe('shared navigation components', () => {
       />,
     );
 
-    await user.press(screen.getByRole('button', { name: 'Messages, 2 unread' }));
+    await user.press(
+      screen.getByRole('button', { name: 'Messages, 2 unread' }),
+    );
 
     expect(onPress).toHaveBeenCalledTimes(1);
   });
 
-  test('BottomNavigation invokes only implemented navigation destinations', async () => {
-    const onMessages = jest.fn();
+  test('BottomNavigation keeps unfinished destinations visible but non-interactive', async () => {
     const user = userEvent.setup();
 
     await renderWithProviders(
-      <BottomNavigation activeItem="home" onNavigate={{ messages: onMessages }} />,
+      <BottomNavigation activeItem="home" onNavigate={{ visits: jest.fn() }} />,
     );
 
-    await user.press(screen.getByLabelText('Messages'));
+    expect(screen.getByLabelText('Messages')).toBeDisabled();
+    expect(screen.getByLabelText('Records')).toBeDisabled();
+    await user.press(screen.getByRole('tab', { name: 'Visits' }));
 
-    expect(onMessages).toHaveBeenCalledTimes(1);
-    expect(screen.getByLabelText('Home').props.accessibilityState).toEqual({
-      selected: true,
-    });
+    expect(screen.getByRole('tab', { name: 'Visits' })).toBeEnabled();
+    expect(screen.getByLabelText('Home')).toBeSelected();
   });
 });

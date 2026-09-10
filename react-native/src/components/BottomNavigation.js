@@ -25,7 +25,9 @@ export function BottomNavigation({ activeItem = 'home', onNavigate = {} }) {
         const content = (
           <>
             <Ionicons color={color} name={item.icon} size={20} />
-            <Text style={[styles.label, { color }, isActive && styles.activeLabel]}>
+            <Text
+              style={[styles.label, { color }, isActive && styles.activeLabel]}
+            >
               {item.label}
             </Text>
           </>
@@ -36,7 +38,7 @@ export function BottomNavigation({ activeItem = 'home', onNavigate = {} }) {
             <View
               accessibilityLabel={item.label}
               accessibilityRole="tab"
-              accessibilityState={{ selected: isActive }}
+              accessibilityState={{ disabled: true, selected: isActive }}
               key={item.key}
               style={styles.item}
             >
@@ -83,7 +85,7 @@ const styles = StyleSheet.create({
     borderColor: colors.border,
     borderTopWidth: borderWidths.normal,
     flexDirection: 'row',
-    minHeight: 76,
+    minHeight: layout.bottomNavigationHeight,
   },
   pressed: {
     opacity: 0.7,

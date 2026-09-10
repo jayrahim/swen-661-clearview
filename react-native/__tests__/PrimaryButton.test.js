@@ -8,7 +8,9 @@ describe('PrimaryButton', () => {
     const onPress = jest.fn();
     const user = userEvent.setup();
 
-    await renderWithProviders(<PrimaryButton label="Continue" onPress={onPress} />);
+    await renderWithProviders(
+      <PrimaryButton label="Continue" onPress={onPress} />,
+    );
 
     await user.press(screen.getByRole('button', { name: 'Continue' }));
 
@@ -26,5 +28,20 @@ describe('PrimaryButton', () => {
     await user.press(screen.getByRole('button', { name: 'Continue' }));
 
     expect(onPress).not.toHaveBeenCalled();
+  });
+
+  test('passes an accessibility hint to the action', async () => {
+    await renderWithProviders(
+      <PrimaryButton
+        accessibilityHint="Continue to the dashboard"
+        label="Continue"
+        onPress={jest.fn()}
+      />,
+    );
+
+    expect(screen.getByRole('button', { name: 'Continue' })).toHaveProp(
+      'accessibilityHint',
+      'Continue to the dashboard',
+    );
   });
 });

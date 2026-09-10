@@ -1,7 +1,6 @@
 import { Ionicons } from '@expo/vector-icons';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
-import { useState } from 'react';
-import { PrototypeNoticeModal } from '../components/PrototypeNoticeModal';
+import { usePrototypeFeedback } from '../components/PrototypeFeedback';
 
 import { AppCard } from '../components/AppCard';
 import { BottomNavigation } from '../components/BottomNavigation';
@@ -10,7 +9,7 @@ import { getMessages } from '../repositories/messagesRepository';
 import { colors, layout, spacing, typography } from '../theme/tokens';
 
 export function MessagesScreen({ onHome, onSelectMessage }) {
-  const [showComposeNotice, setShowComposeNotice] = useState(false);
+  const { showPrototypeFeedback } = usePrototypeFeedback();
   const messages = getMessages();
 
   return (
@@ -42,18 +41,16 @@ export function MessagesScreen({ onHome, onSelectMessage }) {
               Messages
             </Text>
 
-            <Pressable
+           <Pressable
   accessibilityLabel="Compose message"
   accessibilityRole="button"
-  onPress={() => setShowComposeNotice(true)}
-  style={({ pressed }) => [
-    styles.composeButton,
-    pressed && styles.pressed,
-  ]}
+  onPress={() =>
+    showPrototypeFeedback(
+      'Composing a new message is not available in this prototype.',
+    )
+  }
 >
-  <Text style={styles.composeText}>
-    Compose
-  </Text>
+  <Text>Compose</Text>
 </Pressable>
           </View>
 
@@ -101,13 +98,7 @@ export function MessagesScreen({ onHome, onSelectMessage }) {
           home: onHome,
         }}
       />
-      <PrototypeNoticeModal
-  message="Composing a new message is not part of the scope of this prototype."
-  onClose={() => setShowComposeNotice(false)}
-  title="Compose Message"
-  visible={showComposeNotice}
-/>
-    </View>
+          </View>
   );
 }
 

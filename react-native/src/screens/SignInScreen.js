@@ -1,19 +1,22 @@
 import { useState } from 'react';
-import {
-  Pressable,
-  StyleSheet,
-  Text,
-  TextInput,
-  View,
-} from 'react-native';
+import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 
 import { PrimaryButton } from '../components/PrimaryButton';
+import { usePrototypeFeedback } from '../components/PrototypeFeedback';
 import { ScreenContainer } from '../components/ScreenContainer';
-import { colors, layout, spacing, typography } from '../theme/tokens';
+import {
+  colors,
+  layout,
+  scaledFontSize,
+  spacing,
+  typography,
+} from '../theme/tokens';
+import { useClearViewTheme } from '../theme/useClearViewTheme';
 
 export function SignInScreen({ onSignIn }) {
   const [passwordVisible, setPasswordVisible] = useState(false);
-  const [prototypeMessage, setPrototypeMessage] = useState(null);
+  const { theme } = useClearViewTheme();
+  const { showPrototypeFeedback } = usePrototypeFeedback();
 
   return (
     <ScreenContainer>
@@ -21,9 +24,14 @@ export function SignInScreen({ onSignIn }) {
         <Text style={styles.brand}>CareConnect</Text>
         <Text style={styles.product}>ClearView</Text>
 
-        <Text style={styles.title}>Sign in to manage your care</Text>
-        <Text style={styles.description}>
-          Use your CareConnect account to view appointments, messages, and health information.
+        <Text style={[styles.title, { fontSize: scaledFontSize(26, theme) }]}>
+          Sign in to manage your care
+        </Text>
+        <Text
+          style={[styles.description, { fontSize: scaledFontSize(16, theme) }]}
+        >
+          Use your CareConnect account to view appointments, messages, and
+          health information.
         </Text>
 
         <Text style={styles.fieldLabel}>Email</Text>
@@ -46,12 +54,16 @@ export function SignInScreen({ onSignIn }) {
             style={styles.passwordInput}
           />
           <Pressable
-            accessibilityLabel={passwordVisible ? 'Hide password' : 'Show password'}
+            accessibilityLabel={
+              passwordVisible ? 'Hide password' : 'Show password'
+            }
             accessibilityRole="button"
             onPress={() => setPasswordVisible((visible) => !visible)}
             style={styles.passwordToggle}
           >
-            <Text style={styles.passwordToggleLabel}>{passwordVisible ? 'Hide' : 'Show'}</Text>
+            <Text style={styles.passwordToggleLabel}>
+              {passwordVisible ? 'Hide' : 'Show'}
+            </Text>
           </Pressable>
         </View>
 
@@ -60,18 +72,14 @@ export function SignInScreen({ onSignIn }) {
         <Pressable
           accessibilityRole="button"
           onPress={() =>
-            setPrototypeMessage('Password recovery is not available in this prototype.')
+            showPrototypeFeedback(
+              'Password recovery is not available in this prototype.',
+            )
           }
           style={styles.forgotPassword}
         >
           <Text style={styles.forgotPasswordLabel}>Forgot password?</Text>
         </Pressable>
-
-        {prototypeMessage ? (
-          <Text accessibilityLiveRegion="polite" style={styles.prototypeMessage}>
-            {prototypeMessage}
-          </Text>
-        ) : null}
 
         <View
           accessible
@@ -79,7 +87,8 @@ export function SignInScreen({ onSignIn }) {
           style={styles.accessibilityNotice}
         >
           <Text style={styles.accessibilityNoticeText}>
-            Accessibility options are available after sign-in and can be saved for future sessions.
+            Accessibility options are available after sign-in and can be saved
+            for future sessions.
           </Text>
         </View>
       </View>
@@ -179,13 +188,6 @@ const styles = StyleSheet.create({
     fontSize: typography.heading,
     fontWeight: '700',
     marginTop: spacing.xs,
-  },
-  prototypeMessage: {
-    color: colors.primary,
-    fontSize: typography.label,
-    lineHeight: 20,
-    marginTop: spacing.sm,
-    textAlign: 'center',
   },
   title: {
     color: colors.ink,

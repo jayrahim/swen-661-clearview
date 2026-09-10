@@ -1,43 +1,125 @@
-import { useState } from 'react';
+import { useMemo, useReducer } from 'react';
 
+import { AccessibilitySettingsScreen } from '../screens/AccessibilitySettingsScreen';
+import { AppointmentDetailScreen } from '../screens/AppointmentDetailScreen';
+import { AppointmentsScreen } from '../screens/AppointmentsScreen';
 import { DashboardScreen } from '../screens/DashboardScreen';
 import { MessageDetailScreen } from '../screens/MessageDetailScreen';
 import { MessagesScreen } from '../screens/MessagesScreen';
 import { SignInScreen } from '../screens/SignInScreen';
-
+import {
+  initialRoute,
+  navigationActionTypes,
+  navigationReducer,
+  routeNames,
+  rootTabRoutes,
+} from './routes';
 
 export function AppNavigator() {
-  const [screen, setScreen] = useState('sign-in');
-  const [selectedMessage, setSelectedMessage] = useState(null);
+  const [route, dispatch] = useReducer(navigationReducer, initialRoute);
+  
+  const rootNavigation = useMemo(
+    () => ({
+      home: () =>
+        dispatch({
+          type: navigationActionTypes.openRoot,
+          name: rootTabRoutes.home,
+        }),
 
-  if (screen === 'dashboard') {
+      visits: () =>
+        dispatch({
+          type: navigationActionTypes.openRoot,
+          name: rootTabRoutes.visits,
+        }),
+
+      messages: () =>
+        dispatch({
+          type: navigationActionTypes.openRoot,
+          name: rootTabRoutes.messages,
+        }),
+
+      settings: () =>
+        dispatch({
+          type: navigationActionTypes.openRoot,
+          name: rootTabRoutes.settings,
+        }),
+    }),
+    [],
+  );
+
+  if (route.name === routeNames.dashboard) {
+    return <DashboardScreen onNavigate={rootNavigation} />;
+  }
+
+  if (route.name === routeNames.appointments) {
     return (
-      <DashboardScreen
-        onMessages={() => setScreen('messages')}
+      <AppointmentsScreen
+        onNavigate={rootNavigation}
+        onSelect={(appointment) =>
+          dispatch({
+            type: navigationActionTypes.openAppointmentDetail,
+            appointment,
+          })
+        }
       />
     );
   }
 
-  if (screen === 'messages') {
+  if (route.name === routeNames.appointmentDetail) {
+    return (
+      <AppointmentDetailScreen
+        appointment={route.appointment}
+        onBack={() =>
+          dispatch({
+            type: navigationActionTypes.back,
+          })
+        }
+      />
+    );
+  }
+
+  if (route.name === routeNames.messages) {
     return (
       <MessagesScreen
-        onHome={() => setScreen('dashboard')}
-        onSelectMessage={(message) => {
-          setSelectedMessage(message);
-          setScreen('message-detail');
-        }}
+        onHome={rootNavigation.home}
+        onSelectMessage={(message) =>
+          dispatch({
+            type: navigationActionTypes.openMessageDetail,
+            message,
+          })
+        }
       />
     );
   }
 
-  if (screen === 'message-detail' && selectedMessage) {
+  if (route.name === routeNames.messageDetail) {
     return (
       <MessageDetailScreen
-        message={selectedMessage}
-        onBack={() => setScreen('messages')}
+        message={route.message}
+        onBack={() =>
+          dispatch({
+            type: navigationActionTypes.back,
+          })
+        }
       />
     );
   }
 
-  return <SignInScreen onSignIn={() => setScreen('dashboard')} />;
+  if (route.name === routeNames.settings) {
+    return (
+      <AccessibilitySettingsScreen
+        onNavigate={rootNavigation}
+      />
+    );
+  }
+
+  return (
+    <SignInScreen
+      onSignIn={() =>
+        dispatch({
+          type: navigationActionTypes.signInComplete,
+        })
+      }
+    />
+  );
 }

@@ -29,6 +29,8 @@ export const highContrastColors = {
   ink: '#111827',
   mutedInk: '#4B5563',
   border: '#111827',
+  infoBackground: '#FFFFFF',
+  infoBorder: '#111827',
 };
 
 export const spacing = {
@@ -41,6 +43,7 @@ export const spacing = {
 };
 
 export const layout = {
+  bottomNavigationHeight: 76,
   minimumTouchTarget: 48,
   phoneMaxWidth: 480,
   tabletBreakpoint: 600,
@@ -60,3 +63,18 @@ export const borderWidths = {
   normal: 1,
   highContrast: 2,
 };
+
+export function resolveTheme(preferences) {
+  return {
+    isHighContrast: preferences.highContrast,
+    colors: preferences.highContrast ? highContrastColors : colors,
+    borderWidth: preferences.highContrast
+      ? borderWidths.highContrast
+      : borderWidths.normal,
+    textScale: preferences.textSize.scale,
+  };
+}
+
+export function scaledFontSize(size, theme) {
+  return size * theme.textScale;
+}

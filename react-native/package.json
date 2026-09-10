@@ -18,6 +18,9 @@
     "android": "expo start --android",
     "ios": "expo start --ios",
     "web": "expo start --web",
+    "lint": "eslint .",
+    "format": "prettier --write App.js index.js jest.setup.js package.json app.json src __tests__",
+    "format:check": "prettier --check App.js index.js jest.setup.js package.json app.json src __tests__",
     "test": "jest",
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage"
@@ -40,7 +43,12 @@
   "private": true,
   "devDependencies": {
     "@testing-library/react-native": "^14.0.1",
+    "eslint": "^9.39.5",
+    "eslint-config-expo": "~57.0.2",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-prettier": "^5.5.6",
     "jest": "~29.7.0",
-    "jest-expo": "~57.0.5"
+    "jest-expo": "~57.0.5",
+    "prettier": "^3.9.6"
   }
 }

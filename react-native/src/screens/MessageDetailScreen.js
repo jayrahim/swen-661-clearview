@@ -1,15 +1,14 @@
-import { useState } from 'react';
 import { Ionicons } from '@expo/vector-icons';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { usePrototypeFeedback } from '../components/PrototypeFeedback';
 
 import { AppCard } from '../components/AppCard';
 import { PrimaryButton } from '../components/PrimaryButton';
-import { PrototypeNoticeModal } from '../components/PrototypeNoticeModal';
 import { ScreenContainer } from '../components/ScreenContainer';
 import { colors, layout, spacing, typography } from '../theme/tokens';
 
 export function MessageDetailScreen({ message, onBack }) {
-  const [notice, setNotice] = useState(null);
+  const { showPrototypeFeedback } = usePrototypeFeedback(); 
   const showLabResultsAction = message.type === 'lab-results';
 
   return (
@@ -57,15 +56,13 @@ export function MessageDetailScreen({ message, onBack }) {
           {showLabResultsAction && (
   <View style={styles.primaryAction}>
     <PrimaryButton
-      label="View lab results"
-      onPress={() =>
-        setNotice({
-          title: 'View Lab Results',
-          message:
-            'Viewing lab results is not part of the scope of this prototype.',
-        })
-      }
-    />
+  label="View lab results"
+  onPress={() =>
+    showPrototypeFeedback(
+      'Viewing lab results is not available in this prototype.',
+    )
+  }
+/>
   </View>
 )}
 
@@ -73,30 +70,20 @@ export function MessageDetailScreen({ message, onBack }) {
   accessibilityLabel="Reply to message"
   accessibilityRole="button"
   onPress={() =>
-    setNotice({
-      title: 'Reply to Message',
-      message:
-        'Replying to messages is not part of the scope of this prototype.',
-    })
+    showPrototypeFeedback(
+      'Replying to messages is not available in this prototype.',
+    )
   }
   style={({ pressed }) => [
     styles.replyButton,
     pressed && styles.pressed,
   ]}
 >
-  <Text style={styles.replyText}>
-    Reply
-  </Text>
+  <Text style={styles.replyText}>Reply</Text>
 </Pressable>
         </View>
       </ScreenContainer>
-      <PrototypeNoticeModal
-  message={notice?.message ?? ''}
-  onClose={() => setNotice(null)}
-  title={notice?.title ?? ''}
-  visible={notice !== null}
-/>
-    </View>
+         </View>
   );
 }
 

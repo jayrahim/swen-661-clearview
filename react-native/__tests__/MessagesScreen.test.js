@@ -28,7 +28,7 @@ describe('MessagesScreen', () => {
     expect(screen.getByText('Referral update')).toBeVisible();
   });
 
-  test('shows an out-of-scope message when Compose is pressed', async () => {
+ test('shows prototype feedback when Compose is pressed', async () => {
   const user = userEvent.setup();
 
   await renderWithProviders(
@@ -45,28 +45,10 @@ describe('MessagesScreen', () => {
   );
 
   expect(
-    screen.getByRole('header', {
-      name: 'Compose Message',
-    }),
-  ).toBeVisible();
-
-  expect(
     screen.getByText(
-      'Composing a new message is not part of the scope of this prototype.',
+      'Composing a new message is not available in this prototype.',
     ),
   ).toBeVisible();
-
-  await user.press(
-    screen.getByRole('button', {
-      name: 'Close prototype notice',
-    }),
-  );
-
-  expect(
-    screen.queryByText(
-      'Composing a new message is not part of the scope of this prototype.',
-    ),
-  ).toBeNull();
 });
 
   test('passes the selected message when a message is pressed', async () => {
