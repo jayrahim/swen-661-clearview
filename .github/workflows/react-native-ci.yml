@@ -7,11 +7,11 @@ on:
 
 permissions:
   contents: read
-  issues: write
-  pull-requests: write
 
 jobs:
   validate-react-native:
+    outputs:
+      details: ${{ steps.validation.outputs.details }}
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -42,7 +42,12 @@ jobs:
 
       - id: validation
         name: Run tests with coverage
-        run: npm run test:coverage -- --runInBand
+        run: |
+          set -o pipefail
+          npm run test:coverage -- --runInBand | tee test-output.txt
+          suites=$(awk '/Test Suites:/{print $3}' test-output.txt | tail -1)
+          tests=$(awk '/Tests:/{print $2}' test-output.txt | tail -1)
+          echo "details=$suites suites / $tests tests · coverage generated" >> "$GITHUB_OUTPUT"
 
       - name: Upload coverage report
         uses: actions/upload-artifact@v7
@@ -51,15 +56,33 @@ jobs:
           path: react-native/coverage/lcov.info
           if-no-files-found: error
 
-      - name: Update pull request validation summary
-        if: >-
-          ${{
-          always() &&
-          github.event_name == 'pull_request' &&
-          github.event.pull_request.head.repo.full_name == github.repository
-          }}
-        uses: ./.github/actions/pr-validation-summary
+  summarize-react-native:
+    needs: validate-react-native
+    if: >-
+      ${{
+      always() &&
+      github.event_name == 'pull_request' &&
+      github.event.pull_request.head.repo.full_name == github.repository
+      }}
+    runs-on: ubuntu-latest
+    concurrency:
+      group: pr-validation-summary-${{ github.event.pull_request.number }}
+      cancel-in-progress: false
+    permissions:
+      contents: read
+      issues: write
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@v7
+      - name: Download coverage report
+        if: needs.validate-react-native.result == 'success'
+        uses: actions/download-artifact@v7
         with:
-          coverage-path: react-native/coverage/lcov.info
-          outcome: ${{ steps.validation.outcome == 'success' && 'success' || 'failure' }}
+          name: react-native-coverage
+          path: coverage
+      - uses: ./.github/actions/pr-validation-summary
+        with:
+          coverage-path: coverage/lcov.info
+          details: ${{ needs.validate-react-native.outputs.details }}
+          outcome: ${{ needs.validate-react-native.result }}
           platform: React Native

@@ -19,3 +19,28 @@ jobs:
       scan-args: |-
         --lockfile=./flutter/pubspec.lock
       fail-on-vuln: true
+
+  summarize-security:
+    needs: osv-scan
+    if: >-
+      ${{
+      always() &&
+      github.event_name == 'pull_request' &&
+      github.event.pull_request.head.repo.full_name == github.repository
+      }}
+    runs-on: ubuntu-latest
+    concurrency:
+      group: pr-validation-summary-${{ github.event.pull_request.number }}
+      cancel-in-progress: false
+    permissions:
+      contents: read
+      issues: write
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@v7
+      - uses: ./.github/actions/pr-validation-summary
+        with:
+          coverage-path: ''
+          details: OSV scan
+          outcome: ${{ needs.osv-scan.result }}
+          platform: Security

@@ -11,21 +11,29 @@ inputs:
   platform:
     description: Platform name for the summary row.
     required: true
+  details:
+    description: Optional platform-specific validation details.
+    required: false
 
 runs:
   using: composite
   steps:
     - name: Update sticky pull request comment
       uses: actions/github-script@v9
+      env:
+        COVERAGE_PATH: ${{ inputs.coverage-path }}
+        DETAILS: ${{ inputs.details }}
+        OUTCOME: ${{ inputs.outcome }}
+        PLATFORM: ${{ inputs.platform }}
       with:
         script: |
           const fs = require('fs');
           const path = require('path');
-          const platform = core.getInput('platform');
-          const outcome = core.getInput('outcome');
+          const platform = process.env.PLATFORM;
+          const outcome = process.env.OUTCOME;
           const coveragePath = path.join(
             process.env.GITHUB_WORKSPACE,
-            core.getInput('coverage-path'),
+            process.env.COVERAGE_PATH,
           );
 
           if (
@@ -37,7 +45,11 @@ runs:
           }
 
           function coverageSummary() {
-            if (outcome !== 'success' || !fs.existsSync(coveragePath)) {
+            if (
+              outcome !== 'success' ||
+              !fs.existsSync(coveragePath) ||
+              !fs.statSync(coveragePath).isFile()
+            ) {
               return '—';
             }
 
@@ -57,7 +69,6 @@ runs:
           }
 
           const marker = '<!-- clearview-validation-summary -->';
-          const dataMarker = '<!-- clearview-validation-data:';
           const comments = await github.paginate(github.rest.issues.listComments, {
             owner: context.repo.owner,
             repo: context.repo.repo,
@@ -71,27 +82,31 @@ runs:
             /<!-- clearview-validation-data:([\s\S]*?) -->/,
           );
           const summary = dataMatch ? JSON.parse(dataMatch[1]) : {};
+          const coverage = coverageSummary();
           summary[platform] = {
-            coverage: coverageSummary(),
+            details: [process.env.DETAILS, coverage === '—' ? '' : coverage]
+              .filter(Boolean)
+              .join(' · ') || '—',
             status: outcome === 'success' ? '✅ Passed' : '❌ Failed',
           };
 
           const row = (name) => {
             const result = summary[name];
             return result
-              ? `| ${name} | ${result.status} | ${result.coverage} |`
-              : `| ${name} | — | Not configured |`;
+              ? `| ${name} | ${result.status} | ${result.details} |`
+              : `| ${name} | — | Not yet included in validation |`;
           };
           const body = [
             marker,
             `<!-- clearview-validation-data:${JSON.stringify(summary)} -->`,
             '## ClearView validation',
             '',
-            '| Platform | Result | Coverage |',
+            '| Platform | Result | Details |',
             '| --- | --- | --- |',
             row('Flutter'),
             row('React Native'),
-            '| Electron | — | Not configured |',
+            '| Electron | — | Not yet included in validation |',
+            row('Security'),
           ].join('\n');
 
           if (existing) {
