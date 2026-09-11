@@ -1,9 +1,20 @@
 name: Dependency vulnerability scan
 
 on:
-  pull_request:
-  push:
-    branches: [main]
+  workflow_call:
+    inputs:
+      scan-flutter:
+        description: Whether Flutter dependency files require scanning.
+        required: true
+        type: boolean
+      scan-react-native:
+        description: Whether React Native dependency files require scanning.
+        required: true
+        type: boolean
+    outputs:
+      outcome:
+        description: Aggregated dependency scan outcome.
+        value: ${{ jobs.security-result.outputs.outcome }}
 
 permissions:
   actions: read
@@ -11,11 +22,44 @@ permissions:
   security-events: write
 
 jobs:
-  osv-scan:
-    name: Scan dependencies for known vulnerabilities
+  scan-flutter:
+    if: inputs.scan-flutter
+    name: Scan Flutter dependencies
     uses: google/osv-scanner-action/.github/workflows/osv-scanner-reusable.yml@v2.5.1
     with:
-      # Scoped to the active Flutter prototype; JS starters are not shipped this term.
       scan-args: |-
         --lockfile=./flutter/pubspec.lock
       fail-on-vuln: true
+
+  scan-react-native:
+    if: inputs.scan-react-native
+    name: Scan React Native dependencies
+    uses: google/osv-scanner-action/.github/workflows/osv-scanner-reusable.yml@v2.5.1
+    with:
+      scan-args: |-
+        --lockfile=./react-native/package-lock.json
+      fail-on-vuln: true
+
+  security-result:
+    needs: [scan-flutter, scan-react-native]
+    if: always()
+    runs-on: ubuntu-latest
+    outputs:
+      outcome: ${{ steps.outcome.outputs.value }}
+    steps:
+      - id: outcome
+        env:
+          FLUTTER_RESULT: ${{ needs.scan-flutter.result }}
+          REACT_NATIVE_RESULT: ${{ needs.scan-react-native.result }}
+        run: |
+          if [ "$FLUTTER_RESULT" = failure ] || [ "$REACT_NATIVE_RESULT" = failure ]; then
+            echo 'value=failure' >> "$GITHUB_OUTPUT"
+            exit 1
+          fi
+
+          if [ "$FLUTTER_RESULT" = success ] || [ "$REACT_NATIVE_RESULT" = success ]; then
+            echo 'value=success' >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          echo 'value=skipped' >> "$GITHUB_OUTPUT"

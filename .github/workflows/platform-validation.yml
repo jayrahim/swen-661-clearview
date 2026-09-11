@@ -1,0 +1,105 @@
+name: Platform validation
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  schedule:
+    - cron: '17 3 * * 1'
+
+permissions:
+  contents: read
+
+jobs:
+  changes:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: read
+    outputs:
+      flutter: ${{ github.event_name == 'push' && 'true' || steps.filter.outputs.flutter }}
+      react-native: ${{ github.event_name == 'push' && 'true' || steps.filter.outputs.react-native }}
+      security-flutter: ${{ github.event_name != 'pull_request' && 'true' || steps.filter.outputs.security-flutter }}
+      security-react-native: ${{ github.event_name != 'pull_request' && 'true' || steps.filter.outputs.security-react-native }}
+    steps:
+      - if: github.event_name == 'pull_request'
+        uses: dorny/paths-filter@v4
+        id: filter
+        with:
+          filters: |
+            flutter:
+              - 'flutter/**'
+              - '.github/workflows/flutter-ci.yml'
+              - '.github/workflows/platform-validation.yml'
+            react-native:
+              - 'react-native/**'
+              - '.github/workflows/react-native-ci.yml'
+              - '.github/workflows/platform-validation.yml'
+            security-flutter:
+              - 'flutter/pubspec.yaml'
+              - 'flutter/pubspec.lock'
+              - '.github/workflows/security-scan.yml'
+              - '.github/workflows/platform-validation.yml'
+            security-react-native:
+              - 'react-native/package.json'
+              - 'react-native/package-lock.json'
+              - '.github/workflows/security-scan.yml'
+              - '.github/workflows/platform-validation.yml'
+
+  flutter:
+    needs: changes
+    uses: ./.github/workflows/flutter-ci.yml
+    with:
+      run: ${{ needs.changes.outputs.flutter == 'true' }}
+
+  react-native:
+    needs: changes
+    uses: ./.github/workflows/react-native-ci.yml
+    with:
+      run: ${{ needs.changes.outputs.react-native == 'true' }}
+
+  security:
+    needs: changes
+    uses: ./.github/workflows/security-scan.yml
+    with:
+      scan-flutter: ${{ needs.changes.outputs.security-flutter == 'true' }}
+      scan-react-native: ${{ needs.changes.outputs.security-react-native == 'true' }}
+    permissions:
+      actions: read
+      contents: read
+      security-events: write
+
+  summarize:
+    needs: [changes, flutter, react-native, security]
+    if: >-
+      ${{
+      always() &&
+      github.event_name == 'pull_request' &&
+      github.event.pull_request.head.repo.full_name == github.repository
+      }}
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      issues: write
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@v7
+      - name: Download Flutter coverage report
+        if: needs.flutter.outputs.outcome == 'success'
+        uses: actions/download-artifact@v7
+        with:
+          name: flutter-coverage
+          path: coverage/flutter
+      - name: Download React Native coverage report
+        if: needs.react-native.outputs.outcome == 'success'
+        uses: actions/download-artifact@v7
+        with:
+          name: react-native-coverage
+          path: coverage/react-native
+      - uses: ./.github/actions/pr-validation-summary
+        with:
+          flutter-details: ${{ needs.flutter.outputs.details }}
+          flutter-outcome: ${{ needs.flutter.outputs.outcome || (needs.changes.outputs.flutter == 'true' && needs.flutter.result || 'skipped') }}
+          react-native-details: ${{ needs.react-native.outputs.details }}
+          react-native-outcome: ${{ needs.react-native.outputs.outcome || (needs.changes.outputs.react-native == 'true' && needs.react-native.result || 'skipped') }}
+          security-outcome: ${{ needs.security.outputs.outcome || needs.security.result }}
