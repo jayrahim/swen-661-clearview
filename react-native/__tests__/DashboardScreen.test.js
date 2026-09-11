@@ -1,5 +1,6 @@
 import { screen } from '@testing-library/react-native';
 
+import { getUnreadMessageCount } from '../src/repositories/messagesRepository';
 import { DashboardScreen } from '../src/screens/DashboardScreen';
 import { defaultAccessibilityPreferences } from '../src/state/accessibilityPreferences';
 import { renderWithProviders } from '../src/test-utils/renderWithProviders';
@@ -10,7 +11,13 @@ describe('DashboardScreen', () => {
 
     expect(screen.getByText('Dr. Elena Martinez')).toBeVisible();
     expect(screen.getByText('Sep 4 • 10:30 AM')).toBeVisible();
-    expect(screen.getByLabelText('Messages, 2 unread')).toBeVisible();
+
+    const unreadCount = getUnreadMessageCount();
+
+    expect(
+      screen.getByLabelText(`Messages, ${unreadCount} unread`),
+    ).toBeVisible();
+
     expect(screen.getByLabelText('Medical notes, 3 recent')).toBeVisible();
   });
 
@@ -28,7 +35,12 @@ describe('DashboardScreen', () => {
       },
     });
 
-    expect(screen.queryByLabelText('Messages, 2 unread')).toBeNull();
+    const unreadCount = getUnreadMessageCount();
+
+    expect(
+      screen.queryByLabelText(`Messages, ${unreadCount} unread`),
+    ).toBeNull();
+
     expect(screen.getByText('Text: Large • High contrast: On')).toBeVisible();
   });
 });

@@ -11,7 +11,6 @@ export const quickAccessItems = Object.freeze([
   {
     id: 'messages',
     title: 'Messages',
-    subtitle: '2 unread',
     backgroundColor: colors.blueTile,
     subtitleColor: '#00679D',
   },

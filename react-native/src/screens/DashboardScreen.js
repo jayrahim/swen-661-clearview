@@ -13,11 +13,13 @@ import { ScreenContainer } from '../components/ScreenContainer';
 import { nextAppointment, quickAccessItems } from '../data/dashboardData';
 import { colors, scaledFontSize, spacing, typography } from '../theme/tokens';
 import { useClearViewTheme } from '../theme/useClearViewTheme';
+import { getUnreadMessageCount } from '../repositories/messagesRepository';
 
 export function DashboardScreen({ onNavigate = {} }) {
   const { width } = useWindowDimensions();
   const isTablet = width >= 600;
   const { preferences, theme } = useClearViewTheme();
+  const unreadMessageCount = getUnreadMessageCount();
 
   return (
     <View style={[styles.screen, { backgroundColor: theme.colors.background }]}>
@@ -78,15 +80,29 @@ export function DashboardScreen({ onNavigate = {} }) {
           <Text accessibilityRole="header" style={styles.sectionTitle}>
             Quick access
           </Text>
+
           {!preferences.reducedClutter && (
             <View style={isTablet ? styles.tabletTiles : styles.phoneTiles}>
-              {quickAccessItems.map((item) => (
-                <QuickAccessTile
-                  item={item}
-                  key={item.id}
-                  style={isTablet ? styles.tabletTile : styles.phoneTile}
-                />
-              ))}
+              {quickAccessItems.map((item) => {
+                const displayItem =
+                  item.id === 'messages'
+                    ? {
+                        ...item,
+                        subtitle: `${unreadMessageCount} unread`,
+                      }
+                    : item;
+
+                return (
+                  <QuickAccessTile
+                    item={displayItem}
+                    key={item.id}
+                    onPress={
+                      item.id === 'messages' ? onNavigate.messages : undefined
+                    }
+                    style={isTablet ? styles.tabletTile : styles.phoneTile}
+                  />
+                );
+              })}
             </View>
           )}
 
@@ -101,6 +117,7 @@ export function DashboardScreen({ onNavigate = {} }) {
                   <Text style={styles.preferencesTitle}>
                     Accessibility preferences
                   </Text>
+
                   <Text
                     style={[
                       styles.preferencesDetail,
@@ -111,6 +128,7 @@ export function DashboardScreen({ onNavigate = {} }) {
                     {preferences.highContrast ? 'On' : 'Off'}
                   </Text>
                 </View>
+
                 <Text accessibilityElementsHidden style={styles.chevron}>
                   ›
                 </Text>
