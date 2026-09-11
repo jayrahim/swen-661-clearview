@@ -54,9 +54,11 @@ runs:
               found ? `${((covered / found) * 100).toFixed(2)}%` : '—';
             return [
               `lines ${percentage(totals.LH, totals.LF)}`,
-              `branches ${percentage(totals.BRH, totals.BRF)}`,
-              `functions ${percentage(totals.FNH, totals.FNF)}`,
-            ].join(' · ');
+              totals.BRF ? `branches ${percentage(totals.BRH, totals.BRF)}` : '',
+              totals.FNF ? `functions ${percentage(totals.FNH, totals.FNF)}` : '',
+            ]
+              .filter(Boolean)
+              .join(' · ');
           }
 
           const outcomeStatus = (outcome) =>
@@ -92,7 +94,7 @@ runs:
             '## ClearView validation',
             '',
             '| Platform | Result | Details |',
-            '| --- | --- | --- |',
+            '| :---: | :---: | :--- |',
             ...rows.map(([platform, outcome, result]) =>
               `| ${platform} | ${outcome ? outcomeStatus(outcome) : '—'} | ${result} |`,
             ),
