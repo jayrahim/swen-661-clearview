@@ -2,18 +2,28 @@ name: React Native CI
 
 on:
   workflow_call:
+    inputs:
+      run:
+        description: Whether React Native validation is relevant to this event.
+        required: true
+        type: boolean
     outputs:
       details:
         description: React Native test-count summary.
         value: ${{ jobs.validate-react-native.outputs.details }}
+      outcome:
+        description: React Native validation outcome.
+        value: ${{ jobs.validate-react-native.outputs.outcome }}
 
 permissions:
   contents: read
 
 jobs:
   validate-react-native:
+    if: inputs.run
     outputs:
       details: ${{ steps.validation.outputs.details }}
+      outcome: ${{ steps.outcome.outputs.value || 'skipped' }}
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -58,3 +68,10 @@ jobs:
           name: react-native-coverage
           path: react-native/coverage/lcov.info
           if-no-files-found: error
+
+      - id: outcome
+        if: always()
+        name: Record validation outcome
+        env:
+          JOB_STATUS: ${{ job.status }}
+        run: echo "value=$JOB_STATUS" >> "$GITHUB_OUTPUT"

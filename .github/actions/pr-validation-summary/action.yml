@@ -61,32 +61,40 @@ runs:
               .join(' · ');
           }
 
-          const outcomeStatus = (outcome) =>
-            outcome === 'success' ? '✅ Passed' : '❌ Failed';
+          const outcomeStatus = (outcome) => {
+            if (outcome === 'success') return '✅ Passed';
+            return '❌ Failed';
+          };
           const details = (testDetails, coverage) =>
             [testDetails, coverage === '—' ? '' : coverage].filter(Boolean).join(' · ') || '—';
+          const platformRow = (name, outcome, testDetails, coveragePath) => {
+            if (outcome === 'skipped') {
+              return [name, '', 'Skipped — no relevant changes'];
+            }
+
+            return [
+              name,
+              outcome,
+              details(testDetails, coverageSummary(coveragePath, outcome)),
+            ];
+          };
           const rows = [
-            [
+            platformRow(
               'Flutter',
               process.env.FLUTTER_OUTCOME,
-              details(
-                process.env.FLUTTER_DETAILS,
-                coverageSummary('coverage/flutter/lcov.info', process.env.FLUTTER_OUTCOME),
-              ),
-            ],
-            [
+              process.env.FLUTTER_DETAILS,
+              'coverage/flutter/lcov.info',
+            ),
+            platformRow(
               'React Native',
               process.env.REACT_NATIVE_OUTCOME,
-              details(
-                process.env.REACT_NATIVE_DETAILS,
-                coverageSummary(
-                  'coverage/react-native/lcov.info',
-                  process.env.REACT_NATIVE_OUTCOME,
-                ),
-              ),
-            ],
+              process.env.REACT_NATIVE_DETAILS,
+              'coverage/react-native/lcov.info',
+            ),
             ['Electron', '', 'Not yet included in validation'],
-            ['Security', process.env.SECURITY_OUTCOME, 'OSV scan'],
+            process.env.SECURITY_OUTCOME === 'skipped'
+              ? ['Security', '', 'Skipped — no dependency changes']
+              : ['Security', process.env.SECURITY_OUTCOME, 'OSV scan'],
           ];
           const marker = '<!-- clearview-validation-summary -->';
           const body = [
