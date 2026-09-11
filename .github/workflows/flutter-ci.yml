@@ -43,7 +43,7 @@ jobs:
         run: |
           set -o pipefail
           flutter test --coverage 2>&1 | tee test-output.txt
-          test_count=$(sed -E 's/\x1B\[[0-9;]*[[:alpha:]]//g' test-output.txt | sed -nE 's/.*\+([0-9]+):.*All tests passed.*/\1/p' | tail -1)
+          test_count=$(sed -E 's/\x1B\[[0-9;]*[[:alpha:]]//g' test-output.txt | sed -nE 's/.*[^0-9]([0-9][0-9]*) tests passed\..*/\1/p' | tail -1)
           echo "details=${test_count:+$test_count tests}" >> "$GITHUB_OUTPUT"
 
       - name: Upload coverage report
