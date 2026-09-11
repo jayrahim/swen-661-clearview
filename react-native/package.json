@@ -11,6 +11,9 @@
     "react-native": "0.86.3",
     "react-native-safe-area-context": "~5.7.0"
   },
+  "overrides": {
+    "uuid": "11.1.1"
+  },
   "scripts": {
     "start": "expo start",
     "android": "expo start --android",
