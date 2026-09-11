@@ -1,0 +1,58 @@
+name: Platform validation
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  flutter:
+    uses: ./.github/workflows/flutter-ci.yml
+
+  react-native:
+    uses: ./.github/workflows/react-native-ci.yml
+
+  security:
+    uses: ./.github/workflows/security-scan.yml
+    permissions:
+      actions: read
+      contents: read
+      security-events: write
+
+  summarize:
+    needs: [flutter, react-native, security]
+    if: >-
+      ${{
+      always() &&
+      github.event_name == 'pull_request' &&
+      github.event.pull_request.head.repo.full_name == github.repository
+      }}
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      issues: write
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@v7
+      - name: Download Flutter coverage report
+        if: needs.flutter.result == 'success'
+        uses: actions/download-artifact@v7
+        with:
+          name: flutter-coverage
+          path: coverage/flutter
+      - name: Download React Native coverage report
+        if: needs.react-native.result == 'success'
+        uses: actions/download-artifact@v7
+        with:
+          name: react-native-coverage
+          path: coverage/react-native
+      - uses: ./.github/actions/pr-validation-summary
+        with:
+          flutter-details: ${{ needs.flutter.outputs.details }}
+          flutter-outcome: ${{ needs.flutter.result }}
+          react-native-details: ${{ needs.react-native.outputs.details }}
+          react-native-outcome: ${{ needs.react-native.result }}
+          security-outcome: ${{ needs.security.result }}

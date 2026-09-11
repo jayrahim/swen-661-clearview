@@ -1,9 +1,11 @@
 name: Flutter CI
 
 on:
-  pull_request:
-  push:
-    branches: [main]
+  workflow_call:
+    outputs:
+      details:
+        description: Flutter test-count summary.
+        value: ${{ jobs.validate-flutter.outputs.details }}
 
 permissions:
   contents: read
@@ -42,7 +44,7 @@ jobs:
           set -o pipefail
           flutter test --coverage | tee test-output.txt
           test_count=$(sed -nE 's/.*\+([0-9]+): All tests passed.*/\1/p' test-output.txt | tail -1)
-          echo "details=${test_count:+$test_count tests} · coverage generated" >> "$GITHUB_OUTPUT"
+          echo "details=${test_count:+$test_count tests}" >> "$GITHUB_OUTPUT"
 
       - name: Upload coverage report
         uses: actions/upload-artifact@v7
@@ -50,34 +52,3 @@ jobs:
           name: flutter-coverage
           path: flutter/coverage/lcov.info
           if-no-files-found: error
-
-  summarize-flutter:
-    needs: validate-flutter
-    if: >-
-      ${{
-      always() &&
-      github.event_name == 'pull_request' &&
-      github.event.pull_request.head.repo.full_name == github.repository
-      }}
-    runs-on: ubuntu-latest
-    concurrency:
-      group: pr-validation-summary-${{ github.event.pull_request.number }}
-      cancel-in-progress: false
-    permissions:
-      contents: read
-      issues: write
-      pull-requests: write
-    steps:
-      - uses: actions/checkout@v7
-      - name: Download coverage report
-        if: needs.validate-flutter.result == 'success'
-        uses: actions/download-artifact@v7
-        with:
-          name: flutter-coverage
-          path: coverage
-      - uses: ./.github/actions/pr-validation-summary
-        with:
-          coverage-path: coverage/lcov.info
-          details: ${{ needs.validate-flutter.outputs.details }}
-          outcome: ${{ needs.validate-flutter.result }}
-          platform: Flutter

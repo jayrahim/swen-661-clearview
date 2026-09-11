@@ -1,19 +1,22 @@
 name: Update PR validation summary
-description: Publishes a single sticky platform-validation comment for internal pull requests.
+description: Publishes one sticky platform-validation comment for an internal pull request.
 
 inputs:
-  coverage-path:
-    description: Path to the platform lcov.info file relative to the repository root.
-    required: true
-  outcome:
-    description: Outcome of the platform validation steps.
-    required: true
-  platform:
-    description: Platform name for the summary row.
-    required: true
-  details:
-    description: Optional platform-specific validation details.
+  flutter-details:
+    description: Flutter test-count summary.
     required: false
+  flutter-outcome:
+    description: Flutter validation outcome.
+    required: true
+  react-native-details:
+    description: React Native test-count summary.
+    required: false
+  react-native-outcome:
+    description: React Native validation outcome.
+    required: true
+  security-outcome:
+    description: Security scan outcome.
+    required: true
 
 runs:
   using: composite
@@ -21,30 +24,18 @@ runs:
     - name: Update sticky pull request comment
       uses: actions/github-script@v9
       env:
-        COVERAGE_PATH: ${{ inputs.coverage-path }}
-        DETAILS: ${{ inputs.details }}
-        OUTCOME: ${{ inputs.outcome }}
-        PLATFORM: ${{ inputs.platform }}
+        FLUTTER_DETAILS: ${{ inputs.flutter-details }}
+        FLUTTER_OUTCOME: ${{ inputs.flutter-outcome }}
+        REACT_NATIVE_DETAILS: ${{ inputs.react-native-details }}
+        REACT_NATIVE_OUTCOME: ${{ inputs.react-native-outcome }}
+        SECURITY_OUTCOME: ${{ inputs.security-outcome }}
       with:
         script: |
           const fs = require('fs');
           const path = require('path');
-          const platform = process.env.PLATFORM;
-          const outcome = process.env.OUTCOME;
-          const coveragePath = path.join(
-            process.env.GITHUB_WORKSPACE,
-            process.env.COVERAGE_PATH,
-          );
 
-          if (
-            context.payload.pull_request.head.repo.full_name !==
-            context.payload.repository.full_name
-          ) {
-            core.info('Skipping PR comments for a fork-based pull request.');
-            return;
-          }
-
-          function coverageSummary() {
+          function coverageSummary(relativePath, outcome) {
+            const coveragePath = path.join(process.env.GITHUB_WORKSPACE, relativePath);
             if (
               outcome !== 'success' ||
               !fs.existsSync(coveragePath) ||
@@ -68,7 +59,44 @@ runs:
             ].join(' · ');
           }
 
+          const outcomeStatus = (outcome) =>
+            outcome === 'success' ? '✅ Passed' : '❌ Failed';
+          const details = (testDetails, coverage) =>
+            [testDetails, coverage === '—' ? '' : coverage].filter(Boolean).join(' · ') || '—';
+          const rows = [
+            [
+              'Flutter',
+              process.env.FLUTTER_OUTCOME,
+              details(
+                process.env.FLUTTER_DETAILS,
+                coverageSummary('coverage/flutter/lcov.info', process.env.FLUTTER_OUTCOME),
+              ),
+            ],
+            [
+              'React Native',
+              process.env.REACT_NATIVE_OUTCOME,
+              details(
+                process.env.REACT_NATIVE_DETAILS,
+                coverageSummary(
+                  'coverage/react-native/lcov.info',
+                  process.env.REACT_NATIVE_OUTCOME,
+                ),
+              ),
+            ],
+            ['Electron', '', 'Not yet included in validation'],
+            ['Security', process.env.SECURITY_OUTCOME, 'OSV scan'],
+          ];
           const marker = '<!-- clearview-validation-summary -->';
+          const body = [
+            marker,
+            '## ClearView validation',
+            '',
+            '| Platform | Result | Details |',
+            '| --- | --- | --- |',
+            ...rows.map(([platform, outcome, result]) =>
+              `| ${platform} | ${outcome ? outcomeStatus(outcome) : '—'} | ${result} |`,
+            ),
+          ].join('\n');
           const comments = await github.paginate(github.rest.issues.listComments, {
             owner: context.repo.owner,
             repo: context.repo.repo,
@@ -78,36 +106,6 @@ runs:
           const existing = comments.find(
             (comment) => comment.user.type === 'Bot' && comment.body.includes(marker),
           );
-          const dataMatch = existing?.body.match(
-            /<!-- clearview-validation-data:([\s\S]*?) -->/,
-          );
-          const summary = dataMatch ? JSON.parse(dataMatch[1]) : {};
-          const coverage = coverageSummary();
-          summary[platform] = {
-            details: [process.env.DETAILS, coverage === '—' ? '' : coverage]
-              .filter(Boolean)
-              .join(' · ') || '—',
-            status: outcome === 'success' ? '✅ Passed' : '❌ Failed',
-          };
-
-          const row = (name) => {
-            const result = summary[name];
-            return result
-              ? `| ${name} | ${result.status} | ${result.details} |`
-              : `| ${name} | — | Not yet included in validation |`;
-          };
-          const body = [
-            marker,
-            `<!-- clearview-validation-data:${JSON.stringify(summary)} -->`,
-            '## ClearView validation',
-            '',
-            '| Platform | Result | Details |',
-            '| --- | --- | --- |',
-            row('Flutter'),
-            row('React Native'),
-            '| Electron | — | Not yet included in validation |',
-            row('Security'),
-          ].join('\n');
 
           if (existing) {
             await github.rest.issues.updateComment({
@@ -116,12 +114,11 @@ runs:
               comment_id: existing.id,
               body,
             });
-            return;
+          } else {
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              body,
+            });
           }
-
-          await github.rest.issues.createComment({
-            owner: context.repo.owner,
-            repo: context.repo.repo,
-            issue_number: context.issue.number,
-            body,
-          });
