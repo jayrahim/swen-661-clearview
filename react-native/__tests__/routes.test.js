@@ -73,4 +73,18 @@ describe('navigationReducer', () => {
       name: routeNames.messages,
     });
   });
+
+  test('returns from medical note detail to its records parent', () => {
+    const detail = navigationReducer(
+      { name: routeNames.records },
+      {
+        type: navigationActionTypes.openMedicalNoteDetail,
+        note: { id: 'note-1' },
+      },
+    );
+
+    expect(
+      navigationReducer(detail, { type: navigationActionTypes.back }),
+    ).toEqual({ name: routeNames.records });
+  });
 });

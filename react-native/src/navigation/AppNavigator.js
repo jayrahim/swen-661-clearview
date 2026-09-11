@@ -7,6 +7,8 @@ import { DashboardScreen } from '../screens/DashboardScreen';
 import { MessageDetailScreen } from '../screens/MessageDetailScreen';
 import { MessagesScreen } from '../screens/MessagesScreen';
 import { SignInScreen } from '../screens/SignInScreen';
+import { MedicalNoteDetailScreen } from '../screens/MedicalNoteDetailScreen';
+import { MedicalNotesScreen } from '../screens/MedicalNotesScreen';
 import {
   initialRoute,
   navigationActionTypes,
@@ -20,7 +22,6 @@ export function AppNavigator() {
 
   const rootNavigation = useMemo(
     () => ({
-      // Records remains intentionally omitted until its route exists.
       home: () =>
         dispatch({
           type: navigationActionTypes.openRoot,
@@ -32,13 +33,17 @@ export function AppNavigator() {
           type: navigationActionTypes.openRoot,
           name: rootTabRoutes.visits,
         }),
-
       messages: () =>
         dispatch({
           type: navigationActionTypes.openRoot,
           name: rootTabRoutes.messages,
         }),
 
+      records: () =>
+        dispatch({
+          type: navigationActionTypes.openRoot,
+          name: rootTabRoutes.records,
+        }),
       settings: () =>
         dispatch({
           type: navigationActionTypes.openRoot,
@@ -89,10 +94,32 @@ export function AppNavigator() {
     );
   }
 
+  if (route.name === routeNames.records) {
+    return (
+      <MedicalNotesScreen
+        onNavigate={rootNavigation}
+        onSelect={(note) =>
+          dispatch({
+            type: navigationActionTypes.openMedicalNoteDetail,
+            note,
+          })
+        }
+      />
+    );
+  }
   if (route.name === routeNames.messageDetail) {
     return (
       <MessageDetailScreen
         message={route.message}
+        onBack={() => dispatch({ type: navigationActionTypes.back })}
+      />
+    );
+  }
+
+  if (route.name === routeNames.medicalNoteDetail) {
+    return (
+      <MedicalNoteDetailScreen
+        note={route.note}
         onBack={() => dispatch({ type: navigationActionTypes.back })}
       />
     );

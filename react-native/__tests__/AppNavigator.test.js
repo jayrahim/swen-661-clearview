@@ -85,7 +85,6 @@ describe('AppNavigator', () => {
     await renderWithProviders(<AppNavigator />);
 
     await user.press(screen.getByRole('button', { name: 'Sign in' }));
-
     await user.press(
       screen.getByRole('button', {
         name: `Messages, ${getUnreadMessageCount()} unread`,
@@ -130,5 +129,27 @@ describe('AppNavigator', () => {
 
     expect(screen.getByRole('header', { name: 'Messages' })).toBeVisible();
     expect(screen.getByLabelText('Messages')).toBeSelected();
+  });
+
+  test('opens Records as a root destination and returns from note detail', async () => {
+    const user = userEvent.setup();
+
+    await renderWithProviders(<AppNavigator />);
+
+    await user.press(screen.getByRole('button', { name: 'Sign in' }));
+    await user.press(screen.getByRole('tab', { name: 'Records' }));
+    expect(screen.getByRole('header', { name: 'Medical Notes' })).toBeVisible();
+
+    await user.press(
+      screen.getByRole('button', {
+        name: 'Reviewed note: Primary Care Follow-up, Dr. David Chen, Aug 21',
+      }),
+    );
+    expect(screen.getByRole('header', { name: 'Visit Note' })).toBeVisible();
+
+    await user.press(
+      screen.getByRole('button', { name: 'Back to medical notes' }),
+    );
+    expect(screen.getByRole('header', { name: 'Medical Notes' })).toBeVisible();
   });
 });

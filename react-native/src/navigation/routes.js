@@ -7,6 +7,7 @@ export const routeNames = Object.freeze({
   settings: 'settings',
   appointmentDetail: 'appointment-detail',
   messageDetail: 'message-detail',
+  medicalNoteDetail: 'medical-note-detail',
 });
 
 export const rootRouteNames = Object.freeze([
@@ -30,6 +31,7 @@ export const navigationActionTypes = Object.freeze({
   openRoot: 'open-root',
   openAppointmentDetail: 'open-appointment-detail',
   openMessageDetail: 'open-message-detail',
+  openMedicalNoteDetail: 'open-medical-note-detail',
   back: 'back',
 });
 
@@ -50,22 +52,28 @@ export function navigationReducer(route, action) {
         name: routeNames.appointmentDetail,
         appointment: action.appointment,
       };
-
     case navigationActionTypes.openMessageDetail:
       return {
         name: routeNames.messageDetail,
         message: action.message,
       };
 
+    case navigationActionTypes.openMedicalNoteDetail:
+      return {
+        name: routeNames.medicalNoteDetail,
+        note: action.note,
+      };
     case navigationActionTypes.back:
       if (route.name === routeNames.appointmentDetail) {
         return { name: routeNames.appointments };
       }
-
       if (route.name === routeNames.messageDetail) {
         return { name: routeNames.messages };
       }
 
+      if (route.name === routeNames.medicalNoteDetail) {
+        return { name: routeNames.records };
+      }
       return route;
 
     default:
