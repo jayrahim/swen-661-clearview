@@ -1,7 +1,7 @@
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 
-import { BottomNavigation } from '../components/BottomNavigation';
-import { SafeAreaScreen } from '../components/SafeAreaScreen';
+import { RootScreenLayout } from '../components/RootScreenLayout';
+import { ResponsiveContent } from '../components/ResponsiveContent';
 import {
   getMessages,
   getUnreadMessageCount,
@@ -66,158 +66,162 @@ export function MessagesScreen({ onNavigate = {}, onSelectMessage }) {
   const unreadCount = getUnreadMessageCount();
 
   return (
-    <SafeAreaScreen style={{ backgroundColor: theme.colors.background }}>
+    <RootScreenLayout
+      activeItem="messages"
+      onNavigate={onNavigate}
+      style={{ backgroundColor: theme.colors.background }}
+    >
       <View style={styles.container}>
         <ScrollView contentContainerStyle={styles.content}>
-          <View style={styles.header}>
-            <Text
-              accessibilityRole="header"
-              style={[
-                styles.title,
-                {
-                  color: theme.colors.ink,
-                  fontSize: scaledFontSize(24, theme),
-                },
-              ]}
-            >
-              Messages
-            </Text>
+          <ResponsiveContent>
+            <View style={styles.header}>
+              <Text
+                accessibilityRole="header"
+                style={[
+                  styles.title,
+                  {
+                    color: theme.colors.ink,
+                    fontSize: scaledFontSize(24, theme),
+                  },
+                ]}
+              >
+                Messages
+              </Text>
+
+              <View
+                accessible
+                accessibilityLabel="User profile"
+                style={[
+                  styles.profileAvatar,
+                  {
+                    backgroundColor: theme.colors.primary,
+                  },
+                ]}
+              >
+                <Text
+                  style={[
+                    styles.profileInitial,
+                    {
+                      color: theme.colors.background,
+                      fontSize: scaledFontSize(16, theme),
+                    },
+                  ]}
+                >
+                  A
+                </Text>
+              </View>
+            </View>
 
             <View
               accessible
-              accessibilityLabel="User profile"
+              accessibilityLabel={`${unreadCount} unread messages`}
               style={[
-                styles.profileAvatar,
+                styles.unreadBadge,
                 {
-                  backgroundColor: theme.colors.primary,
+                  borderColor: theme.colors.primary,
+                  borderWidth: theme.borderWidth,
                 },
               ]}
             >
               <Text
                 style={[
-                  styles.profileInitial,
+                  styles.unreadText,
                   {
-                    color: theme.colors.background,
+                    color: theme.colors.primary,
                     fontSize: scaledFontSize(16, theme),
                   },
                 ]}
               >
-                A
+                {unreadCount} unread
               </Text>
             </View>
-          </View>
 
-          <View
-            accessible
-            accessibilityLabel={`${unreadCount} unread messages`}
-            style={[
-              styles.unreadBadge,
-              {
-                borderColor: theme.colors.primary,
-                borderWidth: theme.borderWidth,
-              },
-            ]}
-          >
-            <Text
-              style={[
-                styles.unreadText,
-                {
-                  color: theme.colors.primary,
-                  fontSize: scaledFontSize(16, theme),
-                },
-              ]}
-            >
-              {unreadCount} unread
-            </Text>
-          </View>
+            <View style={styles.messageList}>
+              {messages.map((message) => {
+                const formattedDate = formatMessageDate(message.sentAt);
 
-          <View style={styles.messageList}>
-            {messages.map((message) => {
-              const formattedDate = formatMessageDate(message.sentAt);
+                const accessibilityLabel = `${
+                  message.isRead ? 'Read' : 'Unread'
+                } message from ${message.sender}. ${
+                  message.subject
+                }. ${formattedDate}`;
 
-              const accessibilityLabel = `${
-                message.isRead ? 'Read' : 'Unread'
-              } message from ${message.sender}. ${
-                message.subject
-              }. ${formattedDate}`;
+                return (
+                  <Pressable
+                    key={message.id}
+                    accessibilityLabel={accessibilityLabel}
+                    accessibilityRole="button"
+                    onPress={() => onSelectMessage?.(message)}
+                    style={[
+                      styles.messageCard,
+                      {
+                        backgroundColor: theme.colors.surface,
+                        borderColor: theme.colors.border,
+                        borderWidth: theme.borderWidth,
+                      },
+                    ]}
+                  >
+                    <View style={styles.messageHeader}>
+                      <View style={styles.senderRow}>
+                        {!message.isRead && (
+                          <View
+                            accessible
+                            accessibilityLabel="Unread"
+                            style={[
+                              styles.unreadDot,
+                              {
+                                backgroundColor: theme.colors.primary,
+                              },
+                            ]}
+                          />
+                        )}
 
-              return (
-                <Pressable
-                  key={message.id}
-                  accessibilityLabel={accessibilityLabel}
-                  accessibilityRole="button"
-                  onPress={() => onSelectMessage?.(message)}
-                  style={[
-                    styles.messageCard,
-                    {
-                      backgroundColor: theme.colors.surface,
-                      borderColor: theme.colors.border,
-                      borderWidth: theme.borderWidth,
-                    },
-                  ]}
-                >
-                  <View style={styles.messageHeader}>
-                    <View style={styles.senderRow}>
-                      {!message.isRead && (
-                        <View
-                          accessible
-                          accessibilityLabel="Unread"
+                        <Text
                           style={[
-                            styles.unreadDot,
+                            styles.sender,
                             {
-                              backgroundColor: theme.colors.primary,
+                              color: theme.colors.ink,
+                              fontSize: scaledFontSize(16, theme),
                             },
                           ]}
-                        />
-                      )}
+                        >
+                          {message.sender}
+                        </Text>
+                      </View>
 
                       <Text
                         style={[
-                          styles.sender,
+                          styles.date,
                           {
-                            color: theme.colors.ink,
-                            fontSize: scaledFontSize(16, theme),
+                            color: theme.colors.mutedInk,
+                            fontSize: scaledFontSize(14, theme),
                           },
                         ]}
                       >
-                        {message.sender}
+                        {formattedDate}
                       </Text>
                     </View>
 
                     <Text
                       style={[
-                        styles.date,
+                        styles.subject,
                         {
-                          color: theme.colors.mutedInk,
-                          fontSize: scaledFontSize(14, theme),
+                          color: theme.colors.ink,
+                          fontSize: scaledFontSize(16, theme),
+                          fontWeight: message.isRead ? '400' : '600',
                         },
                       ]}
                     >
-                      {formattedDate}
+                      {message.subject}
                     </Text>
-                  </View>
-
-                  <Text
-                    style={[
-                      styles.subject,
-                      {
-                        color: theme.colors.ink,
-                        fontSize: scaledFontSize(16, theme),
-                        fontWeight: message.isRead ? '400' : '600',
-                      },
-                    ]}
-                  >
-                    {message.subject}
-                  </Text>
-                </Pressable>
-              );
-            })}
-          </View>
+                  </Pressable>
+                );
+              })}
+            </View>
+          </ResponsiveContent>
         </ScrollView>
-
-        <BottomNavigation activeItem="messages" onNavigate={onNavigate} />
       </View>
-    </SafeAreaScreen>
+    </RootScreenLayout>
   );
 }
 

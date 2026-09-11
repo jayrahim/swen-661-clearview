@@ -3,7 +3,8 @@ import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { AppCard } from '../components/AppCard';
 import { PrimaryButton } from '../components/PrimaryButton';
 import { usePrototypeFeedback } from '../components/PrototypeFeedback';
-import { SafeAreaScreen } from '../components/SafeAreaScreen';
+import { ResponsiveContent } from '../components/ResponsiveContent';
+import { RootScreenLayout } from '../components/RootScreenLayout';
 import { layout, scaledFontSize, spacing } from '../theme/tokens';
 import { useClearViewTheme } from '../theme/useClearViewTheme';
 
@@ -36,141 +37,202 @@ function formatMessageDate(sentAt) {
   return `${months[sentAt.getMonth()]} ${sentAt.getDate()} • ${hour}:${minute} ${period}`;
 }
 
-export function MessageDetailScreen({ message, onBack }) {
+export function MessageDetailScreen({ message, onBack, onNavigate = {} }) {
   const { theme } = useClearViewTheme();
   const { showPrototypeFeedback } = usePrototypeFeedback();
 
   return (
-    <SafeAreaScreen style={{ backgroundColor: theme.colors.background }}>
+    <RootScreenLayout
+      activeItem="messages"
+      onNavigate={onNavigate}
+      showPhoneNavigation={false}
+      style={{ backgroundColor: theme.colors.background }}
+    >
       <ScrollView contentContainerStyle={styles.content}>
-        <View style={styles.header}>
-          <Pressable
-            accessibilityLabel="Back to messages"
-            accessibilityRole="button"
-            onPress={onBack}
-            style={styles.back}
-          >
+        <ResponsiveContent>
+          <View style={styles.header}>
+            <Pressable
+              accessibilityLabel="Back to messages"
+              accessibilityRole="button"
+              onPress={onBack}
+              style={styles.back}
+            >
+              <Text
+                style={[
+                  styles.backText,
+                  {
+                    color: theme.colors.primary,
+                    fontSize: scaledFontSize(34, theme),
+                  },
+                ]}
+              >
+                ‹
+              </Text>
+            </Pressable>
+
             <Text
+              accessibilityRole="header"
               style={[
-                styles.backText,
+                styles.headerTitle,
                 {
-                  color: theme.colors.primary,
-                  fontSize: scaledFontSize(34, theme),
+                  color: theme.colors.ink,
+                  fontSize: scaledFontSize(24, theme),
                 },
               ]}
             >
-              ‹
+              Message
             </Text>
-          </Pressable>
+
+            <View
+              accessible
+              accessibilityLabel="User profile"
+              style={[
+                styles.profileAvatar,
+                {
+                  backgroundColor: theme.colors.primary,
+                },
+              ]}
+            >
+              <Text
+                style={[
+                  styles.profileInitial,
+                  {
+                    color: theme.colors.background,
+                    fontSize: scaledFontSize(16, theme),
+                  },
+                ]}
+              >
+                A
+              </Text>
+            </View>
+          </View>
+
+          <View style={styles.messageInfo}>
+            <Text
+              style={[
+                styles.sender,
+                {
+                  color: theme.colors.ink,
+                  fontSize: scaledFontSize(16, theme),
+                },
+              ]}
+            >
+              {message.sender}
+            </Text>
+
+            <Text
+              style={[
+                styles.date,
+                {
+                  color: theme.colors.mutedInk,
+                  fontSize: scaledFontSize(14, theme),
+                },
+              ]}
+            >
+              {formatMessageDate(message.sentAt)}
+            </Text>
+          </View>
+
+          <View
+            style={[
+              styles.divider,
+              {
+                backgroundColor: theme.colors.mutedInk,
+              },
+            ]}
+          />
 
           <Text
-            accessibilityRole="header"
             style={[
-              styles.headerTitle,
+              styles.subject,
               {
                 color: theme.colors.ink,
                 fontSize: scaledFontSize(24, theme),
               },
             ]}
           >
-            Message
+            {message.subject}
           </Text>
 
-          <View
-            accessible
-            accessibilityLabel="User profile"
-            style={[
-              styles.profileAvatar,
-              {
-                backgroundColor: theme.colors.primary,
-              },
-            ]}
-          >
+          <AppCard style={styles.messageCard}>
             <Text
+              accessibilityLabel={`Message from ${message.sender}`}
               style={[
-                styles.profileInitial,
+                styles.body,
                 {
-                  color: theme.colors.background,
+                  color: theme.colors.ink,
                   fontSize: scaledFontSize(16, theme),
+                  lineHeight: scaledFontSize(24, theme),
                 },
               ]}
             >
-              A
+              {message.body ?? message.preview}
             </Text>
-          </View>
-        </View>
+          </AppCard>
 
-        <View style={styles.messageInfo}>
-          <Text
+          {message.statusMessage && (
+            <View
+              accessible
+              accessibilityLabel={`${message.statusMessage}${
+                message.statusDetail ? `. ${message.statusDetail}` : ''
+              }`}
+              style={[
+                styles.statusCard,
+                {
+                  borderColor: theme.colors.primary,
+                  borderWidth: theme.borderWidth,
+                },
+              ]}
+            >
+              <Text
+                style={[
+                  styles.statusTitle,
+                  {
+                    color: theme.colors.ink,
+                    fontSize: scaledFontSize(16, theme),
+                  },
+                ]}
+              >
+                {message.statusMessage}
+              </Text>
+
+              {message.statusDetail && (
+                <Text
+                  style={[
+                    styles.statusDetail,
+                    {
+                      color: theme.colors.mutedInk,
+                      fontSize: scaledFontSize(14, theme),
+                    },
+                  ]}
+                >
+                  {message.statusDetail}
+                </Text>
+              )}
+            </View>
+          )}
+
+          {message.showLabResultsAction && (
+            <View style={styles.primaryAction}>
+              <PrimaryButton
+                label="View lab results"
+                onPress={() =>
+                  showPrototypeFeedback(
+                    'Lab results are not available in this prototype.',
+                  )
+                }
+              />
+            </View>
+          )}
+
+          <Pressable
+            accessibilityLabel="Reply to message"
+            accessibilityRole="button"
+            onPress={() =>
+              showPrototypeFeedback('Reply is not available in this prototype.')
+            }
             style={[
-              styles.sender,
-              {
-                color: theme.colors.ink,
-                fontSize: scaledFontSize(16, theme),
-              },
-            ]}
-          >
-            {message.sender}
-          </Text>
-
-          <Text
-            style={[
-              styles.date,
-              {
-                color: theme.colors.mutedInk,
-                fontSize: scaledFontSize(14, theme),
-              },
-            ]}
-          >
-            {formatMessageDate(message.sentAt)}
-          </Text>
-        </View>
-
-        <View
-          style={[
-            styles.divider,
-            {
-              backgroundColor: theme.colors.mutedInk,
-            },
-          ]}
-        />
-
-        <Text
-          style={[
-            styles.subject,
-            {
-              color: theme.colors.ink,
-              fontSize: scaledFontSize(24, theme),
-            },
-          ]}
-        >
-          {message.subject}
-        </Text>
-
-        <AppCard style={styles.messageCard}>
-          <Text
-            accessibilityLabel={`Message from ${message.sender}`}
-            style={[
-              styles.body,
-              {
-                color: theme.colors.ink,
-                fontSize: scaledFontSize(16, theme),
-                lineHeight: scaledFontSize(24, theme),
-              },
-            ]}
-          >
-            {message.body ?? message.preview}
-          </Text>
-        </AppCard>
-
-        {message.statusMessage && (
-          <View
-            accessible
-            accessibilityLabel={`${message.statusMessage}${
-              message.statusDetail ? `. ${message.statusDetail}` : ''
-            }`}
-            style={[
-              styles.statusCard,
+              styles.replyButton,
               {
                 borderColor: theme.colors.primary,
                 borderWidth: theme.borderWidth,
@@ -179,73 +241,19 @@ export function MessageDetailScreen({ message, onBack }) {
           >
             <Text
               style={[
-                styles.statusTitle,
+                styles.replyText,
                 {
-                  color: theme.colors.ink,
+                  color: theme.colors.primary,
                   fontSize: scaledFontSize(16, theme),
                 },
               ]}
             >
-              {message.statusMessage}
+              Reply
             </Text>
-
-            {message.statusDetail && (
-              <Text
-                style={[
-                  styles.statusDetail,
-                  {
-                    color: theme.colors.mutedInk,
-                    fontSize: scaledFontSize(14, theme),
-                  },
-                ]}
-              >
-                {message.statusDetail}
-              </Text>
-            )}
-          </View>
-        )}
-
-        {message.showLabResultsAction && (
-          <View style={styles.primaryAction}>
-            <PrimaryButton
-              label="View lab results"
-              onPress={() =>
-                showPrototypeFeedback(
-                  'Lab results are not available in this prototype.',
-                )
-              }
-            />
-          </View>
-        )}
-
-        <Pressable
-          accessibilityLabel="Reply to message"
-          accessibilityRole="button"
-          onPress={() =>
-            showPrototypeFeedback('Reply is not available in this prototype.')
-          }
-          style={[
-            styles.replyButton,
-            {
-              borderColor: theme.colors.primary,
-              borderWidth: theme.borderWidth,
-            },
-          ]}
-        >
-          <Text
-            style={[
-              styles.replyText,
-              {
-                color: theme.colors.primary,
-                fontSize: scaledFontSize(16, theme),
-              },
-            ]}
-          >
-            Reply
-          </Text>
-        </Pressable>
+          </Pressable>
+        </ResponsiveContent>
       </ScrollView>
-    </SafeAreaScreen>
+    </RootScreenLayout>
   );
 }
 

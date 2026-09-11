@@ -1,116 +1,131 @@
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
-import { BottomNavigation } from '../components/BottomNavigation';
 import { AppCard } from '../components/AppCard';
 import { PrimaryButton } from '../components/PrimaryButton';
 import {
   PrototypeFeedbackAnchor,
   usePrototypeFeedback,
 } from '../components/PrototypeFeedback';
-import { SafeAreaScreen } from '../components/SafeAreaScreen';
+import {
+  RootScreenLayout,
+  rootNavigationFeedbackOffset,
+} from '../components/RootScreenLayout';
+import { ResponsiveContent } from '../components/ResponsiveContent';
 import { appointmentRepository } from '../data/appointments';
+import { useResponsiveLayout } from '../layout/useResponsiveLayout';
 import { appointmentBadge, appointmentTime } from '../utils/appointmentFormat';
-import { colors, layout, scaledFontSize, spacing } from '../theme/tokens';
+import { colors, scaledFontSize, spacing } from '../theme/tokens';
 import { useClearViewTheme } from '../theme/useClearViewTheme';
 
 export function AppointmentsScreen({ onNavigate = {}, onSelect }) {
   const { preferences, theme } = useClearViewTheme();
+  const { isTablet } = useResponsiveLayout();
   const { showPrototypeFeedback } = usePrototypeFeedback();
   const appointments = appointmentRepository.getAll();
 
   return (
-    <SafeAreaScreen
+    <RootScreenLayout
+      activeItem="visits"
+      onNavigate={onNavigate}
       style={[styles.screen, { backgroundColor: theme.colors.background }]}
     >
       <PrototypeFeedbackAnchor
-        bottomOffset={layout.bottomNavigationHeight + spacing.md}
+        bottomOffset={rootNavigationFeedbackOffset(isTablet) + spacing.md}
       />
       <ScrollView contentContainerStyle={styles.content}>
-        <Text
-          accessibilityRole="header"
-          style={[
-            styles.title,
-            { color: theme.colors.ink, fontSize: scaledFontSize(24, theme) },
-          ]}
-        >
-          Appointments
-        </Text>
-        <Text
-          accessibilityRole="header"
-          style={[
-            styles.heading,
-            { color: theme.colors.ink, fontSize: scaledFontSize(20, theme) },
-          ]}
-        >
-          Upcoming
-        </Text>
-        {appointments.map((item) => (
-          <Pressable
-            accessibilityLabel={`${item.clinicianName}, ${item.specialty}, ${item.status}`}
-            accessibilityRole="button"
-            key={item.id}
-            onPress={() => onSelect(item)}
+        <ResponsiveContent>
+          <Text
+            accessibilityRole="header"
+            style={[
+              styles.title,
+              { color: theme.colors.ink, fontSize: scaledFontSize(24, theme) },
+            ]}
           >
-            <AppCard style={styles.card}>
-              <View style={styles.row}>
-                <View
-                  style={[
-                    styles.badge,
-                    {
-                      backgroundColor: preferences.highContrast
-                        ? theme.colors.surface
-                        : colors.aqua,
-                      borderColor: theme.colors.border,
-                      borderWidth: theme.borderWidth,
-                    },
-                  ]}
-                >
-                  <Text
-                    style={[styles.badgeDate, { color: theme.colors.primary }]}
-                  >
-                    {appointmentBadge(item.scheduledAt)}
-                  </Text>
-                  <Text style={[styles.badgeTime, { color: theme.colors.ink }]}>
-                    {appointmentTime(item.scheduledAt)}
-                  </Text>
-                </View>
-                <View style={styles.details}>
-                  <Text
+            Appointments
+          </Text>
+          <Text
+            accessibilityRole="header"
+            style={[
+              styles.heading,
+              { color: theme.colors.ink, fontSize: scaledFontSize(20, theme) },
+            ]}
+          >
+            Upcoming
+          </Text>
+          {appointments.map((item) => (
+            <Pressable
+              accessibilityLabel={`${item.clinicianName}, ${item.specialty}, ${item.status}`}
+              accessibilityRole="button"
+              key={item.id}
+              onPress={() => onSelect(item)}
+            >
+              <AppCard style={styles.card}>
+                <View style={styles.row}>
+                  <View
                     style={[
-                      styles.clinician,
+                      styles.badge,
                       {
-                        color: theme.colors.ink,
-                        fontSize: scaledFontSize(18, theme),
+                        backgroundColor: preferences.highContrast
+                          ? theme.colors.surface
+                          : colors.aqua,
+                        borderColor: theme.colors.border,
+                        borderWidth: theme.borderWidth,
                       },
                     ]}
                   >
-                    {item.clinicianName}
-                  </Text>
-                  <Text
-                    style={[styles.muted, { color: theme.colors.mutedInk }]}
-                  >
-                    {item.specialty} • {item.location}
-                  </Text>
-                  <Text style={styles.status}>{item.status}</Text>
-                  <Text style={[styles.link, { color: theme.colors.primary }]}>
-                    View details ›
-                  </Text>
+                    <Text
+                      style={[
+                        styles.badgeDate,
+                        { color: theme.colors.primary },
+                      ]}
+                    >
+                      {appointmentBadge(item.scheduledAt)}
+                    </Text>
+                    <Text
+                      style={[styles.badgeTime, { color: theme.colors.ink }]}
+                    >
+                      {appointmentTime(item.scheduledAt)}
+                    </Text>
+                  </View>
+                  <View style={styles.details}>
+                    <Text
+                      style={[
+                        styles.clinician,
+                        {
+                          color: theme.colors.ink,
+                          fontSize: scaledFontSize(18, theme),
+                        },
+                      ]}
+                    >
+                      {item.clinicianName}
+                    </Text>
+                    <Text
+                      style={[styles.muted, { color: theme.colors.mutedInk }]}
+                    >
+                      {item.specialty} • {item.location}
+                    </Text>
+                    <Text style={styles.status}>{item.status}</Text>
+                    <Text
+                      style={[styles.link, { color: theme.colors.primary }]}
+                    >
+                      View details ›
+                    </Text>
+                  </View>
                 </View>
-              </View>
-            </AppCard>
-          </Pressable>
-        ))}
-        <PrimaryButton
-          accessibilityHint="Scheduling is not available in this prototype"
-          label="Schedule Appointment"
-          onPress={() =>
-            showPrototypeFeedback(
-              'Scheduling is not available in this prototype.',
-            )
-          }
-        />
+              </AppCard>
+            </Pressable>
+          ))}
+          <PrimaryButton
+            accessibilityHint="Scheduling is not available in this prototype"
+            label="Schedule Appointment"
+            onPress={() =>
+              showPrototypeFeedback(
+                'Scheduling is not available in this prototype.',
+              )
+            }
+          />
+        </ResponsiveContent>
       </ScrollView>
-      <BottomNavigation activeItem="visits" onNavigate={onNavigate} />
-    </SafeAreaScreen>
+    </RootScreenLayout>
   );
 }
 const styles = StyleSheet.create({
