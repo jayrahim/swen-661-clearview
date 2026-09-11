@@ -7,10 +7,38 @@ import { SafeAreaScreen } from '../components/SafeAreaScreen';
 import { layout, scaledFontSize, spacing } from '../theme/tokens';
 import { useClearViewTheme } from '../theme/useClearViewTheme';
 
+function formatMessageDate(sentAt) {
+  const months = [
+    'Jan',
+    'Feb',
+    'Mar',
+    'Apr',
+    'May',
+    'Jun',
+    'Jul',
+    'Aug',
+    'Sep',
+    'Oct',
+    'Nov',
+    'Dec',
+  ];
+
+  const hour =
+    sentAt.getHours() === 0
+      ? 12
+      : sentAt.getHours() > 12
+        ? sentAt.getHours() - 12
+        : sentAt.getHours();
+
+  const minute = sentAt.getMinutes().toString().padStart(2, '0');
+  const period = sentAt.getHours() >= 12 ? 'PM' : 'AM';
+
+  return `${months[sentAt.getMonth()]} ${sentAt.getDate()} • ${hour}:${minute} ${period}`;
+}
+
 export function MessageDetailScreen({ message, onBack }) {
   const { theme } = useClearViewTheme();
   const { showPrototypeFeedback } = usePrototypeFeedback();
-  const showLabResultsAction = message.type === 'lab-results';
 
   return (
     <SafeAreaScreen style={{ backgroundColor: theme.colors.background }}>
@@ -37,39 +65,153 @@ export function MessageDetailScreen({ message, onBack }) {
 
           <Text
             accessibilityRole="header"
-            style={[styles.subject, { color: theme.colors.ink }]}
+            style={[
+              styles.headerTitle,
+              {
+                color: theme.colors.ink,
+                fontSize: scaledFontSize(24, theme),
+              },
+            ]}
           >
-            {message.subject}
+            Message
           </Text>
+
+          <View
+            accessible
+            accessibilityLabel="User profile"
+            style={[
+              styles.profileAvatar,
+              {
+                backgroundColor: theme.colors.primary,
+              },
+            ]}
+          >
+            <Text
+              style={[
+                styles.profileInitial,
+                {
+                  color: theme.colors.background,
+                  fontSize: scaledFontSize(16, theme),
+                },
+              ]}
+            >
+              A
+            </Text>
+          </View>
         </View>
 
         <View style={styles.messageInfo}>
-          <Text style={[styles.sender, { color: theme.colors.ink }]}>
+          <Text
+            style={[
+              styles.sender,
+              {
+                color: theme.colors.ink,
+                fontSize: scaledFontSize(16, theme),
+              },
+            ]}
+          >
             {message.sender}
           </Text>
 
-          <Text style={[styles.date, { color: theme.colors.mutedInk }]}>
-            {message.date}
-          </Text>
-
-          <Text style={[styles.status, { color: theme.colors.mutedInk }]}>
-            Status: {message.status}
+          <Text
+            style={[
+              styles.date,
+              {
+                color: theme.colors.mutedInk,
+                fontSize: scaledFontSize(14, theme),
+              },
+            ]}
+          >
+            {formatMessageDate(message.sentAt)}
           </Text>
         </View>
 
+        <View
+          style={[
+            styles.divider,
+            {
+              backgroundColor: theme.colors.mutedInk,
+            },
+          ]}
+        />
+
+        <Text
+          style={[
+            styles.subject,
+            {
+              color: theme.colors.ink,
+              fontSize: scaledFontSize(24, theme),
+            },
+          ]}
+        >
+          {message.subject}
+        </Text>
+
         <AppCard style={styles.messageCard}>
-          <Text style={[styles.body, { color: theme.colors.ink }]}>
-            {message.body}
+          <Text
+            accessibilityLabel={`Message from ${message.sender}`}
+            style={[
+              styles.body,
+              {
+                color: theme.colors.ink,
+                fontSize: scaledFontSize(16, theme),
+                lineHeight: scaledFontSize(24, theme),
+              },
+            ]}
+          >
+            {message.body ?? message.preview}
           </Text>
         </AppCard>
 
-        {showLabResultsAction && (
+        {message.statusMessage && (
+          <View
+            accessible
+            accessibilityLabel={`${message.statusMessage}${
+              message.statusDetail ? `. ${message.statusDetail}` : ''
+            }`}
+            style={[
+              styles.statusCard,
+              {
+                borderColor: theme.colors.primary,
+                borderWidth: theme.borderWidth,
+              },
+            ]}
+          >
+            <Text
+              style={[
+                styles.statusTitle,
+                {
+                  color: theme.colors.ink,
+                  fontSize: scaledFontSize(16, theme),
+                },
+              ]}
+            >
+              {message.statusMessage}
+            </Text>
+
+            {message.statusDetail && (
+              <Text
+                style={[
+                  styles.statusDetail,
+                  {
+                    color: theme.colors.mutedInk,
+                    fontSize: scaledFontSize(14, theme),
+                  },
+                ]}
+              >
+                {message.statusDetail}
+              </Text>
+            )}
+          </View>
+        )}
+
+        {message.showLabResultsAction && (
           <View style={styles.primaryAction}>
             <PrimaryButton
               label="View lab results"
               onPress={() =>
                 showPrototypeFeedback(
-                  'Viewing lab results is not part of the scope of this prototype.',
+                  'Lab results are not available in this prototype.',
                 )
               }
             />
@@ -80,9 +222,7 @@ export function MessageDetailScreen({ message, onBack }) {
           accessibilityLabel="Reply to message"
           accessibilityRole="button"
           onPress={() =>
-            showPrototypeFeedback(
-              'Replying to messages is not part of the scope of this prototype.',
-            )
+            showPrototypeFeedback('Reply is not available in this prototype.')
           }
           style={[
             styles.replyButton,
@@ -92,7 +232,15 @@ export function MessageDetailScreen({ message, onBack }) {
             },
           ]}
         >
-          <Text style={[styles.replyText, { color: theme.colors.primary }]}>
+          <Text
+            style={[
+              styles.replyText,
+              {
+                color: theme.colors.primary,
+                fontSize: scaledFontSize(16, theme),
+              },
+            ]}
+          >
             Reply
           </Text>
         </Pressable>
@@ -110,53 +258,73 @@ const styles = StyleSheet.create({
   backText: {
     fontWeight: '700',
   },
-  body: {
-    fontSize: 16,
-    lineHeight: 27,
-  },
+  body: {},
   content: {
     padding: 18,
   },
   date: {
-    fontSize: 14,
     marginTop: spacing.sm,
+  },
+  divider: {
+    height: 1,
+    marginTop: 14,
+    opacity: 0.3,
   },
   header: {
     alignItems: 'center',
     flexDirection: 'row',
   },
+  headerTitle: {
+    flex: 1,
+    fontWeight: '700',
+    marginLeft: spacing.sm,
+  },
   messageCard: {
     marginTop: spacing.lg,
   },
   messageInfo: {
-    marginTop: spacing.md,
+    marginTop: spacing.lg,
   },
   primaryAction: {
     marginTop: spacing.lg,
+  },
+  profileAvatar: {
+    alignItems: 'center',
+    borderRadius: 22,
+    height: 44,
+    justifyContent: 'center',
+    width: 44,
+  },
+  profileInitial: {
+    fontWeight: '700',
   },
   replyButton: {
     alignItems: 'center',
     borderRadius: 12,
     justifyContent: 'center',
-    marginTop: spacing.lg,
+    marginTop: spacing.sm,
     minHeight: layout.minimumTouchTarget,
     paddingHorizontal: spacing.lg,
   },
   replyText: {
-    fontSize: 16,
     fontWeight: '700',
   },
   sender: {
-    fontSize: 16,
     fontWeight: '700',
   },
-  status: {
-    fontSize: 14,
+  statusCard: {
+    borderRadius: 12,
+    marginTop: 36,
+    padding: 16,
+  },
+  statusDetail: {
     marginTop: spacing.sm,
   },
+  statusTitle: {
+    fontWeight: '600',
+  },
   subject: {
-    flex: 1,
-    fontSize: 24,
     fontWeight: '700',
+    marginTop: 14,
   },
 });

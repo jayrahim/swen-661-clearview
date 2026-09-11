@@ -1,159 +1,295 @@
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 
-import { AppCard } from '../components/AppCard';
 import { BottomNavigation } from '../components/BottomNavigation';
-import {
-  PrototypeFeedbackAnchor,
-  usePrototypeFeedback,
-} from '../components/PrototypeFeedback';
 import { SafeAreaScreen } from '../components/SafeAreaScreen';
-import { getMessages } from '../repositories/messagesRepository';
+import {
+  getMessages,
+  getUnreadMessageCount,
+} from '../repositories/messagesRepository';
 import { layout, scaledFontSize, spacing } from '../theme/tokens';
 import { useClearViewTheme } from '../theme/useClearViewTheme';
 
+function formatMessageDate(sentAt, now = new Date()) {
+  const sentDate = new Date(
+    sentAt.getFullYear(),
+    sentAt.getMonth(),
+    sentAt.getDate(),
+  );
+
+  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+
+  const yesterday = new Date(today);
+  yesterday.setDate(today.getDate() - 1);
+
+  if (sentDate.getTime() === today.getTime()) {
+    return `Today • ${formatTime(sentAt)}`;
+  }
+
+  if (sentDate.getTime() === yesterday.getTime()) {
+    return `Yesterday • ${formatTime(sentAt)}`;
+  }
+
+  const months = [
+    'Jan',
+    'Feb',
+    'Mar',
+    'Apr',
+    'May',
+    'Jun',
+    'Jul',
+    'Aug',
+    'Sep',
+    'Oct',
+    'Nov',
+    'Dec',
+  ];
+
+  return `${months[sentAt.getMonth()]} ${sentAt.getDate()} • ${formatTime(
+    sentAt,
+  )}`;
+}
+
+function formatTime(dateTime) {
+  const hours = dateTime.getHours();
+
+  const hour = hours === 0 ? 12 : hours > 12 ? hours - 12 : hours;
+  const minute = dateTime.getMinutes().toString().padStart(2, '0');
+  const period = hours >= 12 ? 'PM' : 'AM';
+
+  return `${hour}:${minute} ${period}`;
+}
+
 export function MessagesScreen({ onNavigate = {}, onSelectMessage }) {
   const { theme } = useClearViewTheme();
-  const { showPrototypeFeedback } = usePrototypeFeedback();
+
   const messages = getMessages();
+  const unreadCount = getUnreadMessageCount();
 
   return (
     <SafeAreaScreen style={{ backgroundColor: theme.colors.background }}>
-      <PrototypeFeedbackAnchor
-        bottomOffset={layout.bottomNavigationHeight + spacing.md}
-      />
+      <View style={styles.container}>
+        <ScrollView contentContainerStyle={styles.content}>
+          <View style={styles.header}>
+            <Text
+              accessibilityRole="header"
+              style={[
+                styles.title,
+                {
+                  color: theme.colors.ink,
+                  fontSize: scaledFontSize(24, theme),
+                },
+              ]}
+            >
+              Messages
+            </Text>
 
-      <ScrollView contentContainerStyle={styles.content}>
-        <View style={styles.headerRow}>
-          <Text
-            accessibilityRole="header"
-            style={[styles.title, { color: theme.colors.ink }]}
-          >
-            Messages
-          </Text>
+            <View
+              accessible
+              accessibilityLabel="User profile"
+              style={[
+                styles.profileAvatar,
+                {
+                  backgroundColor: theme.colors.primary,
+                },
+              ]}
+            >
+              <Text
+                style={[
+                  styles.profileInitial,
+                  {
+                    color: theme.colors.background,
+                    fontSize: scaledFontSize(16, theme),
+                  },
+                ]}
+              >
+                A
+              </Text>
+            </View>
+          </View>
 
-          <Pressable
-            accessibilityLabel="Compose message"
-            accessibilityRole="button"
-            onPress={() =>
-              showPrototypeFeedback(
-                'Composing a new message is not part of the scope of this prototype.',
-              )
-            }
-            style={({ pressed }) => [
-              styles.composeButton,
-              pressed && styles.pressed,
+          <View
+            accessible
+            accessibilityLabel={`${unreadCount} unread messages`}
+            style={[
+              styles.unreadBadge,
+              {
+                borderColor: theme.colors.primary,
+                borderWidth: theme.borderWidth,
+              },
             ]}
           >
             <Text
               style={[
-                styles.composeText,
+                styles.unreadText,
                 {
                   color: theme.colors.primary,
                   fontSize: scaledFontSize(16, theme),
                 },
               ]}
             >
-              Compose
+              {unreadCount} unread
             </Text>
-          </Pressable>
-        </View>
+          </View>
 
-        {messages.map((message) => (
-          <Pressable
-            accessibilityLabel={`${message.sender}, ${message.subject}`}
-            accessibilityRole="button"
-            key={message.id}
-            onPress={() => onSelectMessage(message)}
-            style={({ pressed }) => pressed && styles.pressed}
-          >
-            <AppCard style={styles.messageCard}>
-              <View style={styles.messageHeader}>
-                <Text style={[styles.sender, { color: theme.colors.ink }]}>
-                  {message.sender}
-                </Text>
+          <View style={styles.messageList}>
+            {messages.map((message) => {
+              const formattedDate = formatMessageDate(message.sentAt);
 
-                <Text style={[styles.date, { color: theme.colors.mutedInk }]}>
-                  {message.date}
-                </Text>
-              </View>
+              const accessibilityLabel = `${
+                message.isRead ? 'Read' : 'Unread'
+              } message from ${message.sender}. ${
+                message.subject
+              }. ${formattedDate}`;
 
-              <Text style={[styles.subject, { color: theme.colors.ink }]}>
-                {message.subject}
-              </Text>
+              return (
+                <Pressable
+                  key={message.id}
+                  accessibilityLabel={accessibilityLabel}
+                  accessibilityRole="button"
+                  onPress={() => onSelectMessage?.(message)}
+                  style={[
+                    styles.messageCard,
+                    {
+                      backgroundColor: theme.colors.surface,
+                      borderColor: theme.colors.border,
+                      borderWidth: theme.borderWidth,
+                    },
+                  ]}
+                >
+                  <View style={styles.messageHeader}>
+                    <View style={styles.senderRow}>
+                      {!message.isRead && (
+                        <View
+                          accessible
+                          accessibilityLabel="Unread"
+                          style={[
+                            styles.unreadDot,
+                            {
+                              backgroundColor: theme.colors.primary,
+                            },
+                          ]}
+                        />
+                      )}
 
-              <Text style={[styles.preview, { color: theme.colors.mutedInk }]}>
-                {message.preview}
-              </Text>
+                      <Text
+                        style={[
+                          styles.sender,
+                          {
+                            color: theme.colors.ink,
+                            fontSize: scaledFontSize(16, theme),
+                          },
+                        ]}
+                      >
+                        {message.sender}
+                      </Text>
+                    </View>
 
-              {message.status === 'Unread' && (
-                <Text style={[styles.unread, { color: theme.colors.primary }]}>
-                  Unread
-                </Text>
-              )}
-            </AppCard>
-          </Pressable>
-        ))}
-      </ScrollView>
+                    <Text
+                      style={[
+                        styles.date,
+                        {
+                          color: theme.colors.mutedInk,
+                          fontSize: scaledFontSize(14, theme),
+                        },
+                      ]}
+                    >
+                      {formattedDate}
+                    </Text>
+                  </View>
 
-      <BottomNavigation activeItem="messages" onNavigate={onNavigate} />
+                  <Text
+                    style={[
+                      styles.subject,
+                      {
+                        color: theme.colors.ink,
+                        fontSize: scaledFontSize(16, theme),
+                        fontWeight: message.isRead ? '400' : '600',
+                      },
+                    ]}
+                  >
+                    {message.subject}
+                  </Text>
+                </Pressable>
+              );
+            })}
+          </View>
+        </ScrollView>
+
+        <BottomNavigation activeItem="messages" onNavigate={onNavigate} />
+      </View>
     </SafeAreaScreen>
   );
 }
 
 const styles = StyleSheet.create({
-  composeButton: {
-    justifyContent: 'center',
-    minHeight: layout.minimumTouchTarget,
-    paddingHorizontal: spacing.lg,
-  },
-  composeText: {
-    fontWeight: '700',
+  container: {
+    flex: 1,
   },
   content: {
     padding: 18,
+    paddingBottom: spacing.xl,
   },
   date: {
-    fontSize: 14,
     marginLeft: spacing.md,
   },
-  headerRow: {
+  header: {
     alignItems: 'center',
     flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginBottom: spacing.lg,
   },
   messageCard: {
-    marginBottom: spacing.lg,
+    borderRadius: 12,
+    marginBottom: spacing.md,
+    minHeight: layout.minimumTouchTarget,
+    padding: spacing.lg,
   },
   messageHeader: {
     alignItems: 'flex-start',
     flexDirection: 'row',
     justifyContent: 'space-between',
   },
-  preview: {
-    fontSize: 16,
-    marginTop: spacing.sm,
+  messageList: {
+    marginTop: spacing.lg,
   },
-  pressed: {
-    opacity: 0.7,
+  profileAvatar: {
+    alignItems: 'center',
+    borderRadius: 22,
+    height: 44,
+    justifyContent: 'center',
+    width: 44,
+  },
+  profileInitial: {
+    fontWeight: '700',
   },
   sender: {
-    flex: 1,
-    fontSize: 16,
+    flexShrink: 1,
     fontWeight: '700',
   },
+  senderRow: {
+    alignItems: 'center',
+    flex: 1,
+    flexDirection: 'row',
+  },
   subject: {
-    fontSize: 16,
-    fontWeight: '700',
     marginTop: spacing.sm,
   },
   title: {
-    fontSize: 24,
+    flex: 1,
     fontWeight: '700',
   },
-  unread: {
-    fontSize: 14,
-    fontWeight: '700',
-    marginTop: spacing.sm,
+  unreadBadge: {
+    alignSelf: 'flex-start',
+    borderRadius: 999,
+    marginTop: spacing.lg,
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.sm,
+  },
+  unreadDot: {
+    borderRadius: 5,
+    height: 10,
+    marginRight: spacing.sm,
+    width: 10,
+  },
+  unreadText: {
+    fontWeight: '600',
   },
 });

@@ -1,6 +1,7 @@
 import { screen, userEvent } from '@testing-library/react-native';
 
 import { AppNavigator } from '../src/navigation/AppNavigator';
+import { getUnreadMessageCount } from '../src/repositories/messagesRepository';
 import { renderWithProviders } from '../src/test-utils/renderWithProviders';
 
 describe('AppNavigator', () => {
@@ -84,26 +85,50 @@ describe('AppNavigator', () => {
     await renderWithProviders(<AppNavigator />);
 
     await user.press(screen.getByRole('button', { name: 'Sign in' }));
+
     await user.press(
-      screen.getByRole('button', { name: 'Messages, 2 unread' }),
+      screen.getByRole('button', {
+        name: `Messages, ${getUnreadMessageCount()} unread`,
+      }),
     );
+
     expect(screen.getByRole('header', { name: 'Messages' })).toBeVisible();
 
     await user.press(
       screen.getByRole('button', {
-        name: 'Dr. David Chen, Lab results available',
+        name: /Unread message from Dr\. David Chen\. Your lab results are available/,
       }),
     );
+
     expect(
-      screen.getByRole('header', { name: 'Lab results available' }),
+      screen.getByRole('header', {
+        name: 'Message',
+      }),
     ).toBeVisible();
 
+    expect(screen.getByText('Your lab results are available')).toBeVisible();
+
     await user.press(screen.getByRole('button', { name: 'Back to messages' }));
+
     expect(screen.getByRole('header', { name: 'Messages' })).toBeVisible();
 
     await user.press(screen.getByRole('tab', { name: 'Home' }));
+
     expect(
       screen.getByRole('header', { name: 'Good morning, Maya' }),
     ).toBeVisible();
+  });
+
+  test('opens Messages from the root Messages tab', async () => {
+    const user = userEvent.setup();
+
+    await renderWithProviders(<AppNavigator />);
+
+    await user.press(screen.getByRole('button', { name: 'Sign in' }));
+
+    await user.press(screen.getByRole('tab', { name: 'Messages' }));
+
+    expect(screen.getByRole('header', { name: 'Messages' })).toBeVisible();
+    expect(screen.getByLabelText('Messages')).toBeSelected();
   });
 });

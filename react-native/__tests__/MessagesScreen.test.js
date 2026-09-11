@@ -1,42 +1,36 @@
 import { screen, userEvent } from '@testing-library/react-native';
 
+import { getUnreadMessageCount } from '../src/repositories/messagesRepository';
 import { MessagesScreen } from '../src/screens/MessagesScreen';
+import {
+  defaultAccessibilityPreferences,
+  textSizeOptions,
+} from '../src/state/accessibilityPreferences';
 import { renderWithProviders } from '../src/test-utils/renderWithProviders';
 
 describe('MessagesScreen', () => {
-  test('renders the Messages list and Compose control', async () => {
+  test('renders the Flutter-aligned Messages list and unread summary', async () => {
     await renderWithProviders(<MessagesScreen onSelectMessage={jest.fn()} />);
 
     expect(screen.getByRole('header', { name: 'Messages' })).toBeVisible();
 
     expect(
-      screen.getByRole('button', { name: 'Compose message' }),
+      screen.getByLabelText(`${getUnreadMessageCount()} unread messages`),
     ).toBeVisible();
+
+    expect(screen.getByLabelText('User profile')).toBeVisible();
 
     expect(screen.getByText('Dr. David Chen')).toBeVisible();
-    expect(screen.getByText('Lab results available')).toBeVisible();
+    expect(screen.getByText('Your lab results are available')).toBeVisible();
+
     expect(screen.getByText('Care Team')).toBeVisible();
-    expect(screen.getByText('Appointment reminder')).toBeVisible();
+    expect(screen.getByText('Reminder: upcoming appointment')).toBeVisible();
+
     expect(screen.getByText('Vision Center')).toBeVisible();
-    expect(screen.getByText('Referral update')).toBeVisible();
-  });
+    expect(screen.getByText('Referral received')).toBeVisible();
 
-  test('shows an out-of-scope message when Compose is pressed', async () => {
-    const user = userEvent.setup();
-
-    await renderWithProviders(<MessagesScreen onSelectMessage={jest.fn()} />);
-
-    await user.press(
-      screen.getByRole('button', {
-        name: 'Compose message',
-      }),
-    );
-
-    expect(
-      screen.getByText(
-        'Composing a new message is not part of the scope of this prototype.',
-      ),
-    ).toBeVisible();
+    expect(screen.getByText('Billing Support')).toBeVisible();
+    expect(screen.getByText('Statement available')).toBeVisible();
   });
 
   test('passes the selected message when a message is pressed', async () => {
@@ -49,7 +43,7 @@ describe('MessagesScreen', () => {
 
     await user.press(
       screen.getByRole('button', {
-        name: 'Dr. David Chen, Lab results available',
+        name: /Unread message from Dr\. David Chen\. Your lab results are available/,
       }),
     );
 
@@ -57,9 +51,11 @@ describe('MessagesScreen', () => {
 
     expect(onSelectMessage).toHaveBeenCalledWith(
       expect.objectContaining({
+        id: 'msg-1',
         sender: 'Dr. David Chen',
-        subject: 'Lab results available',
-        type: 'lab-results',
+        subject: 'Your lab results are available',
+        isRead: false,
+        showLabResultsAction: true,
       }),
     );
   });
@@ -77,5 +73,51 @@ describe('MessagesScreen', () => {
     );
 
     expect(onHome).toHaveBeenCalledTimes(1);
+  });
+
+  test('uses the enlarged text preference for Messages typography', async () => {
+    await renderWithProviders(<MessagesScreen onSelectMessage={jest.fn()} />, {
+      initialPreferences: {
+        ...defaultAccessibilityPreferences,
+        textSize: textSizeOptions[2],
+      },
+    });
+
+    const title = screen.getByRole('header', { name: 'Messages' });
+    const sender = screen.getByText('Dr. David Chen');
+    const subject = screen.getByText('Your lab results are available');
+    const date = screen.getByText('Aug 27 • 8:42 AM');
+
+    expect(title.props.style).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          fontSize: 27.599999999999998,
+        }),
+      ]),
+    );
+
+    expect(sender.props.style).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          fontSize: 18.4,
+        }),
+      ]),
+    );
+
+    expect(subject.props.style).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          fontSize: 18.4,
+        }),
+      ]),
+    );
+
+    expect(date.props.style).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          fontSize: 16.099999999999998,
+        }),
+      ]),
+    );
   });
 });

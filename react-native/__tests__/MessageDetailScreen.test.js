@@ -1,28 +1,41 @@
 import { screen, userEvent } from '@testing-library/react-native';
 
 import { MessageDetailScreen } from '../src/screens/MessageDetailScreen';
+import {
+  defaultAccessibilityPreferences,
+  textSizeOptions,
+} from '../src/state/accessibilityPreferences';
 import { renderWithProviders } from '../src/test-utils/renderWithProviders';
 
 const labMessage = {
-  id: '1',
+  id: 'msg-1',
   sender: 'Dr. David Chen',
-  subject: 'Lab results available',
-  date: 'Sep 3',
-  preview: 'Your recent lab results are now available to review.',
-  body: 'Your recent lab results are now available. Please review them before your next appointment.',
-  status: 'Unread',
-  type: 'lab-results',
+  subject: 'Your lab results are available',
+  preview: 'Your recent blood work is now available in CareConnect.',
+  sentAt: new Date(2026, 7, 27, 8, 42),
+  isRead: false,
+  body:
+    'Hi Maya,\n\n' +
+    'Your recent blood work is now available in CareConnect. ' +
+    'Most results are within the expected range. I added a note ' +
+    'about your vitamin D level and would like you to review it ' +
+    'before our next visit.',
+  statusMessage: '✓ Results reviewed by care team',
+  statusDetail: 'No urgent follow-up is required.',
+  showLabResultsAction: true,
 };
 
 const generalMessage = {
-  id: '2',
+  id: 'msg-2',
   sender: 'Care Team',
-  subject: 'Appointment reminder',
-  date: 'Sep 2',
-  preview: 'This is a reminder about your upcoming appointment.',
-  body: 'This is a reminder about your upcoming appointment. Please arrive 15 minutes early.',
-  status: 'Read',
-  type: 'general',
+  subject: 'Reminder: upcoming appointment',
+  preview: 'You have an upcoming appointment.',
+  sentAt: new Date(2026, 7, 26, 16, 10),
+  isRead: false,
+  body: null,
+  statusMessage: null,
+  statusDetail: null,
+  showLabResultsAction: false,
 };
 
 describe('MessageDetailScreen', () => {
@@ -31,19 +44,20 @@ describe('MessageDetailScreen', () => {
       <MessageDetailScreen message={labMessage} onBack={jest.fn()} />,
     );
 
-    expect(
-      screen.getByRole('header', {
-        name: 'Lab results available',
-      }),
-    ).toBeVisible();
-
+    expect(screen.getByRole('header', { name: 'Message' })).toBeVisible();
     expect(screen.getByText('Dr. David Chen')).toBeVisible();
-    expect(screen.getByText('Sep 3')).toBeVisible();
-    expect(screen.getByText('Status: Unread')).toBeVisible();
+    expect(screen.getByText('Aug 27 • 8:42 AM')).toBeVisible();
+    expect(screen.getByText('Your lab results are available')).toBeVisible();
     expect(screen.getByText(labMessage.body)).toBeVisible();
+
+    expect(
+      screen.getByLabelText(
+        '✓ Results reviewed by care team. No urgent follow-up is required.',
+      ),
+    ).toBeVisible();
   });
 
-  test('shows the lab-results action for a lab message', async () => {
+  test('shows the lab-results action when enabled by the message', async () => {
     await renderWithProviders(
       <MessageDetailScreen message={labMessage} onBack={jest.fn()} />,
     );
@@ -55,7 +69,7 @@ describe('MessageDetailScreen', () => {
     ).toBeVisible();
   });
 
-  test('does not show the lab-results action for a general message', async () => {
+  test('does not show the lab-results action when disabled by the message', async () => {
     await renderWithProviders(
       <MessageDetailScreen message={generalMessage} onBack={jest.fn()} />,
     );
@@ -67,7 +81,7 @@ describe('MessageDetailScreen', () => {
     ).toBeNull();
   });
 
-  test('shows an out-of-scope message when View lab results is pressed', async () => {
+  test('shows the approved prototype feedback when View lab results is pressed', async () => {
     const user = userEvent.setup();
 
     await renderWithProviders(
@@ -81,13 +95,11 @@ describe('MessageDetailScreen', () => {
     );
 
     expect(
-      screen.getByText(
-        'Viewing lab results is not part of the scope of this prototype.',
-      ),
+      screen.getByText('Lab results are not available in this prototype.'),
     ).toBeVisible();
   });
 
-  test('shows an out-of-scope message when Reply is pressed', async () => {
+  test('shows the approved prototype feedback when Reply is pressed', async () => {
     const user = userEvent.setup();
 
     await renderWithProviders(
@@ -101,9 +113,7 @@ describe('MessageDetailScreen', () => {
     );
 
     expect(
-      screen.getByText(
-        'Replying to messages is not part of the scope of this prototype.',
-      ),
+      screen.getByText('Reply is not available in this prototype.'),
     ).toBeVisible();
   });
 
@@ -134,5 +144,63 @@ describe('MessageDetailScreen', () => {
         name: 'Reply to message',
       }),
     ).toBeVisible();
+  });
+
+  test('uses the enlarged text preference for Message Detail typography', async () => {
+    await renderWithProviders(
+      <MessageDetailScreen message={labMessage} onBack={jest.fn()} />,
+      {
+        initialPreferences: {
+          ...defaultAccessibilityPreferences,
+          textSize: textSizeOptions[2],
+        },
+      },
+    );
+
+    const header = screen.getByRole('header', { name: 'Message' });
+    const sender = screen.getByText('Dr. David Chen');
+    const subject = screen.getByText('Your lab results are available');
+    const date = screen.getByText('Aug 27 • 8:42 AM');
+    const reply = screen.getByText('Reply');
+
+    expect(header.props.style).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          fontSize: 27.599999999999998,
+        }),
+      ]),
+    );
+
+    expect(sender.props.style).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          fontSize: 18.4,
+        }),
+      ]),
+    );
+
+    expect(subject.props.style).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          fontSize: 27.599999999999998,
+        }),
+      ]),
+    );
+
+    expect(date.props.style).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          fontSize: 16.099999999999998,
+        }),
+      ]),
+    );
+
+    expect(reply.props.style).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          fontSize: 18.4,
+        }),
+      ]),
+    );
   });
 });
