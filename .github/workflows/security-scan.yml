@@ -1,9 +1,7 @@
 name: Dependency vulnerability scan
 
 on:
-  pull_request:
-  push:
-    branches: [main]
+  workflow_call:
 
 permissions:
   actions: read
