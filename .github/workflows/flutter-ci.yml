@@ -1,15 +1,19 @@
 name: Flutter CI
 
 on:
-  pull_request:
-  push:
-    branches: [main]
+  workflow_call:
+    outputs:
+      details:
+        description: Flutter test-count summary.
+        value: ${{ jobs.validate-flutter.outputs.details }}
 
 permissions:
   contents: read
 
 jobs:
   validate-flutter:
+    outputs:
+      details: ${{ steps.validation.outputs.details }}
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -34,8 +38,13 @@ jobs:
       - name: Analyze Flutter source
         run: flutter analyze
 
-      - name: Run tests with coverage
-        run: flutter test --coverage
+      - id: validation
+        name: Run tests with coverage
+        run: |
+          set -o pipefail
+          flutter test --coverage 2>&1 | tee test-output.txt
+          test_count=$(sed -E 's/\x1B\[[0-9;]*[[:alpha:]]//g' test-output.txt | sed -nE 's/.*[^0-9]([0-9][0-9]*) tests passed\..*/\1/p' | tail -1)
+          echo "details=${test_count:+$test_count tests}" >> "$GITHUB_OUTPUT"
 
       - name: Upload coverage report
         uses: actions/upload-artifact@v7

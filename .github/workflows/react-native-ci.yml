@@ -1,15 +1,19 @@
 name: React Native CI
 
 on:
-  pull_request:
-  push:
-    branches: [main]
+  workflow_call:
+    outputs:
+      details:
+        description: React Native test-count summary.
+        value: ${{ jobs.validate-react-native.outputs.details }}
 
 permissions:
   contents: read
 
 jobs:
   validate-react-native:
+    outputs:
+      details: ${{ steps.validation.outputs.details }}
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -38,8 +42,15 @@ jobs:
       - name: Lint
         run: npm run lint
 
-      - name: Run tests with coverage
-        run: npm run test:coverage -- --runInBand
+      - id: validation
+        name: Run tests with coverage
+        run: |
+          set -o pipefail
+          npm run test:coverage -- --runInBand 2>&1 | tee test-output.txt
+          test_output=$(sed -E 's/\x1B\[[0-9;]*[[:alpha:]]//g' test-output.txt)
+          suites=$(printf '%s\n' "$test_output" | sed -nE 's/^[[:space:]]*Test Suites:[[:space:]]*([0-9]+).*/\1/p' | tail -1)
+          tests=$(printf '%s\n' "$test_output" | sed -nE 's/^[[:space:]]*Tests:[[:space:]]*([0-9]+).*/\1/p' | tail -1)
+          echo "details=$suites suites / $tests tests" >> "$GITHUB_OUTPUT"
 
       - name: Upload coverage report
         uses: actions/upload-artifact@v7
