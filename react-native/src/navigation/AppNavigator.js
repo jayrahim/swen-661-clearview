@@ -76,6 +76,7 @@ export function AppNavigator() {
       <AppointmentDetailScreen
         appointment={route.appointment}
         onBack={() => dispatch({ type: navigationActionTypes.back })}
+        onNavigate={rootNavigation}
       />
     );
   }
@@ -112,6 +113,7 @@ export function AppNavigator() {
       <MessageDetailScreen
         message={route.message}
         onBack={() => dispatch({ type: navigationActionTypes.back })}
+        onNavigate={rootNavigation}
       />
     );
   }
@@ -121,6 +123,7 @@ export function AppNavigator() {
       <MedicalNoteDetailScreen
         note={route.note}
         onBack={() => dispatch({ type: navigationActionTypes.back })}
+        onNavigate={rootNavigation}
       />
     );
   }

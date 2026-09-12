@@ -1,15 +1,13 @@
+import { Dimensions } from 'react-native';
 import { screen, userEvent } from '@testing-library/react-native';
 import { AppointmentsScreen } from '../src/screens/AppointmentsScreen';
 import { AppointmentDetailScreen } from '../src/screens/AppointmentDetailScreen';
+import { rootNavigationFeedbackOffset } from '../src/components/RootScreenLayout';
 import { appointmentRepository } from '../src/data/appointments';
+import { responsiveLayoutFor } from '../src/layout/responsiveLayoutPolicy';
 import { defaultAccessibilityPreferences } from '../src/state/accessibilityPreferences';
 import { renderWithProviders } from '../src/test-utils/renderWithProviders';
-import {
-  layout,
-  resolveTheme,
-  scaledFontSize,
-  spacing,
-} from '../src/theme/tokens';
+import { resolveTheme, scaledFontSize, spacing } from '../src/theme/tokens';
 
 describe('appointmentRepository', () => {
   test('returns ordered synthetic appointments without exposing its collection', () => {
@@ -80,7 +78,12 @@ test('list renders repository data and selects the intended appointment', async 
   ).toBeVisible();
   expect(
     screen.getByText('Scheduling is not available in this prototype.').parent,
-  ).toHaveStyle({ bottom: layout.bottomNavigationHeight + spacing.md });
+  ).toHaveStyle({
+    bottom:
+      rootNavigationFeedbackOffset(
+        responsiveLayoutFor(Dimensions.get('window')).isTablet,
+      ) + spacing.md,
+  });
 });
 
 test('list uses the high-contrast badge treatment', async () => {

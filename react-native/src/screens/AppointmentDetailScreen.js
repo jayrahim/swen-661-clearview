@@ -1,12 +1,17 @@
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { PrimaryButton } from '../components/PrimaryButton';
 import { usePrototypeFeedback } from '../components/PrototypeFeedback';
-import { SafeAreaScreen } from '../components/SafeAreaScreen';
+import { ResponsiveContent } from '../components/ResponsiveContent';
+import { RootScreenLayout } from '../components/RootScreenLayout';
 import { appointmentDetailDate } from '../utils/appointmentFormat';
 import { scaledFontSize } from '../theme/tokens';
 import { useClearViewTheme } from '../theme/useClearViewTheme';
 
-export function AppointmentDetailScreen({ appointment, onBack }) {
+export function AppointmentDetailScreen({
+  appointment,
+  onBack,
+  onNavigate = {},
+}) {
   const { theme } = useClearViewTheme();
   const { showPrototypeFeedback } = usePrototypeFeedback();
   const location = appointment.locationDetail
@@ -14,142 +19,152 @@ export function AppointmentDetailScreen({ appointment, onBack }) {
     : appointment.location;
 
   return (
-    <SafeAreaScreen style={{ backgroundColor: theme.colors.background }}>
+    <RootScreenLayout
+      activeItem="visits"
+      onNavigate={onNavigate}
+      showPhoneNavigation={false}
+      style={{ backgroundColor: theme.colors.background }}
+    >
       <ScrollView contentContainerStyle={styles.content}>
-        <View style={styles.header}>
-          <Pressable
-            accessibilityLabel="Back to appointments"
-            accessibilityRole="button"
-            onPress={onBack}
-            style={styles.back}
-          >
+        <ResponsiveContent>
+          <View style={styles.header}>
+            <Pressable
+              accessibilityLabel="Back to appointments"
+              accessibilityRole="button"
+              onPress={onBack}
+              style={styles.back}
+            >
+              <Text
+                style={[
+                  styles.backText,
+                  {
+                    color: theme.colors.primary,
+                    fontSize: scaledFontSize(34, theme),
+                  },
+                ]}
+              >
+                ‹
+              </Text>
+            </Pressable>
             <Text
+              accessibilityRole="header"
               style={[
-                styles.backText,
+                styles.headerTitle,
                 {
-                  color: theme.colors.primary,
-                  fontSize: scaledFontSize(34, theme),
+                  color: theme.colors.ink,
+                  fontSize: scaledFontSize(24, theme),
                 },
               ]}
             >
-              ‹
+              Appointment Details
+            </Text>
+          </View>
+          <Text
+            style={[
+              styles.status,
+              {
+                color: theme.colors.mintInk,
+                fontSize: scaledFontSize(14, theme),
+              },
+            ]}
+          >
+            {appointment.status}
+          </Text>
+          <Text
+            style={[
+              styles.title,
+              { color: theme.colors.ink, fontSize: scaledFontSize(26, theme) },
+            ]}
+          >
+            {appointment.specialty} visit
+          </Text>
+          <Text
+            style={[
+              styles.clinician,
+              { color: theme.colors.ink, fontSize: scaledFontSize(18, theme) },
+            ]}
+          >
+            {appointment.clinicianName}
+          </Text>
+          <Section
+            label="Date & time"
+            theme={theme}
+            value={appointmentDetailDate(appointment.scheduledAt)}
+          />
+          <Section label="Location" theme={theme} value={location} />
+          <Section
+            label="Visit type"
+            theme={theme}
+            value={appointment.visitType}
+          />
+          <View
+            style={[
+              styles.notice,
+              {
+                backgroundColor: theme.colors.infoBackground,
+                borderColor: theme.colors.infoBorder,
+                borderWidth: theme.borderWidth,
+              },
+            ]}
+          >
+            <Text
+              style={[
+                styles.noticeTitle,
+                {
+                  color: theme.colors.primary,
+                  fontSize: scaledFontSize(16, theme),
+                },
+              ]}
+            >
+              Before your visit
+            </Text>
+            <Text
+              style={{
+                color: theme.colors.ink,
+                fontSize: scaledFontSize(16, theme),
+              }}
+            >
+              {appointment.preparationNote}
+            </Text>
+          </View>
+          <PrimaryButton
+            label="Get directions"
+            onPress={() =>
+              showPrototypeFeedback(
+                'Directions are not available in this prototype.',
+              )
+            }
+          />
+          <Pressable
+            accessibilityRole="button"
+            onPress={() =>
+              showPrototypeFeedback(
+                'Rescheduling is not available in this prototype.',
+              )
+            }
+            style={[
+              styles.outline,
+              {
+                borderColor: theme.colors.primary,
+                borderWidth: theme.borderWidth,
+              },
+            ]}
+          >
+            <Text
+              style={[
+                styles.outlineText,
+                {
+                  color: theme.colors.primary,
+                  fontSize: scaledFontSize(16, theme),
+                },
+              ]}
+            >
+              Reschedule
             </Text>
           </Pressable>
-          <Text
-            accessibilityRole="header"
-            style={[
-              styles.headerTitle,
-              { color: theme.colors.ink, fontSize: scaledFontSize(24, theme) },
-            ]}
-          >
-            Appointment Details
-          </Text>
-        </View>
-        <Text
-          style={[
-            styles.status,
-            {
-              color: theme.colors.mintInk,
-              fontSize: scaledFontSize(14, theme),
-            },
-          ]}
-        >
-          {appointment.status}
-        </Text>
-        <Text
-          style={[
-            styles.title,
-            { color: theme.colors.ink, fontSize: scaledFontSize(26, theme) },
-          ]}
-        >
-          {appointment.specialty} visit
-        </Text>
-        <Text
-          style={[
-            styles.clinician,
-            { color: theme.colors.ink, fontSize: scaledFontSize(18, theme) },
-          ]}
-        >
-          {appointment.clinicianName}
-        </Text>
-        <Section
-          label="Date & time"
-          theme={theme}
-          value={appointmentDetailDate(appointment.scheduledAt)}
-        />
-        <Section label="Location" theme={theme} value={location} />
-        <Section
-          label="Visit type"
-          theme={theme}
-          value={appointment.visitType}
-        />
-        <View
-          style={[
-            styles.notice,
-            {
-              backgroundColor: theme.colors.infoBackground,
-              borderColor: theme.colors.infoBorder,
-              borderWidth: theme.borderWidth,
-            },
-          ]}
-        >
-          <Text
-            style={[
-              styles.noticeTitle,
-              {
-                color: theme.colors.primary,
-                fontSize: scaledFontSize(16, theme),
-              },
-            ]}
-          >
-            Before your visit
-          </Text>
-          <Text
-            style={{
-              color: theme.colors.ink,
-              fontSize: scaledFontSize(16, theme),
-            }}
-          >
-            {appointment.preparationNote}
-          </Text>
-        </View>
-        <PrimaryButton
-          label="Get directions"
-          onPress={() =>
-            showPrototypeFeedback(
-              'Directions are not available in this prototype.',
-            )
-          }
-        />
-        <Pressable
-          accessibilityRole="button"
-          onPress={() =>
-            showPrototypeFeedback(
-              'Rescheduling is not available in this prototype.',
-            )
-          }
-          style={[
-            styles.outline,
-            {
-              borderColor: theme.colors.primary,
-              borderWidth: theme.borderWidth,
-            },
-          ]}
-        >
-          <Text
-            style={[
-              styles.outlineText,
-              {
-                color: theme.colors.primary,
-                fontSize: scaledFontSize(16, theme),
-              },
-            ]}
-          >
-            Reschedule
-          </Text>
-        </Pressable>
+        </ResponsiveContent>
       </ScrollView>
-    </SafeAreaScreen>
+    </RootScreenLayout>
   );
 }
 

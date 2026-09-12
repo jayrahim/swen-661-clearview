@@ -1,29 +1,27 @@
-import {
-  Pressable,
-  StyleSheet,
-  Text,
-  useWindowDimensions,
-  View,
-} from 'react-native';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { AppCard } from '../components/AppCard';
-import { BottomNavigation } from '../components/BottomNavigation';
 import { QuickAccessTile } from '../components/QuickAccessTile';
+import { RootScreenLayout } from '../components/RootScreenLayout';
 import { ScreenContainer } from '../components/ScreenContainer';
 import { nextAppointment, quickAccessItems } from '../data/dashboardData';
+import { useResponsiveLayout } from '../layout/useResponsiveLayout';
 import { colors, scaledFontSize, spacing, typography } from '../theme/tokens';
 import { useClearViewTheme } from '../theme/useClearViewTheme';
 import { getUnreadMessageCount } from '../repositories/messagesRepository';
 
 export function DashboardScreen({ onNavigate = {} }) {
-  const { width } = useWindowDimensions();
-  const isTablet = width >= 600;
+  const { isTablet } = useResponsiveLayout();
   const { preferences, theme } = useClearViewTheme();
   const unreadMessageCount = getUnreadMessageCount();
 
   return (
-    <View style={[styles.screen, { backgroundColor: theme.colors.background }]}>
-      <ScreenContainer>
+    <RootScreenLayout
+      activeItem="home"
+      onNavigate={onNavigate}
+      style={{ backgroundColor: theme.colors.background }}
+    >
+      <ScreenContainer safeArea={false}>
         <View style={styles.content}>
           <View style={styles.header}>
             <Text
@@ -141,8 +139,7 @@ export function DashboardScreen({ onNavigate = {} }) {
           </Pressable>
         </View>
       </ScreenContainer>
-      <BottomNavigation activeItem="home" onNavigate={onNavigate} />
-    </View>
+    </RootScreenLayout>
   );
 }
 
@@ -189,6 +186,7 @@ const styles = StyleSheet.create({
   date: {
     color: colors.mutedInk,
     fontSize: typography.body,
+    marginBottom: spacing.sm,
     marginTop: 28,
   },
   greeting: {
