@@ -22,4 +22,31 @@ void main() {
     expect(find.byType(MessagesScreen), findsOneWidget);
     expect(find.text('2 unread'), findsOneWidget);
   });
+
+  testWidgets('unavailable Quick Access tiles show prototype feedback', (
+    tester,
+  ) async {
+    await tester.pumpWidget(
+      const ProviderScope(child: MaterialApp(home: DashboardScreen())),
+    );
+
+    final prescriptions = find.text('Prescriptions');
+    await tester.ensureVisible(prescriptions);
+    await tester.tap(prescriptions);
+    await tester.pump();
+    expect(
+      find.text('Prescriptions are not available in this prototype.'),
+      findsOneWidget,
+    );
+
+    final referrals = find.text('Referrals');
+    await tester.ensureVisible(referrals);
+    await tester.tap(referrals);
+    await tester.pump();
+    expect(
+      find.text('Referrals are not available in this prototype.'),
+      findsOneWidget,
+    );
+    expect(find.byType(DashboardScreen), findsOneWidget);
+  });
 }

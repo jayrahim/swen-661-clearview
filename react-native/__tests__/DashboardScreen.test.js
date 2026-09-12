@@ -1,4 +1,4 @@
-import { screen } from '@testing-library/react-native';
+import { screen, userEvent } from '@testing-library/react-native';
 
 import { getUnreadMessageCount } from '../src/repositories/messagesRepository';
 import { DashboardScreen } from '../src/screens/DashboardScreen';
@@ -42,5 +42,28 @@ describe('DashboardScreen', () => {
     ).toBeNull();
 
     expect(screen.getByText('Text: Large • High contrast: On')).toBeVisible();
+  });
+
+  test('provides prototype feedback for unavailable Quick Access tiles without navigating', async () => {
+    const user = userEvent.setup();
+    const onNavigate = { messages: jest.fn(), records: jest.fn() };
+
+    await renderWithProviders(<DashboardScreen onNavigate={onNavigate} />);
+
+    await user.press(
+      screen.getByRole('button', { name: 'Prescriptions, 4 active' }),
+    );
+    expect(
+      screen.getByText('Prescriptions are not available in this prototype.'),
+    ).toBeVisible();
+
+    await user.press(
+      screen.getByRole('button', { name: 'Referrals, 1 pending' }),
+    );
+    expect(
+      screen.getByText('Referrals are not available in this prototype.'),
+    ).toBeVisible();
+    expect(onNavigate.messages).not.toHaveBeenCalled();
+    expect(onNavigate.records).not.toHaveBeenCalled();
   });
 });

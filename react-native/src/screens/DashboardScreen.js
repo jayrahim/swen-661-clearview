@@ -1,8 +1,15 @@
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { AppCard } from '../components/AppCard';
+import {
+  PrototypeFeedbackAnchor,
+  usePrototypeFeedback,
+} from '../components/PrototypeFeedback';
 import { QuickAccessTile } from '../components/QuickAccessTile';
-import { RootScreenLayout } from '../components/RootScreenLayout';
+import {
+  RootScreenLayout,
+  rootNavigationFeedbackOffset,
+} from '../components/RootScreenLayout';
 import { ScreenContainer } from '../components/ScreenContainer';
 import { nextAppointment, quickAccessItems } from '../data/dashboardData';
 import { useResponsiveLayout } from '../layout/useResponsiveLayout';
@@ -10,9 +17,15 @@ import { colors, scaledFontSize, spacing, typography } from '../theme/tokens';
 import { useClearViewTheme } from '../theme/useClearViewTheme';
 import { getUnreadMessageCount } from '../repositories/messagesRepository';
 
+const quickAccessFeedback = {
+  prescriptions: 'Prescriptions are not available in this prototype.',
+  referrals: 'Referrals are not available in this prototype.',
+};
+
 export function DashboardScreen({ onNavigate = {} }) {
   const { isTablet } = useResponsiveLayout();
   const { preferences, theme } = useClearViewTheme();
+  const { showPrototypeFeedback } = usePrototypeFeedback();
   const unreadMessageCount = getUnreadMessageCount();
 
   return (
@@ -21,6 +34,9 @@ export function DashboardScreen({ onNavigate = {} }) {
       onNavigate={onNavigate}
       style={{ backgroundColor: theme.colors.background }}
     >
+      <PrototypeFeedbackAnchor
+        bottomOffset={rootNavigationFeedbackOffset(isTablet) + spacing.md}
+      />
       <ScreenContainer safeArea={false}>
         <View style={styles.content}>
           <View style={styles.header}>
@@ -99,7 +115,12 @@ export function DashboardScreen({ onNavigate = {} }) {
                         ? onNavigate.messages
                         : item.id === 'medical-notes'
                           ? onNavigate.records
-                          : undefined
+                          : quickAccessFeedback[item.id]
+                            ? () =>
+                                showPrototypeFeedback(
+                                  quickAccessFeedback[item.id],
+                                )
+                            : undefined
                     }
                     style={isTablet ? styles.tabletTile : styles.phoneTile}
                   />

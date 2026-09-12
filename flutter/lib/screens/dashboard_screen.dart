@@ -10,6 +10,7 @@ import '../theme/app_colors.dart';
 import '../theme/clearview_tokens.dart';
 import '../utils/appointment_date_format.dart';
 import '../widgets/ui_components.dart';
+import '../widgets/prototype_feedback.dart';
 import 'accessibility_settings_screen.dart';
 import 'appointment_detail_screen.dart';
 import 'appointments_screen.dart';
@@ -257,8 +258,16 @@ class DashboardScreen extends ConsumerWidget {
                         onTap: switch (item.kind) {
                           QuickAccessKind.messages => openMessages,
                           QuickAccessKind.medicalNotes => openMedicalNotes,
-                          QuickAccessKind.prescriptions ||
-                          QuickAccessKind.referrals => null,
+                          QuickAccessKind.prescriptions =>
+                            () => showPrototypeFeedback(
+                              context,
+                              'Prescriptions are not available in this prototype.',
+                            ),
+                          QuickAccessKind.referrals =>
+                            () => showPrototypeFeedback(
+                              context,
+                              'Referrals are not available in this prototype.',
+                            ),
                         },
                       );
                     },
