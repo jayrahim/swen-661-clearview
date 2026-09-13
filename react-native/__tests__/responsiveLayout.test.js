@@ -1,8 +1,11 @@
 import { Text } from 'react-native';
-import { screen } from '@testing-library/react-native';
+import { screen, userEvent } from '@testing-library/react-native';
 
 import { ResponsiveContent } from '../src/components/ResponsiveContent';
-import { RootScreenLayout } from '../src/components/RootScreenLayout';
+import {
+  RootScreenLayout,
+  rootNavigationFeedbackOffset,
+} from '../src/components/RootScreenLayout';
 import { ScreenContainer } from '../src/components/ScreenContainer';
 import { appointmentRepository } from '../src/data/appointments';
 import { responsiveLayoutFor } from '../src/layout/responsiveLayoutPolicy';
@@ -13,7 +16,12 @@ import {
   textSizeOptions,
 } from '../src/state/accessibilityPreferences';
 import { renderWithProviders } from '../src/test-utils/renderWithProviders';
-import { layout, resolveTheme, scaledFontSize } from '../src/theme/tokens';
+import {
+  layout,
+  resolveTheme,
+  scaledFontSize,
+  spacing,
+} from '../src/theme/tokens';
 
 let mockResponsiveLayout = {
   contentMaxWidth: 480,
@@ -119,6 +127,23 @@ describe('responsive layout', () => {
 
     expect(screen.getByTestId('side-navigation')).toBeVisible();
     expect(screen.queryByTestId('bottom-navigation')).toBeNull();
+  });
+
+  test('positions Dashboard prototype feedback above tablet navigation space', async () => {
+    const user = userEvent.setup();
+    mockResponsiveLayout = responsiveLayoutFor({ height: 1194, width: 834 });
+
+    await renderWithProviders(<DashboardScreen />);
+    await user.press(
+      screen.getByRole('button', { name: 'Prescriptions, 4 active' }),
+    );
+
+    expect(
+      screen.getByText('Prescriptions are not available in this prototype.')
+        .parent,
+    ).toHaveStyle({
+      bottom: rootNavigationFeedbackOffset(true) + spacing.md,
+    });
   });
 
   test('keeps Reduced Clutter and High Contrast compatible with tablet navigation', async () => {
