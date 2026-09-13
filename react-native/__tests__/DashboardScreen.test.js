@@ -2,8 +2,12 @@ import { screen, userEvent } from '@testing-library/react-native';
 
 import { getUnreadMessageCount } from '../src/repositories/messagesRepository';
 import { DashboardScreen } from '../src/screens/DashboardScreen';
-import { defaultAccessibilityPreferences } from '../src/state/accessibilityPreferences';
+import {
+  defaultAccessibilityPreferences,
+  textSizeOptions,
+} from '../src/state/accessibilityPreferences';
 import { renderWithProviders } from '../src/test-utils/renderWithProviders';
+import { resolveTheme, scaledFontSize } from '../src/theme/tokens';
 
 describe('DashboardScreen', () => {
   test('renders the approved appointment and quick-access summary', async () => {
@@ -42,6 +46,28 @@ describe('DashboardScreen', () => {
     ).toBeNull();
 
     expect(screen.getByText('Text: Large • High contrast: On')).toBeVisible();
+  });
+
+  test('scales and applies high contrast to Quick Access tiles', async () => {
+    const preferences = {
+      ...defaultAccessibilityPreferences,
+      highContrast: true,
+      textSize: textSizeOptions[2],
+    };
+
+    await renderWithProviders(<DashboardScreen />, {
+      initialPreferences: preferences,
+    });
+
+    expect(screen.getByText('Prescriptions')).toHaveStyle({
+      color: '#111827',
+      fontSize: scaledFontSize(16, resolveTheme(preferences)),
+    });
+    expect(screen.getByText('Prescriptions').parent).toHaveStyle({
+      backgroundColor: '#FFFFFF',
+      borderColor: '#111827',
+      borderWidth: 2,
+    });
   });
 
   test('provides prototype feedback for unavailable Quick Access tiles without navigating', async () => {

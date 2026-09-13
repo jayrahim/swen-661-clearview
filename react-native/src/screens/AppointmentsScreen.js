@@ -75,13 +75,22 @@ export function AppointmentsScreen({ onNavigate = {}, onSelect }) {
                     <Text
                       style={[
                         styles.badgeDate,
-                        { color: theme.colors.primary },
+                        {
+                          color: theme.colors.primary,
+                          fontSize: scaledFontSize(14, theme),
+                        },
                       ]}
                     >
                       {appointmentBadge(item.scheduledAt)}
                     </Text>
                     <Text
-                      style={[styles.badgeTime, { color: theme.colors.ink }]}
+                      style={[
+                        styles.badgeTime,
+                        {
+                          color: theme.colors.ink,
+                          fontSize: scaledFontSize(16, theme),
+                        },
+                      ]}
                     >
                       {appointmentTime(item.scheduledAt)}
                     </Text>
@@ -99,13 +108,35 @@ export function AppointmentsScreen({ onNavigate = {}, onSelect }) {
                       {item.clinicianName}
                     </Text>
                     <Text
-                      style={[styles.muted, { color: theme.colors.mutedInk }]}
+                      style={[
+                        styles.muted,
+                        {
+                          color: theme.colors.mutedInk,
+                          fontSize: scaledFontSize(14, theme),
+                        },
+                      ]}
                     >
                       {item.specialty} • {item.location}
                     </Text>
-                    <Text style={styles.status}>{item.status}</Text>
                     <Text
-                      style={[styles.link, { color: theme.colors.primary }]}
+                      style={[
+                        styles.status,
+                        {
+                          color: theme.colors.mintInk,
+                          fontSize: scaledFontSize(14, theme),
+                        },
+                      ]}
+                    >
+                      {item.status}
+                    </Text>
+                    <Text
+                      style={[
+                        styles.link,
+                        {
+                          color: theme.colors.primary,
+                          fontSize: scaledFontSize(16, theme),
+                        },
+                      ]}
                     >
                       View details ›
                     </Text>
@@ -142,11 +173,11 @@ const styles = StyleSheet.create({
     minWidth: 74,
     padding: 10,
   },
-  badgeDate: { color: colors.primary, fontWeight: '700' },
-  badgeTime: { color: colors.ink, fontWeight: '700', marginTop: 8 },
+  badgeDate: { fontWeight: '700' },
+  badgeTime: { fontWeight: '700', marginTop: 8 },
   details: { flex: 1, marginLeft: 16 },
   clinician: { color: colors.ink, fontSize: 18, fontWeight: '700' },
-  muted: { color: colors.mutedInk, marginTop: 7 },
-  status: { color: colors.mintInk, fontWeight: '700', marginTop: 14 },
-  link: { color: colors.primary, fontWeight: '700', marginTop: 10 },
+  muted: { marginTop: 7 },
+  status: { fontWeight: '700', marginTop: 14 },
+  link: { fontWeight: '700', marginTop: 10 },
 });

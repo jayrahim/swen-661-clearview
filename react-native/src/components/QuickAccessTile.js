@@ -1,20 +1,46 @@
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
-import { colors, spacing } from '../theme/tokens';
+import { scaledFontSize, spacing } from '../theme/tokens';
+import { useClearViewTheme } from '../theme/useClearViewTheme';
 
 /** A dashboard tile that only becomes interactive when its feature is ready. */
 export function QuickAccessTile({ item, onPress, style }) {
+  const { theme } = useClearViewTheme();
+  const tileSurface = {
+    backgroundColor: theme.isHighContrast
+      ? theme.colors.surface
+      : item.backgroundColor,
+    borderColor: theme.colors.border,
+    borderWidth: theme.isHighContrast ? theme.borderWidth : 0,
+  };
   const content = (
     <>
-      <Text style={styles.title}>{item.title}</Text>
-      <Text style={[styles.subtitle, { color: item.subtitleColor }]}>
+      <Text
+        style={[
+          styles.title,
+          { color: theme.colors.ink, fontSize: scaledFontSize(16, theme) },
+        ]}
+      >
+        {item.title}
+      </Text>
+      <Text
+        style={[
+          styles.subtitle,
+          {
+            color: theme.isHighContrast
+              ? theme.colors.primary
+              : item.subtitleColor,
+            fontSize: scaledFontSize(14, theme),
+          },
+        ]}
+      >
         {item.subtitle}
       </Text>
     </>
   );
   const sharedProps = {
     accessibilityLabel: `${item.title}, ${item.subtitle}`,
-    style: [styles.tile, { backgroundColor: item.backgroundColor }, style],
+    style: [styles.tile, tileSurface, style],
   };
 
   if (!onPress) {
@@ -28,7 +54,7 @@ export function QuickAccessTile({ item, onPress, style }) {
       onPress={onPress}
       style={({ pressed }) => [
         styles.tile,
-        { backgroundColor: item.backgroundColor },
+        tileSurface,
         style,
         pressed && styles.pressed,
       ]}
@@ -43,7 +69,6 @@ const styles = StyleSheet.create({
     opacity: 0.8,
   },
   subtitle: {
-    fontSize: 14,
     marginTop: spacing.md,
   },
   tile: {
@@ -52,8 +77,6 @@ const styles = StyleSheet.create({
     padding: spacing.lg,
   },
   title: {
-    color: colors.ink,
-    fontSize: 16,
     fontWeight: '700',
   },
 });
