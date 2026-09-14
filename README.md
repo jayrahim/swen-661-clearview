@@ -3,7 +3,7 @@
 **SWEN 661 — User Interface Implementation**<br>
 **Team 6 — ClearView**
 
-ClearView is a cross-platform UI prototype based on the CareConnect Care Recipient experience for people with low vision or partial sight impairment. The active implementation is the Flutter prototype; the Electron, Expo/React Native, and React/Vite directories remain starter projects for future course work.
+ClearView is a cross-platform UI prototype based on the CareConnect Care Recipient experience for people with low vision or partial sight impairment. Flutter and Expo/React Native implementations are available for framework comparison; the Electron and React/Vite directories remain starter projects for future course work.
 
 ## Team members
 
@@ -26,14 +26,14 @@ The [docs/](docs/README.md) directory holds repository-safe documentation and de
 ├── .github/        # Issue, pull request, and workflow configuration
 ├── docs/           # Repository-safe documentation and design references
 ├── electron/       # Electron desktop starter
-├── flutter/        # Active ClearView Flutter prototype
-├── react-native/   # Expo / React Native starter
+├── flutter/        # ClearView Flutter prototype
+├── react-native/   # ClearView Expo / React Native prototype
 └── react-web/      # Vite / React web starter
 ```
 
-## ClearView Flutter prototype
+## ClearView implementations
 
-The Flutter prototype implements these meaningful UI states and workflows:
+The Flutter and React Native prototypes implement these meaningful UI states and workflows:
 
 - Sign In and Dashboard
 - Appointments and selected Appointment Detail
@@ -43,6 +43,12 @@ The Flutter prototype implements these meaningful UI states and workflows:
 - Reduced Clutter Dashboard, rendered from the shared Reduced Clutter preference
 
 The app uses synthetic data only. It does not include real authentication, PHI, networking, database persistence, or backend integration.
+
+### React Native (Week 5)
+
+The Expo / React Native implementation mirrors the completed Flutter workflows: Sign In, Dashboard, Accessibility Settings, Appointments and Appointment Detail, Messages and Message Detail, and Medical Notes and Medical Note Detail. Its shared root-route model provides Dashboard, Appointments, Messages, Records, and Settings destinations; selected-item details are child routes that return to their parent list.
+
+The prototype uses repository-backed synthetic data, React Context with `useReducer` for session accessibility preferences, shared design tokens and themed primitives, and responsive phone/tablet layouts. It supports the same Text Size, High Contrast, and Reduced Clutter preferences as the Flutter prototype. Controls that are visible in the approved design but outside the prototype scope provide lightweight, in-context feedback rather than fake destination screens.
 
 ### Architecture
 
@@ -166,21 +172,34 @@ Run `flutter build ios` only when local iOS signing is configured.
 
 Generated APKs and coverage reports are intentionally not committed to the repository. GitHub Actions retains `coverage/lcov.info` from successful Flutter CI runs as the `flutter-coverage` artifact.
 
+## React Native validation
+
+Run these commands from `react-native/` after installing dependencies with `npm ci` (or `npm install` for local development).
+
+```sh
+npm run lint
+npm run format:check
+npm test -- --runInBand
+npm run test:coverage -- --runInBand
+```
+
+Jest runs unit and React Native Testing Library tests. The coverage report is written to `react-native/coverage/lcov-report/index.html`; it is intentionally not committed. The GitHub Actions Platform validation workflow runs the applicable Flutter, React Native, and security checks for pull requests and retains the React Native coverage artifact from successful validation.
+
 ## Known limitations and future enhancements
 
 - All content is synthetic prototype data; there is no backend, persistence, networking, or real authentication.
 - Accessibility preferences last for the current app session only.
 - Some approved-design controls intentionally provide prototype feedback rather than a complete workflow.
-- Electron, React Native, and React web remain starter projects while the Flutter prototype is the active course implementation.
+- Electron and React web remain starter projects for future course work.
 - Future work may add additional workflows, persistence, real service integration, and broader platform implementations.
 
-## Week 4 contributions
+## Week 5 React Native contributions
 
 | Team member | Contributions |
 | --- | --- |
-| Jay Scruggs | Riverpod foundation; repository and data models; Appointments and Appointment Detail; High Contrast; responsive phone/tablet layout; Flutter CI and formatting validation; integration and documentation. |
-| Nazia Mst | Medical Notes and Medical Note Detail workflow; High Contrast pull-request merge and review coordination. |
-| Antonio Wilson | Messages and Message Detail workflow; prototype-control feedback; Reduced Clutter Dashboard and accessibility-focused tests. |
+| Jay Scruggs | React Native application shell, root navigation, accessibility-preferences state and theming, Appointments workflow, responsive phone/tablet layout, validation automation, and integration. |
+| Nazia Mst | React Native Medical Notes and Medical Note Detail workflow, repository-backed data, and tests. |
+| Antonio Wilson | React Native Messages and Message Detail workflow, repository-backed data, prototype feedback, and tests. |
 
 ## AI-assisted development
 

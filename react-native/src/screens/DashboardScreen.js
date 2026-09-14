@@ -52,7 +52,17 @@ export function DashboardScreen({ onNavigate = {} }) {
               onPress={onNavigate.settings}
               style={styles.accessibilityShortcut}
             >
-              <Text style={styles.accessibilityLabel}>Accessibility</Text>
+              <Text
+                style={[
+                  styles.accessibilityLabel,
+                  {
+                    color: theme.colors.primary,
+                    fontSize: scaledFontSize(16, theme),
+                  },
+                ]}
+              >
+                Accessibility
+              </Text>
             </Pressable>
           </View>
 
@@ -67,31 +77,103 @@ export function DashboardScreen({ onNavigate = {} }) {
           >
             <AppCard>
               <View style={styles.appointmentHeader}>
-                <Text style={styles.nextAppointment}>Next appointment</Text>
+                <Text
+                  style={[
+                    styles.nextAppointment,
+                    {
+                      color: theme.colors.primary,
+                      fontSize: scaledFontSize(14, theme),
+                    },
+                  ]}
+                >
+                  Next appointment
+                </Text>
                 <View
                   accessible
                   accessibilityLabel="Confirmed"
-                  style={styles.statusPill}
+                  style={[
+                    styles.statusPill,
+                    {
+                      backgroundColor: theme.isHighContrast
+                        ? theme.colors.surface
+                        : colors.mint,
+                      borderColor: theme.colors.primary,
+                      borderWidth: theme.isHighContrast ? theme.borderWidth : 0,
+                    },
+                  ]}
                 >
-                  <Text style={styles.statusLabel}>
+                  <Text
+                    style={[
+                      styles.statusLabel,
+                      {
+                        color: theme.isHighContrast
+                          ? theme.colors.primary
+                          : colors.mintInk,
+                        fontSize: scaledFontSize(14, theme),
+                      },
+                    ]}
+                  >
                     {nextAppointment.status}
                   </Text>
                 </View>
               </View>
-              <Text style={styles.clinician}>
+              <Text
+                style={[
+                  styles.clinician,
+                  {
+                    color: theme.colors.ink,
+                    fontSize: scaledFontSize(20, theme),
+                  },
+                ]}
+              >
                 {nextAppointment.clinicianName}
               </Text>
-              <Text style={styles.appointmentTime}>
+              <Text
+                style={[
+                  styles.appointmentTime,
+                  {
+                    color: theme.colors.ink,
+                    fontSize: scaledFontSize(18, theme),
+                  },
+                ]}
+              >
                 {nextAppointment.dateTime}
               </Text>
-              <Text style={styles.appointmentLocation}>
+              <Text
+                style={[
+                  styles.appointmentLocation,
+                  {
+                    color: theme.colors.mutedInk,
+                    fontSize: scaledFontSize(16, theme),
+                  },
+                ]}
+              >
                 {nextAppointment.location}
               </Text>
-              <Text style={styles.viewDetails}>View details →</Text>
+              <Text
+                style={[
+                  styles.viewDetails,
+                  {
+                    color: theme.colors.primary,
+                    fontSize: scaledFontSize(16, theme),
+                  },
+                ]}
+              >
+                View details →
+              </Text>
             </AppCard>
           </Pressable>
 
-          <Text accessibilityRole="header" style={styles.sectionTitle}>
+          <Text
+            accessibilityRole="header"
+            style={[
+              styles.sectionTitle,
+              {
+                color: theme.colors.ink,
+                fontSize: scaledFontSize(21, theme),
+              },
+            ]}
+          >
             Quick access
           </Text>
 
@@ -137,7 +219,15 @@ export function DashboardScreen({ onNavigate = {} }) {
             <AppCard style={styles.preferencesCard}>
               <View style={styles.preferencesContent}>
                 <View>
-                  <Text style={styles.preferencesTitle}>
+                  <Text
+                    style={[
+                      styles.preferencesTitle,
+                      {
+                        color: theme.colors.ink,
+                        fontSize: scaledFontSize(16, theme),
+                      },
+                    ]}
+                  >
                     Accessibility preferences
                   </Text>
 
@@ -152,7 +242,16 @@ export function DashboardScreen({ onNavigate = {} }) {
                   </Text>
                 </View>
 
-                <Text accessibilityElementsHidden style={styles.chevron}>
+                <Text
+                  accessibilityElementsHidden
+                  style={[
+                    styles.chevron,
+                    {
+                      color: theme.colors.primary,
+                      fontSize: scaledFontSize(32, theme),
+                    },
+                  ]}
+                >
                   ›
                 </Text>
               </View>
@@ -166,8 +265,6 @@ export function DashboardScreen({ onNavigate = {} }) {
 
 const styles = StyleSheet.create({
   accessibilityLabel: {
-    color: colors.primary,
-    fontSize: typography.body,
     fontWeight: '700',
     marginTop: spacing.xs,
   },
@@ -178,24 +275,16 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   appointmentLocation: {
-    color: colors.mutedInk,
-    fontSize: typography.body,
     marginTop: spacing.sm,
   },
   appointmentTime: {
-    color: colors.ink,
-    fontSize: 18,
     fontWeight: '700',
     marginTop: spacing.sm,
   },
   chevron: {
-    color: colors.primary,
-    fontSize: 32,
     fontWeight: '700',
   },
   clinician: {
-    color: colors.ink,
-    fontSize: typography.heading,
     fontWeight: '700',
     marginTop: spacing.sm,
   },
@@ -211,9 +300,7 @@ const styles = StyleSheet.create({
     marginTop: 28,
   },
   greeting: {
-    color: colors.ink,
     flex: 1,
-    fontSize: 23,
     fontWeight: '700',
   },
   header: {
@@ -222,8 +309,6 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   nextAppointment: {
-    color: colors.primary,
-    fontSize: typography.label,
     fontWeight: '700',
   },
   phoneTile: {
@@ -249,8 +334,6 @@ const styles = StyleSheet.create({
     marginTop: spacing.sm,
   },
   preferencesTitle: {
-    color: colors.ink,
-    fontSize: typography.body,
     fontWeight: '700',
   },
   screen: {
@@ -258,19 +341,14 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   sectionTitle: {
-    color: colors.ink,
-    fontSize: 21,
     fontWeight: '700',
     marginTop: 26,
     marginBottom: spacing.lg,
   },
   statusLabel: {
-    color: colors.mintInk,
-    fontSize: typography.label,
     fontWeight: '700',
   },
   statusPill: {
-    backgroundColor: colors.mint,
     borderRadius: 20,
     paddingHorizontal: spacing.lg,
     paddingVertical: spacing.sm,
@@ -285,8 +363,6 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   viewDetails: {
-    color: colors.primary,
-    fontSize: typography.body,
     fontWeight: '700',
     marginTop: spacing.sm,
   },
