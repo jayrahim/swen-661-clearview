@@ -1,8 +1,12 @@
 import { screen, userEvent } from '@testing-library/react-native';
 
 import { AccessibilitySettingsScreen } from '../src/screens/AccessibilitySettingsScreen';
-import { defaultAccessibilityPreferences } from '../src/state/accessibilityPreferences';
+import {
+  defaultAccessibilityPreferences,
+  textSizeOptions,
+} from '../src/state/accessibilityPreferences';
 import { renderWithProviders } from '../src/test-utils/renderWithProviders';
+import { resolveTheme, scaledFontSize } from '../src/theme/tokens';
 
 describe('AccessibilitySettingsScreen', () => {
   test('updates the rendered High Contrast value immediately', async () => {
@@ -77,5 +81,30 @@ describe('AccessibilitySettingsScreen', () => {
     expect(
       screen.getByText('Color preference is not available in this prototype.'),
     ).toBeVisible();
+  });
+
+  test('scales settings labels at the selected text size', async () => {
+    const preferences = {
+      ...defaultAccessibilityPreferences,
+      textSize: textSizeOptions[2],
+    };
+    const theme = resolveTheme(preferences);
+
+    await renderWithProviders(<AccessibilitySettingsScreen />, {
+      initialPreferences: preferences,
+    });
+
+    expect(screen.getByRole('header', { name: 'Accessibility' })).toHaveStyle({
+      fontSize: scaledFontSize(24, theme),
+    });
+    expect(screen.getByText('Extra large')).toHaveStyle({
+      fontSize: scaledFontSize(14, theme),
+    });
+    expect(screen.getByText('Live preview')).toHaveStyle({
+      fontSize: scaledFontSize(16, theme),
+    });
+    expect(screen.getByText('Reset preferences')).toHaveStyle({
+      fontSize: scaledFontSize(16, theme),
+    });
   });
 });

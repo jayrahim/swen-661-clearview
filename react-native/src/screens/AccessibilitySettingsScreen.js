@@ -67,13 +67,27 @@ export function AccessibilitySettingsScreen({ onNavigate = {} }) {
               onPress={onNavigate.home}
               style={styles.back}
             >
-              <Text style={[styles.backLabel, { color: theme.colors.primary }]}>
+              <Text
+                style={[
+                  styles.backLabel,
+                  {
+                    color: theme.colors.primary,
+                    fontSize: scaledFontSize(34, theme),
+                  },
+                ]}
+              >
                 ‹
               </Text>
             </Pressable>
             <Text
               accessibilityRole="header"
-              style={[styles.title, { color: theme.colors.ink }]}
+              style={[
+                styles.title,
+                {
+                  color: theme.colors.ink,
+                  fontSize: scaledFontSize(24, theme),
+                },
+              ]}
             >
               Accessibility
             </Text>
@@ -132,7 +146,13 @@ export function AccessibilitySettingsScreen({ onNavigate = {} }) {
                   ]}
                 >
                   <Text
-                    style={[styles.valueText, { color: theme.colors.primary }]}
+                    style={[
+                      styles.valueText,
+                      {
+                        color: theme.colors.primary,
+                        fontSize: scaledFontSize(14, theme),
+                      },
+                    ]}
                   >
                     {valueFor(action)}
                   </Text>
@@ -183,7 +203,13 @@ export function AccessibilitySettingsScreen({ onNavigate = {} }) {
                 ]}
               >
                 <Text
-                  style={[styles.valueText, { color: theme.colors.primary }]}
+                  style={[
+                    styles.valueText,
+                    {
+                      color: theme.colors.primary,
+                      fontSize: scaledFontSize(14, theme),
+                    },
+                  ]}
                 >
                   Cool
                 </Text>
@@ -200,7 +226,13 @@ export function AccessibilitySettingsScreen({ onNavigate = {} }) {
               ]}
             >
               <Text
-                style={[styles.previewTitle, { color: theme.colors.primary }]}
+                style={[
+                  styles.previewTitle,
+                  {
+                    color: theme.colors.primary,
+                    fontSize: scaledFontSize(16, theme),
+                  },
+                ]}
               >
                 Live preview
               </Text>
@@ -228,7 +260,15 @@ export function AccessibilitySettingsScreen({ onNavigate = {} }) {
                 },
               ]}
             >
-              <Text style={[styles.resetText, { color: theme.colors.primary }]}>
+              <Text
+                style={[
+                  styles.resetText,
+                  {
+                    color: theme.colors.primary,
+                    fontSize: scaledFontSize(16, theme),
+                  },
+                ]}
+              >
                 Reset preferences
               </Text>
             </Pressable>
@@ -254,8 +294,8 @@ const styles = StyleSheet.create({
     minHeight: 48,
     minWidth: 48,
   },
-  backLabel: { fontSize: 34, fontWeight: '700' },
-  title: { fontSize: 24, fontWeight: '700', marginLeft: 14 },
+  backLabel: { fontWeight: '700' },
+  title: { fontWeight: '700', marginLeft: 14 },
   body: { padding: 18 },
   description: { marginBottom: 28 },
   card: {
@@ -281,5 +321,5 @@ const styles = StyleSheet.create({
     marginTop: 18,
     minHeight: 52,
   },
-  resetText: { fontSize: 16, fontWeight: '700' },
+  resetText: { fontWeight: '700' },
 });
