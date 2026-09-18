@@ -32,7 +32,9 @@ class QuickAccessTile extends StatelessWidget {
           Text(
             item.subtitle,
             style: TextStyle(
-              color: tokens.isHighContrast ? tokens.primary : item.subtitleColor,
+              color: tokens.isHighContrast
+                  ? tokens.primary
+                  : item.subtitleColor,
               fontSize: 14,
             ),
           ),
