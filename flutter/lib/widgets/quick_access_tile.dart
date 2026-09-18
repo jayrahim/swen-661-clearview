@@ -31,7 +31,12 @@ class QuickAccessTile extends StatelessWidget {
           const SizedBox(height: 6),
           Text(
             item.subtitle,
-            style: TextStyle(color: item.subtitleColor, fontSize: 14),
+            style: TextStyle(
+              color: tokens.isHighContrast
+                  ? tokens.primary
+                  : item.subtitleColor,
+              fontSize: 14,
+            ),
           ),
         ],
       ),
