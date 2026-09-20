@@ -1,0 +1,15 @@
+appId: ${APP_ID}
+---
+- launchApp:
+    clearState: true
+- tapOn: '^Sign in$'
+- assertVisible: Good morning, Maya
+- scrollUntilVisible:
+    element: 'Accessibility preferences.*'
+    direction: DOWN
+- tapOn: 'Accessibility preferences.*'
+- assertVisible: Accessibility
+- tapOn: High contrast, On.*
+- assertVisible: High contrast, Off.*
+- tapOn: Back to dashboard
+- assertVisible: 'Accessibility preferences.*Text Large.*High contrast off.*'

@@ -1,0 +1,14 @@
+appId: ${APP_ID}
+---
+- launchApp:
+    stopApp: true
+- openLink: ${EXPO_URL}
+- assertVisible: Sign in to manage your care
+- tapOn: '^Sign in$'
+- assertVisible: Good morning, Maya
+- tapOn: 'Visits.*'
+- assertVisible: Appointments
+- tapOn: Dr\. Elena Martinez.*Cardiology.*Confirmed
+- assertVisible: Appointment Details
+- tapOn: Back to appointments
+- assertVisible: Appointments

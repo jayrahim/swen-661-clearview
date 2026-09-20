@@ -1,0 +1,14 @@
+appId: ${APP_ID}
+---
+- launchApp:
+    clearState: true
+- tapOn: '^Sign in$'
+- assertVisible: Good morning, Maya
+- tapOn: 'Records.*'
+- assertVisible: 'Reviewed note: Primary Care Follow-up.*Dr\. David Chen.*'
+- tapOn: 'Reviewed note: Primary Care Follow-up.*Dr\. David Chen.*'
+- assertVisible: Visit Note
+- assertVisible: 'Primary Care Follow-up.*Dr\. David Chen.*'
+- assertVisible: Summary
+- tapOn: Back to medical notes
+- assertVisible: 'Reviewed note: Primary Care Follow-up.*Dr\. David Chen.*'

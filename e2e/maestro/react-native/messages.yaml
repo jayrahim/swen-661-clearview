@@ -1,0 +1,20 @@
+appId: ${APP_ID}
+---
+- launchApp:
+    stopApp: true
+- openLink: ${EXPO_URL}
+- assertVisible: Sign in to manage your care
+- tapOn: '^Sign in$'
+- assertVisible: Good morning, Maya
+- scrollUntilVisible:
+    element: 'Messages, 2 unread'
+    direction: DOWN
+- tapOn:
+    text: Messages, 2 unread
+    retryTapIfNoChange: true
+- assertVisible: Unread message from Dr\. David Chen.*Your lab results are available.*
+- tapOn: Unread message from Dr\. David Chen.*Your lab results are available.*
+- assertVisible: Message
+- assertVisible: Your lab results are available
+- tapOn: Back to messages
+- assertVisible: Unread message from Dr\. David Chen.*Your lab results are available.*
