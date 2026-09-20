@@ -110,6 +110,41 @@ npm start
 
 Choose a target in Expo, or run `npm run ios` or `npm run android` when the corresponding simulator or device environment is available.
 
+### Maestro E2E
+
+Install the Maestro CLI and verify it with `maestro --version`. Start the target
+simulator or emulator and install/run the relevant ClearView application before
+executing its flows. Maestro uses the rendered UI and accessibility tree, so no
+test-only application dependency or committed binary is required.
+
+Flutter uses its installed application bundle. Set `APP_ID` for the selected
+platform, then run all flows:
+
+```sh
+# iOS Simulator
+maestro --device <device-id> test -e APP_ID=com.example.clearviewFlutter e2e/maestro/flutter
+
+# Android emulator
+maestro --device <device-id> test -e APP_ID=com.example.clearview_flutter e2e/maestro/flutter
+```
+
+React Native runs in Expo Go. Start Expo with `npm run ios` or `npm run android`,
+copy the `exp://...` URL printed by Expo, then run:
+
+```sh
+# iOS Simulator
+maestro --device <device-id> test -e APP_ID=host.exp.Exponent -e EXPO_URL=<exp-url> e2e/maestro/react-native
+
+# Android emulator
+maestro --device <device-id> test -e APP_ID=host.exp.exponent -e EXPO_URL=<exp-url> e2e/maestro/react-native
+```
+
+The suites cover sign-in, appointment, message, and medical-note detail
+workflows; an accessibility-preference change reflected on the dashboard; and
+the shared prototype-feedback pattern. Run them on each locally available
+supported simulator or emulator and retain the Maestro output as submission
+evidence.
+
 ### Electron
 
 ```sh

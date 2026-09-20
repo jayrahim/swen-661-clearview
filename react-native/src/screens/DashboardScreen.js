@@ -212,7 +212,7 @@ export function DashboardScreen({ onNavigate = {} }) {
           )}
 
           <Pressable
-            accessibilityLabel="Accessibility preferences"
+            accessibilityLabel={`Accessibility preferences. Text ${preferences.textSize.label}. High contrast ${preferences.highContrast ? 'on' : 'off'}.`}
             accessibilityRole="button"
             onPress={onNavigate.settings}
           >

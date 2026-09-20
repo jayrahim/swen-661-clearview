@@ -31,6 +31,16 @@ describe('DashboardScreen', () => {
     expect(screen.getByLabelText('Home')).toBeSelected();
   });
 
+  test('announces the current accessibility preferences on the settings card', async () => {
+    await renderWithProviders(<DashboardScreen />);
+
+    expect(
+      screen.getByRole('button', {
+        name: 'Accessibility preferences. Text Large. High contrast on.',
+      }),
+    ).toBeVisible();
+  });
+
   test('hides Quick Access tiles when Reduced Clutter is enabled', async () => {
     await renderWithProviders(<DashboardScreen />, {
       initialPreferences: {

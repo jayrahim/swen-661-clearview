@@ -1,0 +1,20 @@
+appId: ${APP_ID}
+---
+- launchApp:
+    stopApp: true
+- openLink: ${EXPO_URL}
+- assertVisible: Sign in to manage your care
+- tapOn: '^Sign in$'
+- assertVisible: Good morning, Maya
+- scrollUntilVisible:
+    element: 'Accessibility preferences.*'
+    direction: DOWN
+- tapOn: 'Accessibility preferences.*'
+- assertVisible: Accessibility
+- tapOn: High contrast, On.*
+- assertVisible: High contrast, Off.*
+- tapOn: Back to dashboard
+- scrollUntilVisible:
+    element: 'Accessibility preferences.*Text Large.*High contrast off.*'
+    direction: DOWN
+- assertVisible: 'Accessibility preferences.*Text Large.*High contrast off.*'

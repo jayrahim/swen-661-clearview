@@ -1,0 +1,15 @@
+appId: ${APP_ID}
+---
+- launchApp:
+    stopApp: true
+- openLink: ${EXPO_URL}
+- assertVisible: Sign in to manage your care
+- tapOn: '^Sign in$'
+- assertVisible: Good morning, Maya
+- scrollUntilVisible:
+    element: 'Prescriptions, 4 active'
+    direction: DOWN
+- tapOn:
+    text: Prescriptions, 4 active
+    retryTapIfNoChange: true
+- assertVisible: Prescriptions are not available in this prototype.
