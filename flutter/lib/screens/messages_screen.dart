@@ -150,52 +150,54 @@ class _MessageCard extends StatelessWidget {
       child: InkWell(
         onTap: onTap,
         borderRadius: BorderRadius.circular(16),
-        child: AppCard(
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              if (!message.isRead) ...[
-                Semantics(
-                  label: 'Unread',
-                  child: Container(
-                    width: 10,
-                    height: 10,
-                    margin: const EdgeInsets.only(top: 7, right: 12),
-                    decoration: BoxDecoration(
-                      color: theme.colorScheme.primary,
-                      shape: BoxShape.circle,
+        child: ExcludeSemantics(
+          child: AppCard(
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                if (!message.isRead) ...[
+                  Semantics(
+                    label: 'Unread',
+                    child: Container(
+                      width: 10,
+                      height: 10,
+                      margin: const EdgeInsets.only(top: 7, right: 12),
+                      decoration: BoxDecoration(
+                        color: theme.colorScheme.primary,
+                        shape: BoxShape.circle,
+                      ),
                     ),
+                  ),
+                ],
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        message.sender,
+                        style: theme.textTheme.titleMedium?.copyWith(
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const SizedBox(height: 6),
+                      Text(
+                        message.subject,
+                        style: theme.textTheme.bodyLarge?.copyWith(
+                          fontWeight: message.isRead
+                              ? FontWeight.normal
+                              : FontWeight.w600,
+                        ),
+                      ),
+                      const SizedBox(height: 6),
+                      Text(
+                        formatMessageDate(message.sentAt),
+                        style: theme.textTheme.bodyMedium,
+                      ),
+                    ],
                   ),
                 ),
               ],
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      message.sender,
-                      style: theme.textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    const SizedBox(height: 6),
-                    Text(
-                      message.subject,
-                      style: theme.textTheme.bodyLarge?.copyWith(
-                        fontWeight: message.isRead
-                            ? FontWeight.normal
-                            : FontWeight.w600,
-                      ),
-                    ),
-                    const SizedBox(height: 6),
-                    Text(
-                      formatMessageDate(message.sentAt),
-                      style: theme.textTheme.bodyMedium,
-                    ),
-                  ],
-                ),
-              ),
-            ],
+            ),
           ),
         ),
       ),
