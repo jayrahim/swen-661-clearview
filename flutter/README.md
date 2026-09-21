@@ -1,17 +1,23 @@
-# clearview_flutter
+# ClearView Flutter
 
-A new Flutter project.
+This directory contains ClearView's Flutter prototype. It implements the
+course workflows and accessibility preferences described in the
+[repository README](../README.md).
 
-## Getting Started
+## Run
 
-This project is a starting point for a Flutter application.
+```sh
+flutter pub get
+flutter run
+```
 
-A few resources to get you started if this is your first Flutter project:
+Run validation from this directory:
 
-- [Learn Flutter](https://docs.flutter.dev/get-started/learn-flutter)
-- [Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Flutter learning resources](https://docs.flutter.dev/reference/learning-resources)
+```sh
+dart format --output=none --set-exit-if-changed lib test
+flutter analyze
+flutter test --coverage
+```
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+See the repository README for platform setup, Maestro E2E commands, and
+coverage evidence guidance.

@@ -1,3 +1,3 @@
-# Documentation
+# Design references
 
-Store project documentation here, or add references to documentation maintained elsewhere. This may include the Team Charter and Project Proposal when those documents are available.
+This directory contains repository-safe design reference images. Team charter, proposal, validation evidence, and course-submission artifacts are maintained outside this public repository or in the relevant GitHub issue or pull request.

@@ -17,14 +17,14 @@ ClearView is a cross-platform UI prototype based on the CareConnect Care Recipie
 
 The Team Charter and Project Proposal are maintained by the team outside this public repository.
 
-The [docs/](docs/README.md) directory holds repository-safe documentation and design references. It does not duplicate or publicly link team documents stored in OneDrive.
+The [docs/](docs/README.md) directory holds repository-safe design references. Team documents are maintained outside this public repository.
 
 ## Repository structure
 
 ```text
 .
 ├── .github/        # Issue, pull request, and workflow configuration
-├── docs/           # Repository-safe documentation and design references
+├── docs/           # Repository-safe design references
 ├── electron/       # Electron desktop starter
 ├── flutter/        # ClearView Flutter prototype
 ├── react-native/   # ClearView Expo / React Native prototype
@@ -44,7 +44,7 @@ The Flutter and React Native prototypes implement these meaningful UI states and
 
 The app uses synthetic data only. It does not include real authentication, PHI, networking, database persistence, or backend integration.
 
-### React Native (Week 5)
+### React Native implementation
 
 The Expo / React Native implementation mirrors the completed Flutter workflows: Sign In, Dashboard, Accessibility Settings, Appointments and Appointment Detail, Messages and Message Detail, and Medical Notes and Medical Note Detail. Its shared root-route model provides Dashboard, Appointments, Messages, Records, and Settings destinations; selected-item details are child routes that return to their parent list.
 
@@ -227,14 +227,6 @@ Jest runs unit and React Native Testing Library tests. The coverage report is wr
 - Some approved-design controls intentionally provide prototype feedback rather than a complete workflow.
 - Electron and React web remain starter projects for future course work.
 - Future work may add additional workflows, persistence, real service integration, and broader platform implementations.
-
-## Week 5 React Native contributions
-
-| Team member | Contributions |
-| --- | --- |
-| Jay Scruggs | React Native application shell, root navigation, accessibility-preferences state and theming, Appointments workflow, responsive phone/tablet layout, validation automation, and integration. |
-| Nazia Mst | React Native Medical Notes and Medical Note Detail workflow, repository-backed data, and tests. |
-| Antonio Wilson | React Native Messages and Message Detail workflow, repository-backed data, prototype feedback, and tests. |
 
 ## AI-assisted development
 
