@@ -59,6 +59,26 @@ void main() {
     expect(find.text('Reply'), findsOneWidget);
   });
 
+  testWidgets('message cards expose one combined semantic label', (
+    tester,
+  ) async {
+    final semantics = tester.ensureSemantics();
+
+    try {
+      await tester.pumpWidget(buildScreen());
+
+      expect(
+        find.bySemanticsLabel(
+          'Unread message from Dr. David Chen. Your lab results are available. Aug 27 • 8:42 AM',
+        ),
+        findsOneWidget,
+      );
+      expect(find.bySemanticsLabel('Unread'), findsNothing);
+    } finally {
+      semantics.dispose();
+    }
+  });
+
   testWidgets('messages screen displays bottom navigation', (tester) async {
     await tester.pumpWidget(buildScreen());
 

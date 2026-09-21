@@ -19,6 +19,7 @@ describe('MessagesScreen', () => {
     ).toBeVisible();
 
     expect(screen.getByLabelText('User profile')).toBeVisible();
+    expect(screen.queryByLabelText('Unread')).toBeNull();
 
     expect(screen.getByText('Dr. David Chen')).toBeVisible();
     expect(screen.getByText('Your lab results are available')).toBeVisible();

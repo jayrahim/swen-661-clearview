@@ -165,8 +165,6 @@ export function MessagesScreen({ onNavigate = {}, onSelectMessage }) {
                       <View style={styles.senderRow}>
                         {!message.isRead && (
                           <View
-                            accessible
-                            accessibilityLabel="Unread"
                             style={[
                               styles.unreadDot,
                               {
