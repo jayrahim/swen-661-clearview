@@ -18,7 +18,8 @@ const notes = [
 ];
 
 const state = {
-  page: 'home',
+  page: 'signIn',
+  signedIn: false,
   appointment: appointments[0],
   message: messages[0],
   note: notes[0],
@@ -118,6 +119,26 @@ function renderHome() {
     </section>`;
 }
 
+function renderSignIn() {
+  return `
+    <section class="sign-in-card" aria-labelledby="page-title">
+      <h1 id="page-title">Sign in to CareConnect</h1>
+      <form id="sign-in-form">
+        <div class="form-field">
+          <label for="email">Email</label>
+          <input id="email" name="email" type="email" value="maya.carter@example.com" autocomplete="email" required />
+        </div>
+        <div class="form-field">
+          <label for="password">Password</label>
+          <input id="password" name="password" type="password" value="ClearView1!" autocomplete="current-password" required />
+        </div>
+        <button class="button button-primary sign-in-button" type="submit">Sign in</button>
+      </form>
+      <button class="text-button" type="button" data-feedback="Forgot password">Forgot password?</button>
+      <p class="sign-in-note">Accessibility preferences become available after sign-in.</p>
+    </section>`;
+}
+
 function recordRow(record, selected, label, statusClass = '') {
   return `<button class="record-row ${selected ? 'is-selected' : ''}" type="button" data-select="${label}" data-id="${record.id}" aria-pressed="${selected}"><strong>${label === 'message' ? record.sender : record.title}</strong><p>${label === 'message' ? record.subject : label === 'appointment' ? record.status : record.provider}</p><p class="${statusClass}">${label === 'message' ? record.date : label === 'appointment' ? record.date : `${record.date}${record.status ? ` • ${record.status}` : ''}`}</p></button>`;
 }
@@ -142,7 +163,8 @@ function renderSettings() {
 }
 
 function renderPage() {
-  const templates = { home: renderHome, visits: renderVisits, messages: renderMessages, records: renderRecords, settings: renderSettings };
+  const templates = { signIn: renderSignIn, home: renderHome, visits: renderVisits, messages: renderMessages, records: renderRecords, settings: renderSettings };
+  document.body.classList.toggle('signed-out', !state.signedIn);
   content.innerHTML = templates[state.page]();
   content.querySelector('#page-title')?.setAttribute('tabindex', '-1');
   content.querySelector('#detail-title')?.setAttribute('tabindex', '-1');
@@ -155,6 +177,10 @@ function renderPage() {
 }
 
 function changePage(page) {
+  if (!state.signedIn && page !== 'signIn') {
+    showToast('Sign in to access your CareConnect information.');
+    return;
+  }
   closeMenu();
   state.page = page;
   renderPage();
@@ -210,6 +236,16 @@ document.addEventListener('click', (event) => {
     }
     return showToast(`${feedback.dataset.feedback} is available in the full CareConnect experience.`);
   }
+});
+
+document.addEventListener('submit', (event) => {
+  if (event.target.id !== 'sign-in-form') return;
+  event.preventDefault();
+  state.signedIn = true;
+  state.page = 'home';
+  renderPage();
+  document.querySelector('#page-title')?.focus({ preventScroll: true });
+  showToast('Signed in. Dashboard is ready.');
 });
 
 document.addEventListener('keydown', (event) => {
