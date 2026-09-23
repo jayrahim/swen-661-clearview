@@ -3,10 +3,70 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>ClearView Electron</title>
+    <meta
+      name="description"
+      content="ClearView desktop prototype for the CareConnect care recipient experience."
+    />
+    <title>CareConnect ClearView</title>
+    <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
-    <h1>ClearView Electron</h1>
-    <p>Minimal Electron starter project.</p>
+    <a class="skip-link" href="#main-content">Skip to main content</a>
+
+    <header class="app-header">
+      <div class="brand">CareConnect ClearView</div>
+      <nav aria-label="Application menu" class="menu-bar">
+        <button class="menu-button" type="button" data-menu="File" aria-haspopup="menu" aria-controls="menu-popup" aria-expanded="false">File</button>
+        <button class="menu-button" type="button" data-menu="View" aria-haspopup="menu" aria-controls="menu-popup" aria-expanded="false">View</button>
+        <button class="menu-button" type="button" data-menu="Navigate" aria-haspopup="menu" aria-controls="menu-popup" aria-expanded="false">Navigate</button>
+        <button class="menu-button" type="button" data-menu="Help" aria-haspopup="menu" aria-controls="menu-popup" aria-expanded="false">Help</button>
+      </nav>
+      <div class="header-actions">
+        <button class="shortcut-button" id="search-button" type="button" aria-label="Search, Command or Control K">
+          <span aria-hidden="true">⌘K</span> Search
+        </button>
+      </div>
+    </header>
+    <div class="menu-popup" id="menu-popup" role="menu" hidden></div>
+
+    <div class="app-shell">
+      <aside class="navigation-rail">
+        <nav aria-label="Primary navigation">
+          <button class="nav-item is-active" type="button" data-page="home">Home</button>
+          <button class="nav-item" type="button" data-page="visits">Visits</button>
+          <button class="nav-item" type="button" data-page="messages">Messages</button>
+          <button class="nav-item" type="button" data-page="records">Records</button>
+          <button class="nav-item" type="button" data-page="settings">Settings</button>
+        </nav>
+        <div class="rail-footer">
+          <button class="rail-link" type="button" id="shortcuts-button">Keyboard shortcuts</button>
+          <button class="rail-link" type="button" data-page="settings">Accessibility</button>
+        </div>
+      </aside>
+
+      <main id="main-content" tabindex="-1">
+        <div id="page-content"></div>
+      </main>
+    </div>
+
+    <dialog id="shortcuts-dialog" aria-labelledby="shortcuts-title">
+      <div class="dialog-heading">
+        <h2 id="shortcuts-title">Keyboard shortcuts</h2>
+        <button class="icon-button" type="button" data-close-dialog aria-label="Close keyboard shortcuts">×</button>
+      </div>
+      <p>Use these shortcuts from anywhere in the desktop prototype.</p>
+      <dl class="shortcut-list">
+        <div><dt><kbd>⌘/Ctrl</kbd> + <kbd>1–5</kbd></dt><dd>Open Home, Visits, Messages, Records, or Settings</dd></div>
+        <div><dt><kbd>⌘/Ctrl</kbd> + <kbd>K</kbd></dt><dd>Focus search</dd></div>
+        <div><dt><kbd>⌘/Ctrl</kbd> + <kbd>/</kbd></dt><dd>Open this shortcut reference</dd></div>
+        <div><dt><kbd>Esc</kbd></dt><dd>Close an open dialog or menu</dd></div>
+        <div><dt><kbd>Tab</kbd></dt><dd>Move through controls in reading order</dd></div>
+        <div><dt><kbd>Enter</kbd> / <kbd>Space</kbd></dt><dd>Activate the focused control</dd></div>
+      </dl>
+      <button class="button button-primary" type="button" data-close-dialog>Done</button>
+    </dialog>
+
+    <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
+    <script src="renderer.js"></script>
   </body>
 </html>
