@@ -52,12 +52,31 @@ const menus = {
   ],
   Help: [{ label: 'Keyboard shortcuts', action: 'shortcuts', shortcut: '⌘/Ctrl /' }],
 };
+const prototypeFeedback = {
+  'Color preference': 'Color preference is not available in this prototype.',
+  Compose: 'Composing messages is not available in this prototype.',
+  Filter: 'Filtering is not available in this prototype.',
+  'Forgot password': 'Password recovery is not available in this prototype.',
+  'Get directions': 'Directions are not available in this prototype.',
+  Prescriptions: 'Prescriptions are not available in this prototype.',
+  Referrals: 'Referrals are not available in this prototype.',
+  Reply: 'Reply is not available in this prototype.',
+  Reschedule: 'Rescheduling is not available in this prototype.',
+  'Schedule appointment': 'Scheduling is not available in this prototype.',
+  Search: 'Search is not available in this prototype.',
+  'Message care team': 'Messaging the care team is not available in this prototype.',
+  'View lab results': 'Lab results are not available in this prototype.',
+};
 
 function showToast(message) {
   toast.textContent = message;
   toast.hidden = false;
   clearTimeout(toastTimer);
   toastTimer = setTimeout(() => { toast.hidden = true; }, 3500);
+}
+
+function showPrototypeFeedback(action) {
+  showToast(prototypeFeedback[action] ?? `${action} is not available in this prototype.`);
 }
 
 function closeMenu(restoreFocus = false) {
@@ -221,7 +240,7 @@ document.addEventListener('click', (event) => {
 
   if (event.target.closest('[data-close-dialog]')) return dialog.close();
   if (event.target.closest('#shortcuts-button')) return dialog.showModal();
-  if (event.target.closest('#search-button')) return showToast('Search is a prototype control. Use Command or Control plus 1–5 to navigate.');
+  if (event.target.closest('#search-button')) return showPrototypeFeedback('Search');
   const menu = event.target.closest('[data-menu]');
   if (menu) return openMenu(menu);
   const menuAction = event.target.closest('[data-menu-action]');
@@ -234,7 +253,7 @@ document.addEventListener('click', (event) => {
     if (feedback.dataset.feedback === 'Reset preferences') {
       state.textSize = 'Standard'; state.highContrast = false; state.reducedClutter = false; updatePreferences(); return showToast('Accessibility preferences reset.');
     }
-    return showToast(`${feedback.dataset.feedback} is available in the full CareConnect experience.`);
+    return showPrototypeFeedback(feedback.dataset.feedback);
   }
 });
 

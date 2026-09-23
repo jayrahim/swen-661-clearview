@@ -39,6 +39,12 @@ test('signs in and opens the desktop dashboard', async () => {
   await expect(window.getByRole('status')).toHaveText('Signed in. Dashboard is ready.');
 });
 
+test('uses the shared prototype-feedback language for password recovery', async () => {
+  await window.reload();
+  await window.getByRole('button', { name: 'Forgot password' }).click();
+  await expect(window.getByRole('status')).toHaveText('Password recovery is not available in this prototype.');
+});
+
 test('submits the sign-in form from Enter', async () => {
   await window.reload();
   await expect(window.getByRole('heading', { name: 'Sign in to CareConnect' })).toBeVisible();
