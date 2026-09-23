@@ -14,6 +14,12 @@ inputs:
   react-native-outcome:
     description: React Native validation outcome.
     required: true
+  electron-details:
+    description: Electron test-count summary.
+    required: false
+  electron-outcome:
+    description: Electron validation outcome.
+    required: true
   security-outcome:
     description: Security scan outcome.
     required: true
@@ -28,6 +34,8 @@ runs:
         FLUTTER_OUTCOME: ${{ inputs.flutter-outcome }}
         REACT_NATIVE_DETAILS: ${{ inputs.react-native-details }}
         REACT_NATIVE_OUTCOME: ${{ inputs.react-native-outcome }}
+        ELECTRON_DETAILS: ${{ inputs.electron-details }}
+        ELECTRON_OUTCOME: ${{ inputs.electron-outcome }}
         SECURITY_OUTCOME: ${{ inputs.security-outcome }}
       with:
         script: |
@@ -91,7 +99,12 @@ runs:
               process.env.REACT_NATIVE_DETAILS,
               'coverage/react-native/lcov.info',
             ),
-            ['Electron', '', 'Not yet included in validation'],
+            platformRow(
+              'Electron',
+              process.env.ELECTRON_OUTCOME,
+              process.env.ELECTRON_DETAILS,
+              '',
+            ),
             process.env.SECURITY_OUTCOME === 'skipped'
               ? ['Security', '', 'Skipped — no dependency changes']
               : ['Security', process.env.SECURITY_OUTCOME, 'OSV scan'],

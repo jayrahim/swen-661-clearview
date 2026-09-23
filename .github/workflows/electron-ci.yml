@@ -1,0 +1,67 @@
+name: Electron CI
+
+on:
+  workflow_call:
+    inputs:
+      run:
+        description: Whether Electron validation is relevant to this event.
+        required: true
+        type: boolean
+    outputs:
+      details:
+        description: Electron test-count summary.
+        value: ${{ jobs.validate-electron.outputs.details }}
+      outcome:
+        description: Electron validation outcome.
+        value: ${{ jobs.validate-electron.outputs.outcome }}
+
+permissions:
+  contents: read
+
+jobs:
+  validate-electron:
+    if: inputs.run
+    outputs:
+      details: ${{ steps.validation.outputs.details }}
+      outcome: ${{ steps.outcome.outputs.value || 'skipped' }}
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: electron
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v7
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: electron/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - id: validation
+        name: Run Electron UI tests
+        run: |
+          set -o pipefail
+          xvfb-run --auto-servernum npm test 2>&1 | tee test-output.txt
+          test_count=$(sed -E 's/\x1B\[[0-9;]*[[:alpha:]]//g' test-output.txt | sed -nE 's/.*([0-9]+) passed.*/\1/p' | tail -1)
+          echo "details=${test_count:+$test_count tests}" >> "$GITHUB_OUTPUT"
+
+      - name: Upload failure diagnostics
+        if: failure()
+        uses: actions/upload-artifact@v7
+        with:
+          name: electron-test-results
+          path: electron/test-results
+          if-no-files-found: ignore
+
+      - id: outcome
+        if: always()
+        name: Record validation outcome
+        env:
+          JOB_STATUS: ${{ job.status }}
+        run: echo "value=$JOB_STATUS" >> "$GITHUB_OUTPUT"

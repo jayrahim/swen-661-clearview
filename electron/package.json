@@ -1,10 +1,10 @@
 {
   "name": "clearview-electron",
   "version": "1.0.0",
-  "description": "",
+  "description": "ClearView desktop prototype for the CareConnect care recipient experience.",
   "main": "main.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "node --check main.js && node --check preload.js && node --check renderer.js && playwright test",
     "start": "electron ."
   },
   "keywords": [],
@@ -12,6 +12,7 @@
   "license": "ISC",
   "type": "commonjs",
   "devDependencies": {
+    "@playwright/test": "^1.63.0",
     "electron": "^43.4.0"
   }
 }

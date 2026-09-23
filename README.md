@@ -3,7 +3,7 @@
 **SWEN 661 — User Interface Implementation**<br>
 **Team 6 — ClearView**
 
-ClearView is a cross-platform UI prototype based on the CareConnect Care Recipient experience for people with low vision or partial sight impairment. Flutter and Expo/React Native implementations are available for framework comparison; the Electron and React/Vite directories remain starter projects for future course work.
+ClearView is a cross-platform UI prototype based on the CareConnect Care Recipient experience for people with low vision or partial sight impairment. Flutter and Expo/React Native implementations are available for framework comparison. The Electron prototype now demonstrates the beginning of the desktop experience; React/Vite remains a starter project for future course work.
 
 ## Team members
 
@@ -11,7 +11,7 @@ ClearView is a cross-platform UI prototype based on the CareConnect Care Recipie
 | --- | --- |
 | Jay Scruggs | [@jayrahim](https://github.com/jayrahim) |
 | Nazia Mst | [@nazmst2](https://github.com/nazmst2) |
-| Antonio Wilson | [@awilso112](https://github.com/awilso112) |
+| Abel Tabor | [@abelktabor](https://github.com/abelktabor) |
 
 ## Project documents
 
@@ -25,7 +25,7 @@ The [docs/](docs/README.md) directory holds repository-safe design references. T
 .
 ├── .github/        # Issue, pull request, and workflow configuration
 ├── docs/           # Repository-safe design references
-├── electron/       # Electron desktop starter
+├── electron/       # ClearView Electron desktop prototype
 ├── flutter/        # ClearView Flutter prototype
 ├── react-native/   # ClearView Expo / React Native prototype
 └── react-web/      # Vite / React web starter
@@ -151,6 +151,14 @@ evidence.
 cd electron
 npm install
 npm start
+```
+
+The Electron prototype is optimized for large displays and includes persistent navigation, menu and toolbar patterns, master/detail workflows, keyboard shortcuts, and desktop accessibility preferences.
+
+Run its automated Electron UI tests from `electron/` with:
+
+```sh
+npm test
 ```
 
 ### React web (Vite)
