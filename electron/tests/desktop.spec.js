@@ -21,14 +21,35 @@ test.afterAll(async () => {
   await app?.close();
 });
 
-test('renders the desktop shell with an isolated renderer', async () => {
-  await expect(window.getByRole('heading', { name: 'Good morning, Maya' })).toBeVisible();
-  await expect(window.getByRole('navigation', { name: 'Primary navigation' })).toBeVisible();
-  await expect(window.getByRole('button', { name: 'View', exact: true })).toBeVisible();
+test('renders an accessible sign-in screen with an isolated renderer', async () => {
+  await expect(window.getByRole('heading', { name: 'Sign in to CareConnect' })).toBeVisible();
+  await expect(window.getByLabel('Email')).toHaveValue('maya.carter@example.com');
+  await expect(window.getByLabel('Password')).toHaveAttribute('type', 'password');
+  await expect(window.getByRole('button', { name: 'Sign in', exact: true })).toBeVisible();
   await expect(window.locator('body')).not.toHaveClass(/high-contrast/);
 
   await expect(window.evaluate(() => typeof window.require)).resolves.toBe('undefined');
   await expect(window.evaluate(() => typeof window.process)).resolves.toBe('undefined');
+});
+
+test('signs in and opens the desktop dashboard', async () => {
+  await window.getByRole('button', { name: 'Sign in', exact: true }).click();
+  await expect(window.getByRole('heading', { name: 'Good morning, Maya' })).toBeFocused();
+  await expect(window.getByRole('navigation', { name: 'Primary navigation' })).toBeVisible();
+  await expect(window.getByRole('status')).toHaveText('Signed in. Dashboard is ready.');
+});
+
+test('uses the shared prototype-feedback language for password recovery', async () => {
+  await window.reload();
+  await window.getByRole('button', { name: 'Forgot password' }).click();
+  await expect(window.getByRole('status')).toHaveText('Password recovery is not available in this prototype.');
+});
+
+test('submits the sign-in form from Enter', async () => {
+  await window.reload();
+  await expect(window.getByRole('heading', { name: 'Sign in to CareConnect' })).toBeVisible();
+  await window.getByLabel('Password').press('Enter');
+  await expect(window.getByRole('heading', { name: 'Good morning, Maya' })).toBeFocused();
 });
 
 test('applies accessibility preferences from the View menu', async () => {

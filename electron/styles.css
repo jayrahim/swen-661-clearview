@@ -69,6 +69,9 @@ button:focus-visible, input:focus-visible, [tabindex]:focus-visible {
 .shortcut-button span { margin-right: .35rem; font-size: .8rem; }
 
 .app-shell { display: grid; grid-template-columns: 220px minmax(0, 1fr); min-height: calc(100vh - 56px); }
+.signed-out .app-shell { grid-template-columns: minmax(0, 1fr); }
+.signed-out .navigation-rail { display: none; }
+.signed-out main { display: grid; place-items: start center; padding-top: 6rem; }
 .navigation-rail {
   display: flex;
   flex-direction: column;
@@ -91,6 +94,15 @@ h1 { font-size: clamp(2rem, 3vw, 2.5rem); line-height: 1.15; letter-spacing: -.0
 h2 { font-size: 1.25rem; }
 h3 { font-size: 1.05rem; }
 .subheading { color: var(--muted); }
+
+.sign-in-card { width: min(660px, 100%); padding: 2.5rem; border: 1px solid var(--border); border-radius: 12px; background: var(--surface); }
+.sign-in-card h1 { margin-bottom: 2.25rem; }
+.form-field { display: grid; gap: .45rem; margin-bottom: 1.25rem; }
+.form-field label { font-weight: 650; }
+.form-field input { min-height: 52px; border: 1px solid var(--border); border-radius: 10px; background: var(--surface); color: var(--text); padding: .75rem .9rem; }
+.sign-in-button { width: 100%; margin-top: 1.35rem; }
+.text-button { margin-top: 1rem; padding: .25rem 0; border: 0; background: transparent; color: var(--accent); text-decoration: underline; text-underline-offset: .18em; }
+.sign-in-note { margin-top: 1.7rem; color: var(--muted); }
 
 .card, .toolbar, .list-card, .detail-card, .preference, .quick-link {
   border: 1px solid var(--border);
