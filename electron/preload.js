@@ -1,16 +1,21 @@
-const { contextBridge, ipcRenderer } = require('electron');
+const { contextBridge, ipcRenderer } = require("electron");
 
-contextBridge.exposeInMainWorld('clearViewDesktop', {
+contextBridge.exposeInMainWorld("clearViewDesktop", {
   onNavigate(listener) {
-    ipcRenderer.on('navigate', (_event, page) => listener(page));
+    ipcRenderer.on("navigate", (_event, page) => listener(page));
   },
   onOpenShortcuts(listener) {
-    ipcRenderer.on('open-shortcuts', listener);
+    ipcRenderer.on("open-shortcuts", listener);
   },
   onSetPreference(listener) {
-    ipcRenderer.on('set-preference', (_event, name, value) => listener(name, value));
+    ipcRenderer.on("set-preference", (_event, name, value) =>
+      listener(name, value),
+    );
   },
   requestClose() {
-    ipcRenderer.send('request-close');
+    ipcRenderer.send("request-close");
+  },
+  updateMenuPreferences(preferences) {
+    ipcRenderer.send("preferences-updated", preferences);
   },
 });

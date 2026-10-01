@@ -32,6 +32,12 @@ test('renders an accessible sign-in screen with an isolated renderer', async () 
   await expect(window.evaluate(() => typeof window.process)).resolves.toBe('undefined');
 });
 
+test('provides complete native desktop menus and a restrictive renderer policy', async () => {
+  const menuLabels = await app.evaluate(({ Menu }) => Menu.getApplicationMenu().items.map((item) => item.label));
+  expect(menuLabels).toEqual(expect.arrayContaining(['File', 'Edit', 'View', 'Help']));
+  await expect(window.locator('meta[http-equiv="Content-Security-Policy"]')).toHaveAttribute('content', /default-src 'self';/);
+});
+
 test('signs in and opens the desktop dashboard', async () => {
   await window.getByRole('button', { name: 'Sign in', exact: true }).click();
   await expect(window.getByRole('heading', { name: 'Good morning, Maya' })).toBeFocused();
@@ -62,6 +68,11 @@ test('applies accessibility preferences from the View menu', async () => {
   await window.getByRole('menuitem', { name: 'Toggle high contrast' }).click();
   await expect(window.locator('body')).toHaveClass(/high-contrast/);
   await expect(window.getByRole('status')).toHaveText('High contrast enabled.');
+
+  const nativeHighContrastChecked = await app.evaluate(({ Menu }) => Menu.getApplicationMenu()
+    .items.find((item) => item.label === 'View')
+    .submenu.items.find((item) => item.label === 'High contrast')?.checked);
+  expect(nativeHighContrastChecked).toBe(true);
 });
 
 test('supports keyboard navigation and transfers focus to selected appointment details', async () => {
