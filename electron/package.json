@@ -16,7 +16,7 @@
   "type": "commonjs",
   "devDependencies": {
     "@playwright/test": "^1.63.0",
-    "electron": "^43.4.0",
+    "electron": "^43.5.0",
     "esbuild": "^0.28.2"
   },
   "dependencies": {
