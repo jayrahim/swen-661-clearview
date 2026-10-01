@@ -914,6 +914,7 @@ function App() {
       preferences.textSize === "Extra Large",
     );
     document.body.classList.toggle("high-contrast", preferences.highContrast);
+    window.clearViewDesktop?.updateMenuPreferences(preferences);
   }, [preferences]);
 
   const feedback = (action) =>

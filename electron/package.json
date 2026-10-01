@@ -5,9 +5,10 @@
   "main": "main.js",
   "scripts": {
     "build:renderer": "esbuild src/renderer.jsx --bundle --format=iife --outfile=renderer.js",
+    "lint": "eslint main.js preload.js src tests",
     "prestart": "npm run build:renderer",
     "pretest": "npm run build:renderer",
-    "test": "node --check main.js && node --check preload.js && node --check renderer.js && playwright test",
+    "test": "npm run lint && node --check main.js && node --check preload.js && node --check renderer.js && playwright test",
     "start": "electron ."
   },
   "keywords": [],
@@ -17,7 +18,8 @@
   "devDependencies": {
     "@playwright/test": "^1.63.0",
     "electron": "^43.5.0",
-    "esbuild": "^0.28.2"
+    "esbuild": "^0.28.2",
+    "eslint": "^10.11.0"
   },
   "dependencies": {
     "react": "^19.3.0",
