@@ -3,7 +3,7 @@
 **SWEN 661 — User Interface Implementation**<br>
 **Team 6 — ClearView**
 
-ClearView is a cross-platform UI prototype based on the CareConnect Care Recipient experience for people with low vision or partial sight impairment. Flutter and Expo/React Native implementations are available for framework comparison. The Electron prototype now demonstrates the beginning of the desktop experience; React/Vite remains a starter project for future course work.
+ClearView is a cross-platform UI prototype based on the CareConnect Care Recipient experience for people with low vision or partial sight impairment. Flutter and Expo/React Native implementations are available for framework comparison. The Electron application provides a React-rendered desktop experience; the separate React/Vite web project remains a starter project for future course work.
 
 ## Team members
 
@@ -153,7 +153,7 @@ npm install
 npm start
 ```
 
-The Electron prototype is optimized for large displays and includes persistent navigation, menu and toolbar patterns, master/detail workflows, keyboard shortcuts, and desktop accessibility preferences.
+The React-rendered Electron prototype is optimized for large displays and includes persistent navigation, menu and toolbar patterns, master/detail workflows, keyboard shortcuts, and desktop accessibility preferences.
 
 Run its automated Electron UI tests from `electron/` with:
 
@@ -233,7 +233,7 @@ Jest runs unit and React Native Testing Library tests. The coverage report is wr
 - All content is synthetic prototype data; there is no backend, persistence, networking, or real authentication.
 - Accessibility preferences last for the current app session only.
 - Some approved-design controls intentionally provide prototype feedback rather than a complete workflow.
-- Electron and React web remain starter projects for future course work.
+- The separate React web project remains a starter project for future course work.
 - Future work may add additional workflows, persistence, real service integration, and broader platform implementations.
 
 ## AI-assisted development

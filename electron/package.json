@@ -4,6 +4,9 @@
   "description": "ClearView desktop prototype for the CareConnect care recipient experience.",
   "main": "main.js",
   "scripts": {
+    "build:renderer": "esbuild src/renderer.jsx --bundle --format=iife --outfile=renderer.js",
+    "prestart": "npm run build:renderer",
+    "pretest": "npm run build:renderer",
     "test": "node --check main.js && node --check preload.js && node --check renderer.js && playwright test",
     "start": "electron ."
   },
@@ -13,6 +16,11 @@
   "type": "commonjs",
   "devDependencies": {
     "@playwright/test": "^1.63.0",
-    "electron": "^43.4.0"
+    "electron": "^43.4.0",
+    "esbuild": "^0.28.2"
+  },
+  "dependencies": {
+    "react": "^19.3.0",
+    "react-dom": "^19.3.0"
   }
 }

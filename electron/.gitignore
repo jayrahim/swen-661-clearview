@@ -9,3 +9,4 @@ playwright-report/
 # Electron build output
 out/
 dist/
+renderer.js

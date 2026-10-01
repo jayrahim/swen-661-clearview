@@ -72,3 +72,17 @@ test('supports keyboard navigation and transfers focus to selected appointment d
   await expect(window.getByRole('heading', { name: 'Primary care follow-up' })).toBeFocused();
   await expect(window.getByText('Review recent lab results and current medications.')).toBeVisible();
 });
+
+test('retains the messages, records, and settings workflows after renderer migration', async () => {
+  await window.keyboard.press(process.platform === 'darwin' ? 'Meta+3' : 'Control+3');
+  await expect(window.getByRole('heading', { name: 'Messages' })).toBeFocused();
+  await expect(window.getByRole('button', { name: /Dr\. David Chen/ })).toBeVisible();
+
+  await window.keyboard.press(process.platform === 'darwin' ? 'Meta+4' : 'Control+4');
+  await expect(window.getByRole('heading', { name: 'Medical Notes' })).toBeFocused();
+  await expect(window.getByRole('button', { name: /Primary Care Follow-up/ })).toBeVisible();
+
+  await window.keyboard.press(process.platform === 'darwin' ? 'Meta+5' : 'Control+5');
+  await expect(window.getByRole('heading', { name: 'Accessibility Settings' })).toBeFocused();
+  await expect(window.getByRole('button', { name: /Text size.*Extra Large/ })).toBeVisible();
+});
