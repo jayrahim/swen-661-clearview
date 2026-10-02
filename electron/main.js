@@ -102,6 +102,7 @@ function createWindow() {
   configureRendererSecurity(mainWindow);
   mainWindow.on("close", () => saveWindowState(mainWindow));
   mainWindow.loadFile("index.html");
+  return mainWindow;
 }
 
 function sendToFocusedWindow(channel, ...args) {
@@ -222,8 +223,7 @@ function hasValidPreferences(preferences) {
   );
 }
 
-app.whenReady().then(() => {
-  Menu.setApplicationMenu(createApplicationMenu());
+function registerIpcHandlers() {
   ipcMain.on("request-close", (event) => {
     if (isTrustedRenderer(event))
       BrowserWindow.fromWebContents(event.sender)?.close();
@@ -233,13 +233,38 @@ app.whenReady().then(() => {
     applicationPreferences = { ...preferences };
     Menu.setApplicationMenu(createApplicationMenu());
   });
-  createWindow();
+}
 
-  app.on("activate", () => {
-    if (BrowserWindow.getAllWindows().length === 0) createWindow();
+function startApplication() {
+  const ready = app.whenReady().then(() => {
+    Menu.setApplicationMenu(createApplicationMenu());
+    registerIpcHandlers();
+    createWindow();
+
+    app.on("activate", () => {
+      if (BrowserWindow.getAllWindows().length === 0) createWindow();
+    });
   });
-});
 
-app.on("window-all-closed", () => {
-  if (process.platform !== "darwin") app.quit();
-});
+  app.on("window-all-closed", () => {
+    if (process.platform !== "darwin") app.quit();
+  });
+
+  return ready;
+}
+
+if (!process.env.JEST_WORKER_ID) startApplication();
+
+module.exports = {
+  APPLICATION_URL,
+  WINDOW_DEFAULTS,
+  createApplicationMenu,
+  createWindow,
+  hasValidPreferences,
+  isApplicationUrl,
+  isTrustedRenderer,
+  readWindowState,
+  registerIpcHandlers,
+  saveWindowState,
+  startApplication,
+};

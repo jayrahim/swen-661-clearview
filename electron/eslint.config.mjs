@@ -58,7 +58,7 @@ export default [
     rules: qualityRules,
   },
   {
-    files: ["src/**/*.test.jsx", "tests/setup-jest.js"],
+    files: ["src/**/*.test.jsx", "tests/**/*.integration.test.js", "tests/setup-jest.js"],
     languageOptions: {
       globals: {
         ...browserGlobals,

@@ -5,7 +5,7 @@ contextBridge.exposeInMainWorld("clearViewDesktop", {
     ipcRenderer.on("navigate", (_event, page) => listener(page));
   },
   onOpenShortcuts(listener) {
-    ipcRenderer.on("open-shortcuts", listener);
+    ipcRenderer.on("open-shortcuts", () => listener());
   },
   onSetPreference(listener) {
     ipcRenderer.on("set-preference", (_event, name, value) =>

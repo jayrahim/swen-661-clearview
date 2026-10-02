@@ -1,6 +1,11 @@
 module.exports = {
   clearMocks: true,
-  collectCoverageFrom: ["src/**/*.{js,jsx}", "!src/**/*.test.{js,jsx}"],
+  collectCoverageFrom: [
+    "main.js",
+    "preload.js",
+    "src/**/*.{js,jsx}",
+    "!src/**/*.test.{js,jsx}",
+  ],
   coverageDirectory: "coverage",
   coverageReporters: ["text", "lcov", "html", "json-summary"],
   coverageThreshold: {
@@ -13,5 +18,8 @@ module.exports = {
   },
   setupFilesAfterEnv: ["<rootDir>/tests/setup-jest.js"],
   testEnvironment: "jsdom",
-  testMatch: ["<rootDir>/src/**/*.test.jsx"],
+  testMatch: [
+    "<rootDir>/src/**/*.test.jsx",
+    "<rootDir>/tests/**/*.integration.test.js",
+  ],
 };
