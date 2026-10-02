@@ -158,8 +158,21 @@ The React-rendered Electron prototype is optimized for large displays and includ
 Run its automated Electron UI tests from `electron/` with:
 
 ```sh
-npm test
+npm test -- --coverage
+npm run test:e2e
 ```
+
+Create the course macOS installer from an Apple-Silicon Mac with:
+
+```sh
+npm run package:mac
+```
+
+The DMG is written to `electron/dist/` (for example,
+`ClearView-1.0.0-arm64.dmg`). This course artifact is intentionally unsigned
+and non-notarized: it is appropriate for instructor review, not production
+distribution. GitHub Actions validates the packaging configuration by creating
+an unpacked Linux build; DMG creation itself requires macOS.
 
 ### React web (Vite)
 

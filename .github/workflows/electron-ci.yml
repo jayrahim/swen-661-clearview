@@ -49,8 +49,9 @@ jobs:
           set -o pipefail
           npm test -- --coverage
           xvfb-run --auto-servernum npm run test:e2e
+          npm run package:verify
           coverage=$(node -e 'const c = require("./coverage/coverage-summary.json").total; console.log(`lines ${c.lines.pct}% · branches ${c.branches.pct}%`);')
-          echo "details=Jest $coverage · Electron E2E passed" >> "$GITHUB_OUTPUT"
+          echo "details=Jest $coverage · Electron E2E and package validation passed" >> "$GITHUB_OUTPUT"
 
       - name: Upload coverage report
         if: always()
