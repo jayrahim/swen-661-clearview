@@ -13,6 +13,14 @@ const nodeGlobals = {
   require: "readonly",
 };
 
+const jestGlobals = {
+  afterEach: "readonly",
+  beforeEach: "readonly",
+  expect: "readonly",
+  jest: "readonly",
+  test: "readonly",
+};
+
 const qualityRules = {
   "no-undef": "error",
   "no-unused-vars": [
@@ -48,5 +56,16 @@ export default [
       globals: browserGlobals,
     },
     rules: qualityRules,
+  },
+  {
+    files: ["src/**/*.test.jsx", "tests/setup-jest.js"],
+    languageOptions: {
+      globals: {
+        ...browserGlobals,
+        ...jestGlobals,
+        Event: "readonly",
+        HTMLDialogElement: "readonly",
+      },
+    },
   },
 ];
