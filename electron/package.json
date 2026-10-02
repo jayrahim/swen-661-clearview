@@ -8,7 +8,8 @@
     "lint": "eslint main.js preload.js src tests",
     "prestart": "npm run build:renderer",
     "pretest": "npm run build:renderer",
-    "test": "npm run lint && node --check main.js && node --check preload.js && node --check renderer.js && playwright test",
+    "test": "npm run lint && jest",
+    "test:e2e": "npm run build:renderer && node --check main.js && node --check preload.js && node --check renderer.js && playwright test",
     "start": "electron ."
   },
   "keywords": [],
@@ -16,10 +17,19 @@
   "license": "ISC",
   "type": "commonjs",
   "devDependencies": {
+    "@babel/core": "^7.29.7",
+    "@babel/preset-env": "^7.29.7",
+    "@babel/preset-react": "^7.29.7",
     "@playwright/test": "^1.63.0",
+    "@testing-library/jest-dom": "^7.0.1",
+    "@testing-library/react": "^16.3.3",
+    "@testing-library/user-event": "^14.6.7",
+    "babel-jest": "^30.5.2",
     "electron": "^43.5.0",
     "esbuild": "^0.28.2",
-    "eslint": "^10.11.0"
+    "eslint": "^10.11.0",
+    "jest": "^30.5.2",
+    "jest-environment-jsdom": "^30.5.2"
   },
   "dependencies": {
     "react": "^19.3.0",

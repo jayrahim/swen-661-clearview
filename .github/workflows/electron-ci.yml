@@ -44,12 +44,21 @@ jobs:
         run: npm ci
 
       - id: validation
-        name: Run Electron UI tests
+        name: Run Electron tests and coverage
         run: |
           set -o pipefail
-          xvfb-run --auto-servernum npm test 2>&1 | tee test-output.txt
-          test_count=$(sed -E 's/\x1B\[[0-9;]*[[:alpha:]]//g' test-output.txt | sed -nE 's/.*([0-9]+) passed.*/\1/p' | tail -1)
-          echo "details=${test_count:+$test_count tests}" >> "$GITHUB_OUTPUT"
+          npm test -- --coverage
+          xvfb-run --auto-servernum npm run test:e2e
+          coverage=$(node -e 'const c = require("./coverage/coverage-summary.json").total; console.log(`lines ${c.lines.pct}% · branches ${c.branches.pct}%`);')
+          echo "details=Jest $coverage · Electron E2E passed" >> "$GITHUB_OUTPUT"
+
+      - name: Upload coverage report
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: electron-coverage-report
+          path: electron/coverage
+          if-no-files-found: error
 
       - name: Upload failure diagnostics
         if: failure()

@@ -117,6 +117,13 @@ const prototypeFeedback = {
 
 const pageNames = ["home", "visits", "messages", "records", "settings"];
 
+export function getPrototypeFeedback(action) {
+  return (
+    prototypeFeedback[action] ??
+    `${action} is not available in this prototype.`
+  );
+}
+
 function ActionButton({ children, primary = false, className = "", onClick }) {
   return (
     <button
@@ -917,11 +924,7 @@ function App() {
     window.clearViewDesktop?.updateMenuPreferences(preferences);
   }, [preferences]);
 
-  const feedback = (action) =>
-    notify(
-      prototypeFeedback[action] ??
-        `${action} is not available in this prototype.`,
-    );
+  const feedback = (action) => notify(getPrototypeFeedback(action));
   const pageContent =
     page === "signIn" ? (
       <SignIn
@@ -1010,4 +1013,7 @@ function App() {
   );
 }
 
-createRoot(document.querySelector("#app")).render(<App />);
+const rootElement = document.querySelector("#app");
+if (rootElement) createRoot(rootElement).render(<App />);
+
+export { App };
