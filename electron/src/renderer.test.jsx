@@ -20,6 +20,19 @@ test("returns shared prototype feedback for known and unknown actions", () => {
   );
 });
 
+test("uses keyboard shortcuts when rendered without the Electron bridge", () => {
+  delete window.clearViewDesktop;
+  render(<App />);
+
+  fireEvent.keyDown(document, { key: "3", metaKey: true });
+  expect(screen.getByRole("status")).toHaveTextContent(
+    "Sign in to access your CareConnect information.",
+  );
+
+  fireEvent.keyDown(document, { key: "/", metaKey: true });
+  expect(screen.getByRole("dialog")).toBeInTheDocument();
+});
+
 test("supports sign-in, feedback, and the accessible home dashboard", async () => {
   const user = userEvent.setup();
   render(<App />);
@@ -138,7 +151,15 @@ test("handles menus, keyboard shortcuts, dialogs, and native bridge events", asy
   );
   expect(document.body).toHaveClass("high-contrast");
 
-  fireEvent.keyDown(document, { key: "2", metaKey: true });
+  const onNavigate = window.clearViewDesktop.onNavigate.mock.calls[0][0];
+  await act(async () => onNavigate("visits"));
+  await waitFor(() =>
+    expect(
+      screen.getByRole("heading", { name: "Appointments" }),
+    ).toHaveFocus(),
+  );
+
+  fireEvent.keyDown(document, { key: "3", metaKey: true });
   expect(
     screen.getByRole("heading", { name: "Appointments" }),
   ).toBeInTheDocument();
@@ -147,7 +168,6 @@ test("handles menus, keyboard shortcuts, dialogs, and native bridge events", asy
   expect(screen.getByRole("dialog")).toBeInTheDocument();
   await user.click(screen.getByRole("button", { name: "Done" }));
 
-  const onNavigate = window.clearViewDesktop.onNavigate.mock.calls[0][0];
   await act(async () => onNavigate("messages"));
   expect(screen.getByRole("heading", { name: "Messages" })).toBeInTheDocument();
 
@@ -174,7 +194,8 @@ test("covers desktop feedback actions and remaining menu paths", async () => {
   const user = userEvent.setup();
   render(<App />);
 
-  fireEvent.keyDown(document, { key: "4", metaKey: true });
+  const onNavigate = window.clearViewDesktop.onNavigate.mock.calls[0][0];
+  await act(async () => onNavigate("records"));
   expect(screen.getByRole("status")).toHaveTextContent(
     "Sign in to access your CareConnect information.",
   );

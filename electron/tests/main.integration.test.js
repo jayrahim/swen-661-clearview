@@ -208,6 +208,16 @@ test("routes native menu actions to the focused renderer window", () => {
   const navigateMenu = menuItem(menu, "Navigate");
   const helpMenu = menuItem(menu, "Help");
 
+  expect(menuItem(navigateMenu.submenu, "Home").accelerator).toBe(
+    "CommandOrControl+1",
+  );
+  expect(menuItem(navigateMenu.submenu, "Search").accelerator).toBe(
+    "CommandOrControl+K",
+  );
+  expect(menuItem(helpMenu.submenu, "Keyboard shortcuts").accelerator).toBe(
+    "CommandOrControl+/",
+  );
+
   ["Home", "Visits", "Messages", "Records", "Settings"].forEach((label) =>
     menuItem(navigateMenu.submenu, label).click(),
   );
