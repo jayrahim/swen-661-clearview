@@ -6,6 +6,15 @@ test.describe.configure({ mode: 'serial' });
 let app;
 let window;
 
+async function triggerNativeMenu(menuLabel, itemLabel) {
+  await app.evaluate(({ Menu }, { menuLabel: parent, itemLabel: child }) =>
+    Menu.getApplicationMenu()
+      .items.find((item) => item.label === parent)
+      ?.submenu.items.find((item) => item.label === child)
+      ?.click(),
+  { menuLabel, itemLabel });
+}
+
 test.beforeAll(async () => {
   const environment = { ...process.env };
   delete environment.ELECTRON_RUN_AS_NODE;
@@ -45,6 +54,28 @@ test('signs in and opens the desktop dashboard', async () => {
   await expect(window.getByRole('status')).toHaveText('Signed in. Dashboard is ready.');
 });
 
+test('keeps focus visible and supports keyboard menu and dialog interactions', async () => {
+  const viewMenu = window.getByRole('button', { name: 'View', exact: true });
+  await viewMenu.focus();
+  await expect(viewMenu).toBeFocused();
+  await expect(viewMenu).toHaveCSS('outline-width', '3px');
+
+  await window.keyboard.press('Enter');
+  const toggleContrast = window.getByRole('menuitem', {
+    name: 'Toggle high contrast',
+  });
+  await expect(toggleContrast).toBeFocused();
+  await window.keyboard.press('ArrowDown');
+  await expect(window.getByRole('menuitem', { name: 'Standard text' })).toBeFocused();
+  await window.keyboard.press('Escape');
+  await expect(viewMenu).toBeFocused();
+
+  await triggerNativeMenu('Help', 'Keyboard shortcuts');
+  await expect(window.getByRole('dialog')).toBeVisible();
+  await window.keyboard.press('Escape');
+  await expect(window.getByRole('dialog')).toBeHidden();
+});
+
 test('uses the shared prototype-feedback language for password recovery', async () => {
   await window.reload();
   await window.getByRole('button', { name: 'Forgot password' }).click();
@@ -75,9 +106,9 @@ test('applies accessibility preferences from the View menu', async () => {
   expect(nativeHighContrastChecked).toBe(true);
 });
 
-test('supports keyboard navigation and transfers focus to selected appointment details', async () => {
-  await window.keyboard.press(process.platform === 'darwin' ? 'Meta+2' : 'Control+2');
-  await expect(window.getByRole('heading', { name: 'Appointments' })).toBeFocused();
+test('routes native navigation shortcuts and transfers focus to selected appointment details', async () => {
+  await triggerNativeMenu('Navigate', 'Visits');
+  await expect(window.getByRole('heading', { name: 'Appointments' })).toBeVisible();
 
   await window.getByRole('button', { name: /Primary care follow-up/ }).click();
   await expect(window.getByRole('heading', { name: 'Primary care follow-up' })).toBeFocused();
@@ -85,15 +116,17 @@ test('supports keyboard navigation and transfers focus to selected appointment d
 });
 
 test('retains the messages, records, and settings workflows after renderer migration', async () => {
-  await window.keyboard.press(process.platform === 'darwin' ? 'Meta+3' : 'Control+3');
-  await expect(window.getByRole('heading', { name: 'Messages' })).toBeFocused();
+  await triggerNativeMenu('Navigate', 'Messages');
+  await expect(window.getByRole('heading', { name: 'Messages' })).toBeVisible();
   await expect(window.getByRole('button', { name: /Dr\. David Chen/ })).toBeVisible();
 
-  await window.keyboard.press(process.platform === 'darwin' ? 'Meta+4' : 'Control+4');
-  await expect(window.getByRole('heading', { name: 'Medical Notes' })).toBeFocused();
+  await triggerNativeMenu('Navigate', 'Records');
+  await expect(window.getByRole('heading', { name: 'Medical Notes' })).toBeVisible();
   await expect(window.getByRole('button', { name: /Primary Care Follow-up/ })).toBeVisible();
 
-  await window.keyboard.press(process.platform === 'darwin' ? 'Meta+5' : 'Control+5');
-  await expect(window.getByRole('heading', { name: 'Accessibility Settings' })).toBeFocused();
+  await triggerNativeMenu('Navigate', 'Settings');
+  await expect(
+    window.getByRole('heading', { name: 'Accessibility Settings' }),
+  ).toBeVisible();
   await expect(window.getByRole('button', { name: /Text size.*Extra Large/ })).toBeVisible();
 });

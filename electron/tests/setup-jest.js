@@ -19,6 +19,7 @@ Object.defineProperties(HTMLDialogElement.prototype, {
 function createDesktopBridge() {
   return {
     onNavigate: jest.fn(),
+    onFocusSearch: jest.fn(),
     onOpenShortcuts: jest.fn(),
     onSetPreference: jest.fn(),
     requestClose: jest.fn(),

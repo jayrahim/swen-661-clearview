@@ -885,27 +885,38 @@ function App() {
   handlers.current = { navigate, changePreference };
 
   useEffect(() => {
+    const desktopApi = window.clearViewDesktop;
+    const focusSearch = () => {
+      // Run after any pending page-heading focus transfer from navigation.
+      window.setTimeout(() =>
+        document
+          .querySelector('[aria-label="Search, Command or Control K"]')
+          ?.focus(),
+      );
+    };
     const onKeyDown = (event) => {
+      // Electron registers these accelerators in the native menu. Avoid a
+      // second navigation/focus event when its menu action reaches the bridge.
+      if (desktopApi) return;
       const modifier = event.metaKey || event.ctrlKey;
       if (modifier && /^[1-5]$/.test(event.key)) {
         event.preventDefault();
         handlers.current.navigate(pageNames[Number(event.key) - 1]);
       } else if (modifier && event.key.toLowerCase() === "k") {
         event.preventDefault();
-        document
-          .querySelector('[aria-label="Search, Command or Control K"]')
-          ?.focus();
+        focusSearch();
       } else if (modifier && event.key === "/") {
         event.preventDefault();
         setShortcutsOpen(true);
       }
     };
     document.addEventListener("keydown", onKeyDown);
-    window.clearViewDesktop?.onNavigate((destination) =>
+    desktopApi?.onNavigate((destination) =>
       handlers.current.navigate(destination),
     );
-    window.clearViewDesktop?.onOpenShortcuts(() => setShortcutsOpen(true));
-    window.clearViewDesktop?.onSetPreference((name, value) =>
+    desktopApi?.onFocusSearch(focusSearch);
+    desktopApi?.onOpenShortcuts(() => setShortcutsOpen(true));
+    desktopApi?.onSetPreference((name, value) =>
       handlers.current.changePreference(name, value),
     );
     return () => document.removeEventListener("keydown", onKeyDown);
