@@ -1,0 +1,9 @@
+[[IgnoredVulns]]
+id = "GHSA-vfj7-8cjw-p6xm"
+ignoreUntil = 2027-01-01
+reason = "No fixed version is available. braces@3.0.3 is a transitive development dependency of Jest's micromatch test-runner dependency and is not shipped in the Expo application. Reassess when Jest publishes an updated dependency chain."
+
+[[IgnoredVulns]]
+id = "GHSA-86w9-cpqp-85rv"
+ignoreUntil = 2027-01-01
+reason = "No fixed version is available. node-forge@1.4.0 is a transitive development dependency of Expo CLI's code-signing helper and is not shipped in the Expo application. Reassess when Expo publishes an updated dependency chain."
