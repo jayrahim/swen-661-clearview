@@ -1,0 +1,4 @@
+[[IgnoredVulns]]
+id = "GHSA-ch52-4w7c-c8xp"
+ignoreUntil = 2027-01-01
+reason = "No fixed version is available. http-cache-semantics@4.2.0 is a transitive, development-only dependency of electron-builder used to download build artifacts; it is not included in the packaged ClearView application. Reassess when Electron Builder publishes an updated dependency chain."

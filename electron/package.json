@@ -3,6 +3,10 @@
   "version": "1.0.0",
   "description": "ClearView desktop prototype for the CareConnect care recipient experience.",
   "main": "main.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jayrahim/swen-661-clearview.git"
+  },
   "scripts": {
     "build:renderer": "esbuild src/renderer.jsx --bundle --format=iife --outfile=renderer.js",
     "lint": "eslint main.js preload.js src tests",
@@ -10,6 +14,8 @@
     "pretest": "npm run build:renderer",
     "test": "npm run lint && jest",
     "test:e2e": "npm run build:renderer && node --check main.js && node --check preload.js && node --check renderer.js && playwright test",
+    "package:mac": "npm run build:renderer && electron-builder --mac dmg --arm64 --publish never",
+    "package:verify": "npm run build:renderer && electron-builder --linux dir --x64 --publish never",
     "start": "electron ."
   },
   "keywords": [],
@@ -26,6 +32,7 @@
     "@testing-library/user-event": "^14.6.7",
     "babel-jest": "^30.5.2",
     "electron": "^43.5.0",
+    "electron-builder": "^26.15.3",
     "esbuild": "^0.28.2",
     "eslint": "^10.11.0",
     "jest": "^30.5.2",
@@ -34,5 +41,35 @@
   "dependencies": {
     "react": "^19.3.0",
     "react-dom": "^19.3.0"
+  },
+  "build": {
+    "appId": "edu.gmu.swen661.clearview",
+    "productName": "ClearView",
+    "asar": true,
+    "directories": {
+      "output": "dist"
+    },
+    "files": [
+      "main.js",
+      "preload.js",
+      "index.html",
+      "renderer.js",
+      "package.json"
+    ],
+    "mac": {
+      "category": "public.app-category.medical",
+      "identity": null,
+      "target": [
+        {
+          "target": "dmg",
+          "arch": [
+            "arm64"
+          ]
+        }
+      ]
+    },
+    "dmg": {
+      "title": "ClearView ${version}"
+    }
   }
 }
