@@ -45,6 +45,29 @@ test('signs in and opens the desktop dashboard', async () => {
   await expect(window.getByRole('status')).toHaveText('Signed in. Dashboard is ready.');
 });
 
+test('keeps focus visible and supports keyboard menu and dialog interactions', async () => {
+  const viewMenu = window.getByRole('button', { name: 'View', exact: true });
+  await viewMenu.focus();
+  await expect(viewMenu).toBeFocused();
+  await expect(viewMenu).toHaveCSS('outline-width', '3px');
+
+  await window.keyboard.press('Enter');
+  const toggleContrast = window.getByRole('menuitem', {
+    name: 'Toggle high contrast',
+  });
+  await expect(toggleContrast).toBeFocused();
+  await window.keyboard.press('ArrowDown');
+  await expect(window.getByRole('menuitem', { name: 'Standard text' })).toBeFocused();
+  await window.keyboard.press('Escape');
+  await expect(viewMenu).toBeFocused();
+
+  const shortcut = process.platform === 'darwin' ? 'Meta+/' : 'Control+/';
+  await window.keyboard.press(shortcut);
+  await expect(window.getByRole('dialog')).toBeVisible();
+  await window.keyboard.press('Escape');
+  await expect(window.getByRole('dialog')).toBeHidden();
+});
+
 test('uses the shared prototype-feedback language for password recovery', async () => {
   await window.reload();
   await window.getByRole('button', { name: 'Forgot password' }).click();

@@ -28,7 +28,7 @@ body {
 
 button, input { font: inherit; }
 button { cursor: pointer; }
-button:focus-visible, input:focus-visible, [tabindex]:focus-visible {
+button:focus-visible, input:focus-visible, a:focus-visible, [tabindex]:focus-visible {
   outline: 3px solid var(--focus);
   outline-offset: 3px;
 }
@@ -167,6 +167,24 @@ kbd { border: 1px solid var(--border); border-bottom-width: 2px; border-radius: 
 body.text-large { font-size: 18px; }
 body.text-extra-large { font-size: 20px; }
 body.high-contrast { --page: #fff; --surface: #fff; --text: #000; --muted: #222; --border: #000; --accent: #004c9c; --accent-hover: #003870; --focus: #d34800; --success: #005a2b; --success-surface: #edf9f0; }
+
+/* Respect the macOS Increase Contrast preference without overriding the user's
+   in-app text-size choice. The in-app high-contrast preference uses the same
+   palette and remains available on platforms that do not expose this query. */
+@media (prefers-contrast: more) {
+  :root {
+    --page: #fff;
+    --surface: #fff;
+    --text: #000;
+    --muted: #222;
+    --border: #000;
+    --accent: #004c9c;
+    --accent-hover: #003870;
+    --focus: #d34800;
+    --success: #005a2b;
+    --success-surface: #edf9f0;
+  }
+}
 
 @media (max-width: 1180px) {
   main { padding: 1.75rem; }

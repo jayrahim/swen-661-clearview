@@ -162,6 +162,11 @@ npm test -- --coverage
 npm run test:e2e
 ```
 
+Jest writes the browser-viewable coverage report to
+`electron/coverage/lcov-report/index.html`. The E2E suite launches Electron
+and validates keyboard-driven navigation, desktop menus, preferences, and the
+available prototype workflows.
+
 Create the course macOS installer from an Apple-Silicon Mac with:
 
 ```sh
@@ -173,6 +178,22 @@ The DMG is written to `electron/dist/` (for example,
 and non-notarized: it is appropriate for instructor review, not production
 distribution. GitHub Actions validates the packaging configuration by creating
 an unpacked Linux build; DMG creation itself requires macOS.
+
+#### Desktop accessibility validation
+
+Run `npm start`, then test the signed-out and signed-in experience using only
+the keyboard: `Tab`/`Shift+Tab`, `Enter`/`Space`, `Esc`, `⌘`/`Ctrl`+`1` through
+`5`, `⌘`/`Ctrl`+`K`, and `⌘`/`Ctrl`+`/`. Exercise File, Edit, View, Navigate,
+and Help; every navigation page; each master/detail selection; the shortcut
+dialog; and all settings, including text size and high contrast. Verify the
+visible blue or orange focus indicator follows each control and that status
+feedback is announced.
+
+On macOS, repeat the workflow with VoiceOver enabled (`⌘`+`F5`; use `fn` if
+needed) and with **System Settings → Accessibility → Display → Increase
+Contrast** enabled. Confirm the control name, role, state, and feedback are
+announced, and that text, boundaries, and focus indicators remain legible.
+Record and retain the required validation evidence outside the repository.
 
 ### React web (Vite)
 
