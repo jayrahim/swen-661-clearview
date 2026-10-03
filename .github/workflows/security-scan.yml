@@ -51,7 +51,6 @@ jobs:
     with:
       scan-args: |-
         --lockfile=./electron/package-lock.json
-        --config=./electron/osv-scanner.toml
       fail-on-vuln: true
 
   security-result:
