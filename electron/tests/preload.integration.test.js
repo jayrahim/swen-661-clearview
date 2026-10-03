@@ -25,6 +25,7 @@ test("exposes only the approved renderer-to-main desktop API", () => {
     "clearViewDesktop",
     expect.objectContaining({
       onNavigate: expect.any(Function),
+      onFocusSearch: expect.any(Function),
       onOpenShortcuts: expect.any(Function),
       onSetPreference: expect.any(Function),
       requestClose: expect.any(Function),
@@ -33,6 +34,7 @@ test("exposes only the approved renderer-to-main desktop API", () => {
   );
   expect(Object.keys(desktopApi)).toEqual([
     "onNavigate",
+    "onFocusSearch",
     "onOpenShortcuts",
     "onSetPreference",
     "requestClose",
@@ -43,10 +45,12 @@ test("exposes only the approved renderer-to-main desktop API", () => {
 test("bridges only expected inbound events and outbound IPC messages", () => {
   const desktopApi = loadPreload();
   const onNavigate = jest.fn();
+  const onFocusSearch = jest.fn();
   const onOpenShortcuts = jest.fn();
   const onSetPreference = jest.fn();
 
   desktopApi.onNavigate(onNavigate);
+  desktopApi.onFocusSearch(onFocusSearch);
   desktopApi.onOpenShortcuts(onOpenShortcuts);
   desktopApi.onSetPreference(onSetPreference);
   desktopApi.requestClose();
@@ -54,13 +58,16 @@ test("bridges only expected inbound events and outbound IPC messages", () => {
 
   expect(mockOn.mock.calls.map(([channel]) => channel)).toEqual([
     "navigate",
+    "focus-search",
     "open-shortcuts",
     "set-preference",
   ]);
   mockOn.mock.calls[0][1]({}, "messages");
   mockOn.mock.calls[1][1]({});
-  mockOn.mock.calls[2][1]({}, "textSize", "Large");
+  mockOn.mock.calls[2][1]({});
+  mockOn.mock.calls[3][1]({}, "textSize", "Large");
   expect(onNavigate).toHaveBeenCalledWith("messages");
+  expect(onFocusSearch).toHaveBeenCalledWith();
   expect(onOpenShortcuts).toHaveBeenCalledWith();
   expect(onSetPreference).toHaveBeenCalledWith("textSize", "Large");
   expect(mockSend).toHaveBeenNthCalledWith(1, "request-close");

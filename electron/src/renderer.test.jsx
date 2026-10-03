@@ -1,4 +1,4 @@
-import { act, fireEvent, render, screen, within } from "@testing-library/react";
+import { act, fireEvent, render, screen, waitFor, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { App, getPrototypeFeedback } from "./renderer";
 
@@ -150,6 +150,15 @@ test("handles menus, keyboard shortcuts, dialogs, and native bridge events", asy
   const onNavigate = window.clearViewDesktop.onNavigate.mock.calls[0][0];
   await act(async () => onNavigate("messages"));
   expect(screen.getByRole("heading", { name: "Messages" })).toBeInTheDocument();
+
+  const onFocusSearch =
+    window.clearViewDesktop.onFocusSearch.mock.calls[0][0];
+  await act(async () => onFocusSearch());
+  await waitFor(() =>
+    expect(
+      screen.getByRole("button", { name: "Search, Command or Control K" }),
+    ).toHaveFocus(),
+  );
 
   const onSetPreference =
     window.clearViewDesktop.onSetPreference.mock.calls[0][0];

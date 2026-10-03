@@ -208,7 +208,10 @@ test("routes native menu actions to the focused renderer window", () => {
   const navigateMenu = menuItem(menu, "Navigate");
   const helpMenu = menuItem(menu, "Help");
 
-  navigateMenu.submenu.forEach((item) => item.click());
+  ["Home", "Visits", "Messages", "Records", "Settings"].forEach((label) =>
+    menuItem(navigateMenu.submenu, label).click(),
+  );
+  menuItem(navigateMenu.submenu, "Search").click();
   menuItem(helpMenu.submenu, "Keyboard shortcuts").click();
   menuItem(viewMenu.submenu, "High contrast").click({ checked: true });
   const textSizeMenu = menuItem(viewMenu.submenu, "Text size");
@@ -222,27 +225,28 @@ test("routes native menu actions to the focused renderer window", () => {
     "home",
   );
   expect(mockWebContents.send).toHaveBeenNthCalledWith(5, "navigate", "settings");
-  expect(mockWebContents.send).toHaveBeenNthCalledWith(6, "open-shortcuts");
+  expect(mockWebContents.send).toHaveBeenNthCalledWith(6, "focus-search");
+  expect(mockWebContents.send).toHaveBeenNthCalledWith(7, "open-shortcuts");
   expect(mockWebContents.send).toHaveBeenNthCalledWith(
-    7,
+    8,
     "set-preference",
     "highContrast",
     true,
   );
   expect(mockWebContents.send).toHaveBeenNthCalledWith(
-    8,
+    9,
     "set-preference",
     "textSize",
     "Standard",
   );
   expect(mockWebContents.send).toHaveBeenNthCalledWith(
-    9,
+    10,
     "set-preference",
     "textSize",
     "Large",
   );
   expect(mockWebContents.send).toHaveBeenNthCalledWith(
-    10,
+    11,
     "set-preference",
     "textSize",
     "Extra Large",

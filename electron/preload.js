@@ -4,6 +4,9 @@ contextBridge.exposeInMainWorld("clearViewDesktop", {
   onNavigate(listener) {
     ipcRenderer.on("navigate", (_event, page) => listener(page));
   },
+  onFocusSearch(listener) {
+    ipcRenderer.on("focus-search", () => listener());
+  },
   onOpenShortcuts(listener) {
     ipcRenderer.on("open-shortcuts", () => listener());
   },

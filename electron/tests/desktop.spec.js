@@ -61,6 +61,11 @@ test('keeps focus visible and supports keyboard menu and dialog interactions', a
   await window.keyboard.press('Escape');
   await expect(viewMenu).toBeFocused();
 
+  await window.keyboard.press(process.platform === 'darwin' ? 'Meta+K' : 'Control+K');
+  await expect(
+    window.getByRole('button', { name: 'Search, Command or Control K' }),
+  ).toBeFocused();
+
   const shortcut = process.platform === 'darwin' ? 'Meta+/' : 'Control+/';
   await window.keyboard.press(shortcut);
   await expect(window.getByRole('dialog')).toBeVisible();

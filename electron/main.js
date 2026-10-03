@@ -192,6 +192,12 @@ function createApplicationMenu() {
           accelerator: "CommandOrControl+5",
           click: () => sendToFocusedWindow("navigate", "settings"),
         },
+        { type: "separator" },
+        {
+          label: "Search",
+          accelerator: "CommandOrControl+K",
+          click: () => sendToFocusedWindow("focus-search"),
+        },
       ],
     },
     {
