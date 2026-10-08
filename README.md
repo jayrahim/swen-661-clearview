@@ -167,6 +167,17 @@ Jest writes the browser-viewable coverage report to
 and validates keyboard-driven navigation, desktop menus, preferences, and the
 available prototype workflows.
 
+To scan the React renderer with axe DevTools in Chrome, run this from
+`electron/`, then open the displayed `http://127.0.0.1:4173` address in Chrome:
+
+```sh
+npm run serve:renderer
+```
+
+The local server exposes only the compiled Electron renderer assets. Scan the
+Sign In, Dashboard, Visits, Messages, Medical Notes, Accessibility Settings,
+and Keyboard Shortcuts dialog; retain axe evidence outside the repository.
+
 Create the course macOS installer from an Apple-Silicon Mac with:
 
 ```sh

@@ -9,13 +9,14 @@
   },
   "scripts": {
     "build:renderer": "esbuild src/renderer.jsx --bundle --format=iife --outfile=renderer.js",
-    "lint": "eslint main.js preload.js src tests",
+    "lint": "eslint main.js preload.js scripts src tests",
     "prestart": "npm run build:renderer",
     "pretest": "npm run build:renderer",
     "test": "npm run lint && jest",
     "test:e2e": "npm run build:renderer && node --check main.js && node --check preload.js && node --check renderer.js && playwright test",
     "package:mac": "npm run build:renderer && electron-builder --mac dmg --arm64 --publish never",
     "package:verify": "npm run build:renderer && electron-builder --linux dir --x64 --publish never",
+    "serve:renderer": "npm run build:renderer && node scripts/serve-renderer.js",
     "start": "electron ."
   },
   "keywords": [],
