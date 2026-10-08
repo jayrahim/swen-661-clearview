@@ -39,7 +39,7 @@ export default [
     ],
   },
   {
-    files: ["main.js", "preload.js", "tests/**/*.js"],
+    files: ["main.js", "preload.js", "scripts/**/*.js", "tests/**/*.js"],
     languageOptions: {
       ecmaVersion: "latest",
       sourceType: "commonjs",
