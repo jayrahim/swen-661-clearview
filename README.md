@@ -3,15 +3,15 @@
 **SWEN 661 — User Interface Implementation**<br>
 **Team 6 — ClearView**
 
-ClearView is a cross-platform UI prototype based on the CareConnect Care Recipient experience for people with low vision or partial sight impairment. Flutter and Expo/React Native implementations are available for framework comparison. The Electron application provides a React-rendered desktop experience; the separate React/Vite web project remains a starter project for future course work.
+ClearView is a cross-platform UI prototype based on the CareConnect Care Recipient experience for people with low vision or partial sight impairment. Flutter and Expo/React Native implementations are available for framework comparison. The Electron application provides a React-rendered desktop experience; the separate React/Vite web project provides the early responsive-web foundation.
 
 ## Team members
 
-| Team member | GitHub username |
-| --- | --- |
-| Jay Scruggs | [@jayrahim](https://github.com/jayrahim) |
-| Nazia Mst | [@nazmst2](https://github.com/nazmst2) |
-| Abel Tabor | [@abelktabor](https://github.com/abelktabor) |
+| Team member | GitHub username                              |
+| ----------- | -------------------------------------------- |
+| Jay Scruggs | [@jayrahim](https://github.com/jayrahim)     |
+| Nazia Mst   | [@nazmst2](https://github.com/nazmst2)       |
+| Abel Tabor  | [@abelktabor](https://github.com/abelktabor) |
 
 ## Project documents
 
@@ -28,7 +28,7 @@ The [docs/](docs/README.md) directory holds repository-safe design references. T
 ├── electron/       # ClearView Electron desktop prototype
 ├── flutter/        # ClearView Flutter prototype
 ├── react-native/   # ClearView Expo / React Native prototype
-└── react-web/      # Vite / React web starter
+└── react-web/      # Vite / React responsive-web foundation
 ```
 
 ## ClearView implementations

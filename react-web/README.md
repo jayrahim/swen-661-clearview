@@ -1,7 +1,11 @@
 # ClearView React web
 
-This directory is the React/Vite starter reserved for future course work. The
-active ClearView mobile prototypes are in `../flutter` and `../react-native`.
+This directory contains the early React/Vite foundation for the ClearView web
+prototype. It includes client-side routes, semantic landmarks, keyboard-visible
+focus styles, a skip link, responsive navigation, and a starter PWA manifest.
+The implementation follows the approved mobile, tablet, and desktop designs
+for the Dashboard, Appointments, Messages, Medical Notes, and Accessibility
+Settings workflows.
 
 ## Run
 
@@ -16,3 +20,7 @@ Build or lint the starter with:
 npm run build
 npm run lint
 ```
+
+The current foundation exposes these routes for early responsive and
+accessibility validation: `/sign-in`, `/dashboard`, `/visits`, `/messages`,
+`/records`, and `/settings`.
