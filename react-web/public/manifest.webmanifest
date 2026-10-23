@@ -2,8 +2,11 @@
   "name": "CareConnect ClearView",
   "short_name": "ClearView",
   "description": "An accessible CareConnect care-recipient prototype.",
+  "id": "/",
   "start_url": "/",
+  "scope": "/",
   "display": "standalone",
+  "display_override": ["standalone"],
   "background_color": "#f7f9fc",
   "theme_color": "#007f90",
   "icons": [
@@ -11,7 +14,19 @@
       "src": "/favicon.svg",
       "sizes": "any",
       "type": "image/svg+xml",
-      "purpose": "any"
+      "purpose": "any maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Appointments",
+      "short_name": "Visits",
+      "url": "/visits"
+    },
+    {
+      "name": "Messages",
+      "short_name": "Messages",
+      "url": "/messages"
     }
   ]
 }

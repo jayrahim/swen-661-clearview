@@ -137,8 +137,7 @@ function RouteFocus() {
   const initialPath = useRef(pathname);
   useEffect(() => {
     const isInitialRedirect =
-      ["/", "/login"].includes(initialPath.current) &&
-      pathname === "/sign-in";
+      ["/", "/login"].includes(initialPath.current) && pathname === "/sign-in";
 
     if (initialPath.current !== pathname && !isInitialRedirect)
       document.querySelector("#main-content h1")?.focus();
@@ -160,6 +159,8 @@ function PageHeading({ title, children, actions }) {
 }
 
 function Status({ children }) {
+  if (!children) return null;
+
   return (
     <p className="status" role="status">
       {children}
@@ -167,10 +168,91 @@ function Status({ children }) {
   );
 }
 
-function AppShell({ preferences, onPreferencesChange }) {
+function useNetworkStatus() {
+  const [isOnline, setIsOnline] = useState(() => navigator.onLine);
+
+  useEffect(() => {
+    const goOnline = () => setIsOnline(true);
+    const goOffline = () => setIsOnline(false);
+    window.addEventListener("online", goOnline);
+    window.addEventListener("offline", goOffline);
+    return () => {
+      window.removeEventListener("online", goOnline);
+      window.removeEventListener("offline", goOffline);
+    };
+  }, []);
+
+  return isOnline;
+}
+
+function useInstallPrompt() {
+  const [deferredPrompt, setDeferredPrompt] = useState(null);
+  const [installMessage, setInstallMessage] = useState("");
+
+  useEffect(() => {
+    const capturePrompt = (event) => {
+      event.preventDefault();
+      setDeferredPrompt(event);
+    };
+    const confirmInstall = () => {
+      setDeferredPrompt(null);
+      setInstallMessage("ClearView is installed and ready to open as an app.");
+    };
+
+    window.addEventListener("beforeinstallprompt", capturePrompt);
+    window.addEventListener("appinstalled", confirmInstall);
+    return () => {
+      window.removeEventListener("beforeinstallprompt", capturePrompt);
+      window.removeEventListener("appinstalled", confirmInstall);
+    };
+  }, []);
+
+  const install = async () => {
+    if (!deferredPrompt) return;
+
+    await deferredPrompt.prompt();
+    const { outcome } = await deferredPrompt.userChoice;
+    setDeferredPrompt(null);
+    setInstallMessage(
+      outcome === "accepted"
+        ? "ClearView installation was accepted."
+        : "ClearView installation was dismissed.",
+    );
+  };
+
+  return { canInstall: Boolean(deferredPrompt), install, installMessage };
+}
+
+function ConnectivityStatus({ isOnline }) {
+  if (isOnline) return null;
+
+  return (
+    <p className="connection-status" role="status">
+      You are offline. ClearView can show content that was previously loaded.
+    </p>
+  );
+}
+
+function AppShell({
+  preferences,
+  onPreferencesChange,
+  canInstall,
+  onInstall,
+  installMessage,
+}) {
   const [menuOpen, setMenuOpen] = useState(false);
+  const menuButtonRef = useRef(null);
   const location = useLocation();
   useEffect(() => setMenuOpen(false), [location.pathname]);
+  useEffect(() => {
+    const closeMenu = (event) => {
+      if (event.key !== "Escape" || !menuOpen) return;
+      setMenuOpen(false);
+      menuButtonRef.current?.focus();
+    };
+    window.addEventListener("keydown", closeMenu, true);
+    return () => window.removeEventListener("keydown", closeMenu, true);
+  }, [menuOpen]);
   const title = titles[location.pathname] ?? "ClearView";
   return (
     <div
@@ -185,6 +267,7 @@ function AppShell({ preferences, onPreferencesChange }) {
         <button
           className="menu-button"
           type="button"
+          ref={menuButtonRef}
           aria-expanded={menuOpen}
           aria-controls="primary-navigation"
           onClick={() => setMenuOpen((open) => !open)}
@@ -197,7 +280,7 @@ function AppShell({ preferences, onPreferencesChange }) {
           ClearView
         </NavLink>
         <nav aria-label="Primary navigation">
-          <Navigation />
+          <Navigation canInstall={canInstall} onInstall={onInstall} />
         </nav>
       </aside>
       <nav
@@ -205,9 +288,10 @@ function AppShell({ preferences, onPreferencesChange }) {
         id="primary-navigation"
         aria-label="Primary navigation"
       >
-        <Navigation />
+        <Navigation canInstall={canInstall} onInstall={onInstall} />
       </nav>
       <main className="page-content" id="main-content" tabIndex="-1">
+        {installMessage && <Status>{installMessage}</Status>}
         <Routes>
           <Route
             path="/dashboard"
@@ -235,7 +319,7 @@ function AppShell({ preferences, onPreferencesChange }) {
   );
 }
 
-function Navigation() {
+function Navigation({ canInstall = false, onInstall }) {
   return (
     <ul>
       {navigationItems.map((item) => (
@@ -243,6 +327,17 @@ function Navigation() {
           <NavLink to={item.to}>{item.label}</NavLink>
         </li>
       ))}
+      {canInstall && (
+        <li>
+          <button
+            className="navigation-install"
+            type="button"
+            onClick={onInstall}
+          >
+            Install app
+          </button>
+        </li>
+      )}
     </ul>
   );
 }
@@ -651,11 +746,14 @@ function SignIn() {
 
 function App() {
   const [preferences, setPreferences] = useState(defaultPreferences);
+  const isOnline = useNetworkStatus();
+  const { canInstall, install, installMessage } = useInstallPrompt();
 
   return (
     <>
       <DocumentTitle />
       <RouteFocus />
+      <ConnectivityStatus isOnline={isOnline} />
       <Routes>
         <Route path="/" element={<Navigate replace to="/sign-in" />} />
         <Route path="/login" element={<Navigate replace to="/sign-in" />} />
@@ -666,6 +764,9 @@ function App() {
             <AppShell
               preferences={preferences}
               onPreferencesChange={setPreferences}
+              canInstall={canInstall}
+              onInstall={install}
+              installMessage={installMessage}
             />
           }
         />

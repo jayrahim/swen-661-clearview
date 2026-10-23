@@ -2,7 +2,7 @@
 
 This directory contains the early React/Vite foundation for the ClearView web
 prototype. It includes client-side routes, semantic landmarks, keyboard-visible
-focus styles, a skip link, responsive navigation, and a starter PWA manifest.
+focus styles, a skip link, responsive navigation, and an installable PWA.
 The implementation follows the approved mobile, tablet, and desktop designs
 for the Dashboard, Appointments, Messages, Medical Notes, and Accessibility
 Settings workflows.
@@ -20,6 +20,32 @@ Build or lint the starter with:
 npm run build
 npm run lint
 ```
+
+## PWA and offline behavior
+
+The production build generates a Workbox service worker and precaches the app
+shell. After an initial online visit, the ClearView routes and prototype data
+remain available offline because they are bundled with the client application.
+The app shows an in-context status message while offline. It does not cache or
+sync live clinical data; this educational prototype has no live backend.
+
+Use a production build to validate PWA behavior locally:
+
+```sh
+npm run build
+npm run preview
+```
+
+On browsers that support the `beforeinstallprompt` event, an **Install app**
+control appears in the primary navigation once the browser determines the app
+is installable. Safari and some managed browsers do not expose that prompt;
+use the browser's install/share menu and its developer tools' Manifest or
+Application panel to verify the manifest and registered service worker.
+
+The mobile menu can be opened with its button and closed with `Escape`. The
+app provides a skip link, visible focus indicators for controls, native buttons
+and links, semantic landmarks, and route-level heading focus for screen-reader
+context.
 
 The current foundation exposes these routes for early responsive and
 accessibility validation: `/sign-in`, `/dashboard`, `/visits`, `/messages`,
