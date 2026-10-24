@@ -20,9 +20,11 @@ jobs:
       flutter: ${{ github.event_name == 'push' && 'true' || steps.filter.outputs.flutter }}
       react-native: ${{ github.event_name == 'push' && 'true' || steps.filter.outputs.react-native }}
       electron: ${{ github.event_name == 'push' && 'true' || steps.filter.outputs.electron }}
+      react-web: ${{ github.event_name == 'push' && 'true' || steps.filter.outputs.react-web }}
       security-flutter: ${{ github.event_name != 'pull_request' && 'true' || steps.filter.outputs.security-flutter }}
       security-react-native: ${{ github.event_name != 'pull_request' && 'true' || steps.filter.outputs.security-react-native }}
       security-electron: ${{ github.event_name != 'pull_request' && 'true' || steps.filter.outputs.security-electron }}
+      security-react-web: ${{ github.event_name != 'pull_request' && 'true' || steps.filter.outputs.security-react-web }}
     steps:
       - if: github.event_name == 'pull_request'
         uses: dorny/paths-filter@v4
@@ -41,6 +43,10 @@ jobs:
               - 'electron/**'
               - '.github/workflows/electron-ci.yml'
               - '.github/workflows/platform-validation.yml'
+            react-web:
+              - 'react-web/**'
+              - '.github/workflows/react-web-ci.yml'
+              - '.github/workflows/platform-validation.yml'
             security-flutter:
               - 'flutter/pubspec.yaml'
               - 'flutter/pubspec.lock'
@@ -54,6 +60,11 @@ jobs:
             security-electron:
               - 'electron/package.json'
               - 'electron/package-lock.json'
+              - '.github/workflows/security-scan.yml'
+              - '.github/workflows/platform-validation.yml'
+            security-react-web:
+              - 'react-web/package.json'
+              - 'react-web/package-lock.json'
               - '.github/workflows/security-scan.yml'
               - '.github/workflows/platform-validation.yml'
 
@@ -75,6 +86,12 @@ jobs:
     with:
       run: ${{ needs.changes.outputs.electron == 'true' }}
 
+  react-web:
+    needs: changes
+    uses: ./.github/workflows/react-web-ci.yml
+    with:
+      run: ${{ needs.changes.outputs.react-web == 'true' }}
+
   security:
     needs: changes
     uses: ./.github/workflows/security-scan.yml
@@ -82,13 +99,14 @@ jobs:
       scan-flutter: ${{ needs.changes.outputs.security-flutter == 'true' }}
       scan-react-native: ${{ needs.changes.outputs.security-react-native == 'true' }}
       scan-electron: ${{ needs.changes.outputs.security-electron == 'true' }}
+      scan-react-web: ${{ needs.changes.outputs.security-react-web == 'true' }}
     permissions:
       actions: read
       contents: read
       security-events: write
 
   summarize:
-    needs: [changes, flutter, react-native, electron, security]
+    needs: [changes, flutter, react-native, electron, react-web, security]
     if: >-
       ${{
       always() &&
@@ -114,6 +132,12 @@ jobs:
         with:
           name: react-native-coverage
           path: coverage/react-native
+      - name: Download React web coverage report
+        if: needs.react-web.outputs.outcome == 'success'
+        uses: actions/download-artifact@v7
+        with:
+          name: react-web-coverage
+          path: coverage/react-web
       - uses: ./.github/actions/pr-validation-summary
         with:
           flutter-details: ${{ needs.flutter.outputs.details }}
@@ -122,4 +146,6 @@ jobs:
           react-native-outcome: ${{ needs.react-native.outputs.outcome || (needs.changes.outputs.react-native == 'true' && needs.react-native.result || 'skipped') }}
           electron-details: ${{ needs.electron.outputs.details }}
           electron-outcome: ${{ needs.electron.outputs.outcome || (needs.changes.outputs.electron == 'true' && needs.electron.result || 'skipped') }}
+          react-web-details: ${{ needs.react-web.outputs.details }}
+          react-web-outcome: ${{ needs.react-web.outputs.outcome || (needs.changes.outputs.react-web == 'true' && needs.react-web.result || 'skipped') }}
           security-outcome: ${{ needs.security.outputs.outcome || needs.security.result }}

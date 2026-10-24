@@ -1,21 +1,29 @@
 name: React web CI
 
 on:
-  pull_request:
-    paths:
-      - 'react-web/**'
-      - '.github/workflows/react-web-ci.yml'
-  push:
-    branches: [main]
-    paths:
-      - 'react-web/**'
-      - '.github/workflows/react-web-ci.yml'
+  workflow_call:
+    inputs:
+      run:
+        description: Whether React web validation is relevant to this event.
+        required: true
+        type: boolean
+    outputs:
+      details:
+        description: React web test-count summary.
+        value: ${{ jobs.validate-react-web.outputs.details }}
+      outcome:
+        description: React web validation outcome.
+        value: ${{ jobs.validate-react-web.outputs.outcome }}
 
 permissions:
   contents: read
 
 jobs:
   validate-react-web:
+    if: inputs.run
+    outputs:
+      details: ${{ steps.validation.outputs.details }}
+      outcome: ${{ steps.outcome.outputs.value || 'skipped' }}
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -39,7 +47,9 @@ jobs:
         run: npm run lint
 
       - name: Run Jest and React Testing Library coverage
-        run: npm run test:coverage -- --runInBand
+        run: |
+          set -o pipefail
+          npm run test:coverage -- --runInBand 2>&1 | tee test-output.txt
 
       - name: Build production bundle
         run: npm run build
@@ -48,7 +58,16 @@ jobs:
         run: npx playwright install --with-deps chromium
 
       - name: Run Playwright end-to-end tests
-        run: npx playwright test
+        run: |
+          set -o pipefail
+          npx playwright test 2>&1 | tee playwright-output.txt
+
+      - id: validation
+        name: Record validation details
+        run: |
+          jest_tests=$(sed -E 's/\x1B\[[0-9;]*[[:alpha:]]//g' test-output.txt | sed -nE 's/^[[:space:]]*Tests:[[:space:]]*([0-9]+).*/\1/p' | tail -1)
+          playwright_tests=$(sed -E 's/\x1B\[[0-9;]*[[:alpha:]]//g' playwright-output.txt | sed -nE 's/^[[:space:]]*([0-9]+) passed.*/\1/p' | tail -1)
+          echo "details=Jest ${jest_tests:-0} tests / Playwright ${playwright_tests:-0} tests" >> "$GITHUB_OUTPUT"
 
       - name: Upload web coverage report
         if: always()
@@ -73,3 +92,10 @@ jobs:
           name: react-web-playwright-test-results
           path: react-web/test-results
           if-no-files-found: ignore
+
+      - id: outcome
+        if: always()
+        name: Record validation outcome
+        env:
+          JOB_STATUS: ${{ job.status }}
+        run: echo "value=$JOB_STATUS" >> "$GITHUB_OUTPUT"

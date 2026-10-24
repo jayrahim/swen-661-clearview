@@ -20,6 +20,12 @@ inputs:
   electron-outcome:
     description: Electron validation outcome.
     required: true
+  react-web-details:
+    description: React web test-count summary.
+    required: false
+  react-web-outcome:
+    description: React web validation outcome.
+    required: true
   security-outcome:
     description: Security scan outcome.
     required: true
@@ -36,6 +42,8 @@ runs:
         REACT_NATIVE_OUTCOME: ${{ inputs.react-native-outcome }}
         ELECTRON_DETAILS: ${{ inputs.electron-details }}
         ELECTRON_OUTCOME: ${{ inputs.electron-outcome }}
+        REACT_WEB_DETAILS: ${{ inputs.react-web-details }}
+        REACT_WEB_OUTCOME: ${{ inputs.react-web-outcome }}
         SECURITY_OUTCOME: ${{ inputs.security-outcome }}
       with:
         script: |
@@ -104,6 +112,12 @@ runs:
               process.env.ELECTRON_OUTCOME,
               process.env.ELECTRON_DETAILS,
               '',
+            ),
+            platformRow(
+              'React web',
+              process.env.REACT_WEB_OUTCOME,
+              process.env.REACT_WEB_DETAILS,
+              'coverage/react-web/lcov.info',
             ),
             process.env.SECURITY_OUTCOME === 'skipped'
               ? ['Security', '', 'Skipped — no dependency changes']
