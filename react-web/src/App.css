@@ -82,7 +82,9 @@
   background: transparent;
   border: 1px solid var(--accent);
   color: var(--accent-strong);
+  font-size: 0.875em;
   margin: 0.5rem 0.75rem;
+  min-height: 2.5rem;
   width: calc(100% - 1.5rem);
 }
 .connection-status {
