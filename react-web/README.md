@@ -40,6 +40,23 @@ pure preference helper unit tests and the routed user-facing components.
 module whose service-worker registration is covered by production-build and
 browser E2E checks rather than a JSDOM unit test.
 
+## End-to-end testing
+
+Install the Chromium browser once on a new development machine, then run the
+Playwright suite against a locally built preview:
+
+```sh
+npx playwright install chromium
+npm run test:e2e
+```
+
+The suite covers sign-in, navigation, visits, messages, medical notes,
+accessibility preferences, unavailable-prototype feedback, and representative
+desktop (1440px), tablet (768px), and mobile (375px) workflows. It writes an
+HTML report to `playwright-report/index.html`; open it with
+`npm run test:e2e:report`. GitHub Actions runs the same Chromium suite without
+external services and retains the report and failure diagnostics as artifacts.
+
 ## PWA and offline behavior
 
 The production build generates a Workbox service worker and precaches the app
