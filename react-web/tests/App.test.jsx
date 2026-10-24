@@ -38,6 +38,17 @@ describe("ClearView primary workflows", () => {
       await screen.findByRole("heading", { name: "Good morning, Maya" }),
     ).toBeVisible();
     expect(document.title).toBe("Dashboard | ClearView");
+    expect(
+      screen.queryByRole("link", { name: "ClearView" }),
+    ).not.toBeInTheDocument();
+    expect(document.querySelector(".sidebar-brand")).toHaveTextContent(
+      "ClearView",
+    );
+    expect(
+      screen
+        .getAllByRole("link", { name: "Home" })
+        .some((link) => link.getAttribute("aria-current") === "page"),
+    ).toBe(true);
   });
 
   it("navigates from dashboard quick access and announces unavailable actions", async () => {

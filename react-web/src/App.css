@@ -82,10 +82,15 @@
   background: transparent;
   border: 1px solid var(--accent);
   color: var(--accent-strong);
-  font-size: 0.875em;
+  font-size: 0.75em;
   margin: 0.5rem 0.75rem;
-  min-height: 2.5rem;
+  min-height: 2.75rem;
   width: calc(100% - 1.5rem);
+}
+.navigation-install-item {
+  border-top: 1px solid var(--border);
+  margin-top: 0.75rem;
+  padding-top: 0.75rem;
 }
 .connection-status {
   background: #fff4d6;
@@ -411,12 +416,15 @@
     min-height: 100svh;
     padding: 1rem 0.75rem;
   }
-  .brand {
+  .sidebar-brand {
+    border-bottom: 1px solid var(--border);
+    margin: 0.25rem 0 0.75rem;
+    padding: 0 0.75rem 1rem;
+  }
+  .sidebar-brand strong {
     color: var(--text-strong);
-    display: block;
-    font-weight: 800;
-    margin: 0.25rem 0.75rem 1.5rem;
-    text-decoration: none;
+    font-size: 1rem;
+    line-height: 1.2;
   }
   .sidebar li + li {
     margin-top: 0.25rem;
@@ -426,7 +434,7 @@
     font-size: 0.875rem;
   }
   .sidebar .navigation-install {
-    margin: 0.75rem 0;
+    margin: 0;
     width: 100%;
   }
   .mobile-header,
