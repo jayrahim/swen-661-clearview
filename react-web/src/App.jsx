@@ -7,6 +7,7 @@ import {
   useLocation,
   useNavigate,
 } from "react-router-dom";
+import { cyclePreference, defaultPreferences } from "./preferences.js";
 import "./App.css";
 
 const navigationItems = [
@@ -115,13 +116,6 @@ const titles = {
   "/messages": "Messages",
   "/records": "Medical Notes",
   "/settings": "Accessibility Settings",
-};
-
-const defaultPreferences = {
-  text: "Large",
-  contrast: "On",
-  clutter: "Off",
-  color: "Cool",
 };
 
 function DocumentTitle() {
@@ -642,7 +636,7 @@ function Settings({ preferences, onPreferencesChange }) {
   const update = (key, values) =>
     onPreferencesChange((current) => ({
       ...current,
-      [key]: values[(values.indexOf(current[key]) + 1) % values.length],
+      [key]: cyclePreference(current[key], values),
     }));
   const reset = () => onPreferencesChange(defaultPreferences);
   const options = [
