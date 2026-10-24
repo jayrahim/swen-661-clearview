@@ -3,7 +3,7 @@
 **SWEN 661 — User Interface Implementation**<br>
 **Team 6 — ClearView**
 
-ClearView is a cross-platform UI prototype based on the CareConnect Care Recipient experience for people with low vision or partial sight impairment. Flutter and Expo/React Native implementations are available for framework comparison. The Electron application provides a React-rendered desktop experience; the separate React/Vite web project provides the early responsive-web foundation.
+ClearView is a cross-platform UI prototype based on the CareConnect Care Recipient experience for people with low vision or partial sight impairment. Flutter and Expo/React Native implementations are available for framework comparison. The Electron application provides a React-rendered desktop experience; the separate React/Vite web project provides the responsive web and PWA experience.
 
 ## Team members
 
@@ -28,7 +28,7 @@ The [docs/](docs/README.md) directory holds repository-safe design references. T
 ├── electron/       # ClearView Electron desktop prototype
 ├── flutter/        # ClearView Flutter prototype
 ├── react-native/   # ClearView Expo / React Native prototype
-└── react-web/      # Vite / React responsive-web foundation
+└── react-web/      # Vite / React responsive web PWA
 ```
 
 ## ClearView implementations
@@ -220,6 +220,20 @@ For a production build:
 npm run build
 ```
 
+Run the Jest and React Testing Library suite, including the enforced 75%
+coverage threshold, with:
+
+```sh
+npm test
+npm run test:coverage
+```
+
+The browser-viewable web coverage report is written to
+`react-web/coverage/lcov-report/index.html`.
+
+See [react-web/README.md](react-web/README.md) for PWA install, offline, and
+accessibility behavior, including how to use the production preview.
+
 ## Flutter validation and builds
 
 Run these commands from `flutter/`.
@@ -278,7 +292,8 @@ Jest runs unit and React Native Testing Library tests. The coverage report is wr
 - All content is synthetic prototype data; there is no backend, persistence, networking, or real authentication.
 - Accessibility preferences last for the current app session only.
 - Some approved-design controls intentionally provide prototype feedback rather than a complete workflow.
-- The separate React web project remains a starter project for future course work.
+- The React web application uses bundled synthetic prototype data; it does not
+  cache or synchronize live clinical data.
 - Future work may add additional workflows, persistence, real service integration, and broader platform implementations.
 
 ## AI-assisted development
