@@ -86,3 +86,24 @@ context.
 The current foundation exposes these routes for early responsive and
 accessibility validation: `/sign-in`, `/dashboard`, `/visits`, `/messages`,
 `/records`, and `/settings`.
+
+## Production deployment (Vercel)
+
+ClearView is deployed as a static Vite single-page application. The committed
+`vercel.json` rewrite serves `index.html` for client-side routes, so a direct
+visit to a route such as `/messages` or `/settings` does not result in a 404.
+
+To connect the repository in Vercel:
+
+1. Import `jayrahim/swen-661-clearview` from GitHub.
+2. Set **Root Directory** to `react-web`.
+3. Keep Vercel's detected Vite build command (`npm run build`) and output
+   directory (`dist`).
+4. Set `main` as the production branch, then deploy.
+
+Vercel creates preview deployments for pull requests and deploys `main` to the
+production URL. After deployment, verify the home page and direct visits to
+`/messages`, `/records`, and `/settings`; use the browser Application panel to
+confirm that the manifest and service worker are present. The final live URL
+and production-verification screenshots belong in the assignment submission,
+not in this repository.
