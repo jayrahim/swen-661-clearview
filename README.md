@@ -231,6 +231,17 @@ npm run test:coverage
 The browser-viewable web coverage report is written to
 `react-web/coverage/lcov-report/index.html`.
 
+Install Chromium once, then run the web end-to-end suite with:
+
+```sh
+cd react-web
+npx playwright install chromium
+npm run test:e2e
+```
+
+The HTML Playwright report is written to
+`react-web/playwright-report/index.html`.
+
 See [react-web/README.md](react-web/README.md) for PWA install, offline, and
 accessibility behavior, including how to use the production preview.
 

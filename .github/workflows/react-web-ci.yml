@@ -44,6 +44,12 @@ jobs:
       - name: Build production bundle
         run: npm run build
 
+      - name: Install Playwright Chromium
+        run: npx playwright install --with-deps chromium
+
+      - name: Run Playwright end-to-end tests
+        run: npx playwright test
+
       - name: Upload web coverage report
         if: always()
         uses: actions/upload-artifact@v7
@@ -51,3 +57,19 @@ jobs:
           name: react-web-coverage
           path: react-web/coverage
           if-no-files-found: error
+
+      - name: Upload Playwright report
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: react-web-playwright-report
+          path: react-web/playwright-report
+          if-no-files-found: warn
+
+      - name: Upload Playwright failure diagnostics
+        if: failure()
+        uses: actions/upload-artifact@v7
+        with:
+          name: react-web-playwright-test-results
+          path: react-web/test-results
+          if-no-files-found: ignore
