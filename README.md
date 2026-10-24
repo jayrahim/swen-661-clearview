@@ -220,6 +220,17 @@ For a production build:
 npm run build
 ```
 
+Run the Jest and React Testing Library suite, including the enforced 75%
+coverage threshold, with:
+
+```sh
+npm test
+npm run test:coverage
+```
+
+The browser-viewable web coverage report is written to
+`react-web/coverage/lcov-report/index.html`.
+
 See [react-web/README.md](react-web/README.md) for PWA install, offline, and
 accessibility behavior, including how to use the production preview.
 

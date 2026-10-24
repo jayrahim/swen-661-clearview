@@ -21,6 +21,25 @@ npm run build
 npm run lint
 ```
 
+## Testing and coverage
+
+Run the Jest unit and React Testing Library component suite with:
+
+```sh
+npm test
+npm run test:coverage
+```
+
+The coverage command enforces a minimum of 75% for statements, branches,
+functions, and lines. It writes a browser-viewable report to
+`coverage/lcov-report/index.html`.
+
+Coverage is collected from the application source under `src/`, including the
+pure preference helper unit tests and the routed user-facing components.
+`src/main.jsx` is intentionally excluded: it is a Vite/browser bootstrap
+module whose service-worker registration is covered by production-build and
+browser E2E checks rather than a JSDOM unit test.
+
 ## PWA and offline behavior
 
 The production build generates a Workbox service worker and precaches the app

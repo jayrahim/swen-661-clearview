@@ -38,5 +38,16 @@ jobs:
       - name: Lint
         run: npm run lint
 
+      - name: Run Jest and React Testing Library coverage
+        run: npm run test:coverage -- --runInBand
+
       - name: Build production bundle
         run: npm run build
+
+      - name: Upload web coverage report
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: react-web-coverage
+          path: react-web/coverage
+          if-no-files-found: error
