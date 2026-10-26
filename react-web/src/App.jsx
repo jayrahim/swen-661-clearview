@@ -270,9 +270,9 @@ function AppShell({
         </button>
       </header>
       <aside className="sidebar">
-        <NavLink className="brand" to="/dashboard">
-          ClearView
-        </NavLink>
+        <div className="sidebar-brand">
+          <strong>ClearView</strong>
+        </div>
         <nav aria-label="Primary navigation">
           <Navigation canInstall={canInstall} onInstall={onInstall} />
         </nav>
@@ -322,7 +322,7 @@ function Navigation({ canInstall = false, onInstall }) {
         </li>
       ))}
       {canInstall && (
-        <li>
+        <li className="navigation-install-item">
           <button
             className="navigation-install"
             type="button"
